@@ -5,6 +5,7 @@ from json import dumps
 from flask.ext.jsonpify import jsonify
 from datetime import datetime
 from dateutil import parser as dateparser
+from flask_cors import CORS
 
 from routes.account import *
 from routes.accountDevice import *
@@ -14,7 +15,7 @@ import os
 
 app = Flask(__name__)
 api = Api(app)
-
+CORS(app)
 
 api.add_resource(AccountCreate, '/account/create')
 api.add_resource(AccountLogin, '/account/login')

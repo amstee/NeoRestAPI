@@ -30,7 +30,6 @@ class AccountDeviceAdd(Resource):
                 userInfo = {"id" : elem[0], "email" : elem[1], "fname" : elem[3], "lname" : elem[4], "birthday" : elem[5]}
             conn.execute("INSERT INTO device (userid, mid) VALUES (?, ?)", userInfo['id'], content['mid'])
             resp = jsonify({"success" : True})
-        resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
 
 class AccountDeviceList(Resource):
@@ -49,5 +48,4 @@ class AccountDeviceList(Resource):
             for elem in query.cursor.fetchall():
                 result.append({"id" : elem[0], "userid" : elem[1], "mid" : elem[2]})
             resp = jsonify(result)
-        resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp

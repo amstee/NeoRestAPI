@@ -23,7 +23,6 @@ class AccountCreate(Resource):
         for elem in query.cursor.fetchall():
             result.append({"id" : elem[0], "email" : elem[1], "fname" : elem[3], "lname" : elem[4], "birthday" : elem[5]})
         resp = jsonify(result)
-        resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
 
     def post(self):
@@ -38,7 +37,6 @@ class AccountCreate(Resource):
             conn.execute("INSERT INTO user (email, password, fname, lname, birthday) VALUES (?, ?, ?, ?, ?)",
                         content['email'], hashed, content['fname'], content['lname'], dateparser.parse(content['birthday']))
             resp = jsonify({"success" : True})
-        resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
 
 class AccountLogin(Resource):
@@ -51,7 +49,6 @@ class AccountLogin(Resource):
             conn = db_connect.connect()
             conn.execute("UPDATE user SET webtoken = ? WHERE email = ?", token, content['username'])
             resp = jsonify({"success" : True, "token" : token})
-        resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
 
 class AccountLogout(Resource):
@@ -63,7 +60,6 @@ class AccountLogout(Resource):
             conn = db_connect.connect()
             conn.execute("UPDATE user SET webtoken = ? WHERE email = ?", '', content['username'])
             resp = jsonify({"success" : True})
-        resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp        
 
 class AccountInfo(Resource):
@@ -77,7 +73,6 @@ class AccountInfo(Resource):
             resp = {}
             for elem in query.cursor.fetchall():
                 resp = jsonify({"id" : elem[0], "email" : elem[1], "fname" : elem[3], "lname" : elem[4], "birthday" : elem[5], "success" : True})
-        resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
 
 class AccountModify(Resource):
@@ -104,5 +99,4 @@ class AccountModify(Resource):
             conn.execute("UPDATE user SET email = ?, password = ?, fname = ?, lname = ?, birthday = ? WHERE email = ?",
                         data['email'], data['password'], data['fname'], data['lname'], data['birthday'], content['username'])
             resp = jsonify({"success" : True})
-        resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
