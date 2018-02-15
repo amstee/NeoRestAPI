@@ -5,14 +5,14 @@ from source.database import Base
 class Contact(Base):
     __tablename__ = "contacts"
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
+    device_id = Column(Integer, ForeignKey('devices.id'))
     platform = Column(String(120))
     first_name = Column(String(120))
     last_name = Column(String(120))
     created = Column(DateTime)
     updated = Column(DateTime)
 
-    user = relationship("User", back_populates="contacts")
+    device = relationship("Device", back_populates="contacts")
 
     def __repr__(self):
         return "<Contact(id='%d')" % (self.id)

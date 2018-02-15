@@ -6,8 +6,6 @@ from dateutil import parser as DateParser
 import hashlib
 import jwt
 import datetime
-import models.Device
-import models.Contact
 
 SECRET_KEY = "defaultsecretkey"
 
@@ -23,8 +21,9 @@ class User(Base):
     created = Column(DateTime)
     updated = Column(DateTime)
     jsonToken = Column(String(120))
+
+    # RELATIONS
     devices = relationship("Device", back_populates="user")
-    contacts = relationship("Contact", back_populates="user")
 
     def __init__(self, email=None, password=None, first_name=None, last_name=None,
                  birthday=None, searchText=None, created=datetime.datetime.now(),
@@ -32,7 +31,8 @@ class User(Base):
         user = db_session.query(User).filter_by(email=email).first()
         if user is not None:
             raise Exception("User already exist")
-        if email is None or email == "" or password is None or password == "" or first_name is None or last_name == "" or last_name is None or last_name == "" or birthday is None or birthday == "":
+        if email is None or email == "" or password is None or password == "" or first_name is None \
+                or last_name == "" or last_name is None or last_name == "" or birthday is None or birthday == "":
             raise Exception("Missing data to create a new user")
         self.email = email
         self.password = hashlib.sha512(password.encode('utf-8')).hexdigest()
@@ -99,7 +99,7 @@ class User(Base):
         return (False, "No password provided.")
 
     def updateContent(self, email=None, password=None, first_name=None, last_name=None, birthday=None,
-                      searchText=None, created=None, updated=None):
+                      searchText=None, created=None, updated=datetime.datetime.now()):
         if email is not None and email is not "":
             self.email = email
         if password is not None and password is not "":
