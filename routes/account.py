@@ -1,13 +1,9 @@
 from flask import request
 from flask_restful import Resource
 from flask.ext.jsonpify import jsonify
-from dateutil import parser as dateparser
-from flask_httpauth import HTTPBasicAuth
 from source.database import db_session
 from models.User import User as UserModel
 from utils.decorators import securedRoute, checkContent
-
-auth = HTTPBasicAuth()
 
 class AccountCreate(Resource):
     def get(sefl):

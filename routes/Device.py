@@ -1,15 +1,19 @@
-# from flask import Flask, request
-# from flask_restful import Resource, Api
-# from sqlalchemy import create_engine
-# from json import dumps
-# from flask.ext.jsonpify import jsonify
-# from datetime import datetime
-# from dateutil import parser as dateparser
-#
-# import time
-# import hashlib
-# import binascii
-# import os
+from flask_restful import Resource, Api
+from utils.decorators import checkContent
+from utils.decorators import securedRoute
+from models.Device import Device
+from flask.ext.jsonpify import jsonify
+
+class DeviceAdd(Resource):
+    @checkContent
+    @securedRoute
+    def post(self, content, user):
+        try:
+            new_device = Device()
+            resp = jsonify({"success": True})
+        except Exception as e:
+            resp = jsonify({"success": False, "message": str(e)})
+        return resp
 #
 # from routes.utils import *
 #
