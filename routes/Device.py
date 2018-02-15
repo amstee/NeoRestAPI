@@ -1,55 +1,72 @@
-from flask_restful import Resource, Api
+from flask_restful import Resource
 from utils.decorators import checkContent
 from utils.decorators import securedRoute
 from models.Device import Device
-from flask.ext.jsonpify import jsonify
+from source.database import db_session
+from utils.apiUtils import *
 
 class DeviceAdd(Resource):
     @checkContent
     @securedRoute
     def post(self, content, user):
         try:
-            new_device = Device()
-            resp = jsonify({"success": True})
+            new_device = Device(user=user)
+            db_session.commit()
+            resp = SUCCESS()
         except Exception as e:
-            resp = jsonify({"success": False, "message": str(e)})
+            resp = FAILED(e)
         return resp
-#
-# from routes.utils import *
-#
-# db_connect = create_engine('sqlite:///database.sqlt')
-#
-# class AccountDeviceAdd(Resource):
-#     def post(self):
-#         content = request.get_json()
-#         if verify_webtoken(content) == False:
-#             resp = jsonify({"success" : False, "error" : "Wrong token or username"})
-#         elif 'mid' not in content:
-#             resp = jsonify({"success" : False, "error" : "missing machine id"})
-#         else:
-#             conn = db_connect.connect()
-#             query = conn.execute("SELECT * FROM user WHERE email = ?", content['username'])
-#             userInfo = {}
-#             for elem in query.cursor.fetchall():
-#                 userInfo = {"id" : elem[0], "email" : elem[1], "fname" : elem[3], "lname" : elem[4], "birthday" : elem[5]}
-#             conn.execute("INSERT INTO device (userid, mid) VALUES (?, ?)", userInfo['id'], content['mid'])
-#             resp = jsonify({"success" : True})
-#         return resp
-#
-# class AccountDeviceList(Resource):
-#     def post(self):
-#         content = request.get_json()
-#         if verify_webtoken(content) == False:
-#             resp = jsonify({"success" : False, "error" : "Wrong token or username"})
-#         else:
-#             conn = db_connect.connect()
-#             query = conn.execute("SELECT * FROM user WHERE email = ?", content['username'])
-#             userInfo = {}
-#             for elem in query.cursor.fetchall():
-#                 userInfo = {"id" : elem[0], "email" : elem[1], "fname" : elem[3], "lname" : elem[4], "birthday" : elem[5]}
-#             query = conn.execute("SELECT * FROM device WHERE userid = ?", userInfo['id'])
-#             result = []
-#             for elem in query.cursor.fetchall():
-#                 result.append({"id" : elem[0], "userid" : elem[1], "mid" : elem[2]})
-#             resp = jsonify(result)
-#         return resp
+
+class DeviceUpdate(Resource):
+    @checkContent
+    @securedRoute
+    def post(self, content, user):
+        try:
+            for device in user.devices:
+                if device.id == content["device_id"]:
+                    device.updateContent(content["created"], content["updated"])
+                    return SUCCESS()
+            resp = FAILED("Device with id %s not found" + str(content["device_id"]))
+        except Exception as e:
+            resp = FAILED(e)
+        return resp
+
+class DeviceInfo(Resource):
+    @checkContent
+    @securedRoute
+    def post(self, content, user):
+        try:
+            for device in user.devices:
+                if device.id == content["device_id"]:
+                    return jsonify({"success": True, "content": device.getNonSensitiveContent()})
+            resp = FAILED("Device not with id %s found" % content["device_id"])
+        except Exception as e:
+            resp = FAILED(e)
+        return resp
+
+class AccountDevices(Resource):
+    @securedRoute
+    def post(self, user):
+        arr = []
+        try:
+            for device in user.devices:
+                arr.append(device.getNonSensitiveContent())
+            resp = jsonify({"success": True, "content": arr})
+        except Exception as e:
+            resp = FAILED(e)
+        return resp
+
+class DeviceDelete(Resource):
+    @checkContent
+    @securedRoute
+    def post(self, content, user):
+        try:
+            for device in user.devices:
+                if device.id == content["device_id"]:
+                    device.delete()
+                    db_session.commit()
+                    return SUCCESS()
+            resp = FAILED("device with id %s not found" % content["device_id"])
+        except Exception as e:
+            return FAILED(e)
+        return resp

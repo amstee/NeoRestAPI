@@ -116,9 +116,11 @@ class User(Base):
             self.updated = updated
         if created is not None and created is not "":
             self.created = created
+        db_session.commit()
 
     def getNonSensitiveContent(self):
-        return {"email": self.email,
+        return {"id": self.id,
+                "email": self.email,
                 "first_name": self.first_name,
                 "last_name": self.last_name,
                 "birthday": self.birthday,

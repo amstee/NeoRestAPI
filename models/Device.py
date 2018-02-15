@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from source.database import Base
 from dateutil import parser as DateParser
+from source.database import db_session
 import datetime
 
 class Device(Base):
@@ -35,15 +36,22 @@ class Device(Base):
     def __repr__(self):
         return "<Device(id='%s' created='%s' updated='%s')>" % (self.id, str(self.created), str(self.updated))
 
-    def updateContent(self, created=None, updated=datetime.datetime.now(), user=None):
+    def updateContent(self, created=None, updated=datetime.datetime.now(), user=None,
+                      device_user=None):
         if created is not None and created is not "":
             self.created = created
         if updated is not None and updated is not "":
             self.updated = updated
         if user is not None:
             self.user = user
-            self.user.addresses.append(self)
+            self.user.devices.append(self)
+        if device_user is not None:
+            self.device_user = device_user
+            self.device_user.device = self
+        db_session.commit()
 
     def getNonSensitiveContent(self):
-        return {"created": self.created,
-                "updated": self.updated}
+        return {
+            "id": self.id,
+            "created": self.created,
+            "updated": self.updated}
