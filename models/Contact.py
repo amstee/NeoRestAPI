@@ -6,11 +6,11 @@ class Contact(Base):
     __tablename__ = "contacts"
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
-    platform = Column(String(120), unique=True)
-    first_name = Column(String(120), unique=True)
-    last_name = Column(String(120), unique=True)
-    created = Column(DateTime, unique=True)
-    updated = Column(DateTime, unique=True)
+    platform = Column(String(120))
+    first_name = Column(String(120))
+    last_name = Column(String(120))
+    created = Column(DateTime)
+    updated = Column(DateTime)
 
     user = relationship("User", back_populates="contacts")
 

@@ -20,4 +20,4 @@ db.init_db()
 # api.add_resource(AccountDeviceList, '/account/device/list')
 
 if __name__ == '__main__':
-     app.run(port=5002, host='0.0.0.0')
+     app.run(port=5000, host='0.0.0.0')

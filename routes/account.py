@@ -31,9 +31,7 @@ class AccountCreate(Resource):
 class AccountLogin(Resource):
     @checkContent
     def post(self, content):
-        print(content)
         user = db_session.query(UserModel).filter_by(email=content["email"]).first()
-        print(user)
         if user != None:
             res, data = user.Authenticate(content["password"])
             if res is True:
@@ -62,8 +60,7 @@ class AccountLogout(Resource):
 class AccountInfo(Resource):
     @checkContent
     @securedRoute
-    def post(self, user):
-        print(user)
+    def post(self, content, user):
         resp = jsonify(user.getNonSensitiveContent())
         return resp
 

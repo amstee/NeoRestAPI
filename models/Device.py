@@ -6,8 +6,8 @@ class Device(Base):
     __tablename__ = "devices"
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
-    created = Column(DateTime, unique=True)
-    updated = Column(DateTime, unique=True)
+    created = Column(DateTime)
+    updated = Column(DateTime)
 
     user = relationship("User", back_populates="devices")
 

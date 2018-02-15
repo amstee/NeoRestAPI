@@ -15,14 +15,14 @@ class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     email = Column(String(120), unique=True)
-    password = Column(String(2048), unique=True)
-    first_name = Column(String(50), unique=True)
-    last_name = Column(String(50), unique=True)
-    birthday = Column(DateTime, unique=True)
-    searchText = Column(String(120), unique=True)
-    created = Column(DateTime, unique=True)
-    updated = Column(DateTime, unique=True)
-    jsonToken = Column(String(120), unique=True)
+    password = Column(String(2048))
+    first_name = Column(String(50))
+    last_name = Column(String(50))
+    birthday = Column(DateTime)
+    searchText = Column(String(120))
+    created = Column(DateTime)
+    updated = Column(DateTime)
+    jsonToken = Column(String(120))
     devices = relationship("Device", back_populates="user")
     contacts = relationship("Contact", back_populates="user")
 
@@ -68,7 +68,7 @@ class User(Base):
         try:
             payload = jwt.decode(auth_token, SECRET_KEY)
             try:
-                user = db_session.query(User).filter(User.id == payload['sub'])
+                user = db_session.query(User).filter(User.id == payload['sub']).first()
                 return (True, user)
             except Exception as e:
                 return (False, "An error occurred : " + str(e))
