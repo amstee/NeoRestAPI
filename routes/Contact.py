@@ -46,3 +46,44 @@ class ContactUpdate(Resource):
             resp = FAILED(e)
         return resp
 
+class ContactsInfo(Resource):
+    @checkContent
+    @securedRoute
+    def post(self, content, user):
+        arr = []
+        try:
+            for contact in user.contacts:
+                arr.append(contact.getNonSensitiveContent())
+                resp = jsonify({"success": True, "content": arr})
+        except Exception as e:
+            resp = FAILED(e)
+        return resp
+
+class ContactInfo(Resource):
+    @checkContent
+    @securedRoute
+    def post(self, content, user):
+        try:
+            contact = db_session.query(Contact).filter(Contact.id == content["contact_id"]).first()
+            if contact is not None:
+                resp = jsonify({"success": True, "content": contact.getNonSensitiveContent()})
+            else:
+                resp = FAILED("Contact with id %d could not be found" % content["contact_id"])
+        except Exception as e:
+            resp = FAILED(e)
+        return resp
+
+class ContactDelete(Resource):
+    @checkContent
+    @securedRoute
+    def post(self, content, user):
+        try:
+            contact = db_session.query(Contact).filter(Contact.id == content["contact_id"]).first()
+            if contact is not None:
+                contact.delete()
+                resp = SUCCESS()
+            else:
+                resp = FAILED("Contact with id %d nto found" % content["contact_id"])
+        except Exception as e:
+            resp = FAILED(e)
+        return resp

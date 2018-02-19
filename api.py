@@ -3,6 +3,7 @@ from flask_restful import Api
 from flask_cors import CORS
 import routes.Account as AccountManager
 import routes.Device as DeviceManager
+import routes.Contact as ContactManager
 import source.database as db
 
 app = Flask(__name__)
@@ -26,6 +27,11 @@ api.add_resource(DeviceManager.DeviceDelete, '/device/delete')
 # DEVICE USER ROUTES
 
 # CONTACT ROUTES
+api.add_resource(ContactManager.ContactAdd, '/contact/create')
+api.add_resource(ContactManager.ContactUpdate, '/contact/Update')
+api.add_resource(ContactManager.ContactInfo, '/contact/Info')
+api.add_resource(ContactManager.ContactsInfo, '/contact/contactsInfo')
+api.add_resource(ContactManager.ContactDelete, '/contact/delete')
 
 
 
