@@ -112,9 +112,13 @@ class User(Base):
             self.birthday = birthday
         if searchText is not None and searchText is not "":
             self.searchText = searchText
-        if updated is not None and updated is not "":
+        if type(updated) is str:
+            self.updated = DateParser.parse(updated)
+        else:
             self.updated = updated
-        if created is not None and created is not "":
+        if type(created) is str:
+            self.created = DateParser.parse(created)
+        elif created is not None:
             self.created = created
         db_session.commit()
 

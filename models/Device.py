@@ -38,9 +38,13 @@ class Device(Base):
 
     def updateContent(self, created=None, updated=datetime.datetime.now(), user=None,
                       device_user=None):
-        if created is not None and created is not "":
+        if type(created) is str:
+            self.created = DateParser.parse(created)
+        elif created is not None:
             self.created = created
-        if updated is not None and updated is not "":
+        if type(updated) is str:
+            self.updated = DateParser.parse(updated)
+        else:
             self.updated = updated
         if user is not None:
             self.user = user

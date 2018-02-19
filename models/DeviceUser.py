@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from source.database import Base
 from dateutil import parser as DateParser
+from source.database import db_session
 import datetime
 
 class DeviceUser(Base):
@@ -21,26 +22,29 @@ class DeviceUser(Base):
         return "<DeviceUser(id='%s' first_name='%s' last_name='%s' birthday='%s' created='%s' updated='%s')>" % \
                (self.id, self.first_name, self.last_name, str(self.birthday), str(self.created), str(self.updated))
 
-    def __init__(self, first_name=None, last_name=None, birthday=None, created=None, updated=None, device=None):
-        self.first_name = first_name
-        self.last_name = last_name
-        if birthday is not None:
+    def __init__(self, first_name=None, last_name=None, birthday=None, created=datetime.datetime.now(), updated=datetime.datetime.now(), device=None):
+        if first_name is not None and first_name != "":
+            self.first_name = first_name
+        if last_name is not None and last_name != "":
+            self.last_name = last_name
+        if type(birthday) is str:
             self.birthday = DateParser.parse(birthday)
-        else:
-            self.birthday = datetime.datetime.now()
-        if created is not None:
+        elif birthday is not None:
+            self.birthday = birthday
+        if type(created) is str:
             self.created = DateParser.parse(created)
         else:
-            self.created = datetime.datetime.now()
-        if updated is not None:
+            self.created = created
+        if type(updated) is str:
             self.updated = DateParser.parse(updated)
         else:
-            self.updated = datetime.datetime.now()
-        self.device = device
+            self.updated = updated
+        if device is not None:
+            self.device = device
+            device.device_user = self
 
 
-    def updateContent(self, first_name=None, last_name=None, birthday=None,
-                      created=None, updated=datetime.datetime.now(), device=None):
+    def updateContent(self, first_name=None, last_name=None, birthday=None, created=None, updated=datetime.datetime.now(), device=None):
         if first_name is not None and first_name is not "":
             self.first_name = first_name
         if last_name is not None and last_name is not "":
@@ -54,6 +58,7 @@ class DeviceUser(Base):
         if device is not None:
             self.device = device
             self.device.device_user = self
+        db_session.commit()
 
     def getNonSensitiveContent(self):
         return {
