@@ -13,8 +13,7 @@ class ContactAdd(Resource):
         try:
             device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is not None:
-                contact = Contact(content["platform"], content["first_name"], content["last_name"],
-                              content["created"], content["updated"], device)
+                contact = Contact(platform=content["platform"], first_name=content["first_name"], last_name=content["last_name"], device=device)
                 db_session.commit()
                 resp = SUCCESS()
             else:
