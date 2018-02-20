@@ -15,6 +15,7 @@ class DeviceAdd(Resource):
             resp = SUCCESS()
         except Exception as e:
             resp = FAILED(e)
+            resp.statuc_code = 409
         return resp
 
 class DeviceUpdate(Resource):

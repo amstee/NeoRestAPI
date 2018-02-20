@@ -20,6 +20,7 @@ class ContactAdd(Resource):
                 resp = FAILED("Device with id '%d' not found" % content["device_id"])
         except Exception as e:
             resp = FAILED(e)
+            resp.status_code = 409
         return resp
 
 class ContactUpdate(Resource):
@@ -53,7 +54,7 @@ class ContactsInfo(Resource):
         try:
             for contact in user.contacts:
                 arr.append(contact.getNonSensitiveContent())
-                resp = jsonify({"success": True, "content": arr})
+            resp = jsonify({"success": True, "content": arr})
         except Exception as e:
             resp = FAILED(e)
         return resp

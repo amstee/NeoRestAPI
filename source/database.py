@@ -13,4 +13,5 @@ def init_db():
     import models.Contact
     import models.Device
     import models.User
+    import models.DeviceUser
     Base.metadata.create_all(bind=engine)

@@ -21,6 +21,7 @@ class DeviceUserCreate(Resource):
                 resp = FAILED("Device with id %d not found" % content["device_id"])
         except Exception as e:
             resp = FAILED(e)
+            resp.status_code = 409
         return resp
 
 class DeviceUserUpdate(Resource):

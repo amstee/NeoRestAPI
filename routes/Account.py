@@ -10,6 +10,7 @@ class AccountCreate(Resource):
         content = request.args.get('email')
         user = db_session.query(UserModel).filter(UserModel.email == content)
         resp = jsonify(user.getNonSensitiveContent())
+        resp.status_code = 200
         return resp
 
     @checkContent
@@ -20,8 +21,10 @@ class AccountCreate(Resource):
             db_session.add(new_user)
             db_session.commit()
             resp = jsonify({"success": True})
+            resp.status_code = 201
         except Exception as e:
             resp = jsonify({"success": False, "message": str(e)})
+            resp.status_code = 409
         return resp
 
 class AccountLogin(Resource):
@@ -32,10 +35,13 @@ class AccountLogin(Resource):
             res, data = user.Authenticate(content["password"])
             if res is True:
                 resp = jsonify({"success": True, "token": data})
+                resp.status_code = 200
             else:
                 resp = jsonify({"success": False, "message": data})
+                resp.status_code = 401
         else:
             resp = jsonify({"succes": False, "message": "User not found"})
+            resp.status_code = 401
         return resp
 
 class AccountLogout(Resource):
@@ -49,8 +55,10 @@ class AccountLogout(Resource):
                 resp = jsonify({"success": True})
             else:
                 resp = jsonify({"success": False, "message": message})
+                resp.status_code =  403
         else:
             resp = jsonify({"success": False, "message": data})
+            resp.status_code = 403
         return resp
 
 class AccountInfo(Resource):
@@ -58,6 +66,7 @@ class AccountInfo(Resource):
     @securedRoute
     def post(self, content, user):
         resp = jsonify(user.getNonSensitiveContent())
+        resp.status_code = 200
         return resp
 
 class AccountModify(Resource):
@@ -69,4 +78,5 @@ class AccountModify(Resource):
                         birthday=content["birthday"], searchText=content["searchText"],
                            created=content["created"], updated=content["updated"])
         resp = jsonify({"success" : True})
+        resp.status_code = 200
         return resp
