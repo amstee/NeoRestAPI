@@ -46,8 +46,7 @@ class AccountLogin(Resource):
 
 class AccountLogout(Resource):
     @checkContent
-    def post(self):
-        content = request.get_json()
+    def post(self, content):
         res, data = UserModel.decodeAuthToken(content["token"])
         if (res is True):
             disco_res, message = data.disconnect()
