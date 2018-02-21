@@ -22,7 +22,7 @@ api.add_resource(AccountManager.AccountModify, '/account/modify')
 api.add_resource(ContactManager.ContactAdd, '/account/contact/create')
 api.add_resource(ContactManager.ContactUpdate, '/account/contact/update')
 api.add_resource(ContactManager.ContactInfo, '/account/contact/info')
-api.add_resource(ContactManager.ContactsInfo, '/account/contact/contactsInfo')
+api.add_resource(ContactManager.ContactList, '/account/contact/list')
 api.add_resource(ContactManager.ContactDelete, '/account/contact/delete')
 
 # DEVICE ROUTES

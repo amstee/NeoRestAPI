@@ -46,7 +46,7 @@ class ContactUpdate(Resource):
             resp = FAILED(e)
         return resp
 
-class ContactsInfo(Resource):
+class ContactList(Resource):
     @checkContent
     @securedRoute
     def post(self, content, user):
