@@ -29,7 +29,7 @@ api.add_resource(ContactManager.ContactDelete, '/account/contact/delete')
 api.add_resource(DeviceManager.DeviceAdd, '/device/create')
 api.add_resource(DeviceManager.DeviceUpdate, '/device/update')
 api.add_resource(DeviceManager.DeviceInfo, '/device/info')
-api.add_resource(DeviceManager.AccountDevices, '/device/accountDevices')
+api.add_resource(DeviceManager.DeviceList, '/device/list')
 api.add_resource(DeviceManager.DeviceDelete, '/device/delete')
 
 # DEVICE USER ROUTES

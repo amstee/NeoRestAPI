@@ -45,7 +45,7 @@ class DeviceInfo(Resource):
             resp = FAILED(e)
         return resp
 
-class AccountDevices(Resource):
+class DeviceList(Resource):
     @securedRoute
     def post(self, user):
         arr = []
