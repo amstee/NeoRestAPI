@@ -8,20 +8,20 @@ import datetime
 class Contact(Base):
     __tablename__ = "contacts"
     id = Column(Integer, primary_key=True)
-    device_id = Column(Integer, ForeignKey('devices.id'))
+    user_id = Column(Integer, ForeignKey('users.id'))
     platform = Column(String(120))
     first_name = Column(String(120))
     last_name = Column(String(120))
     created = Column(DateTime)
     updated = Column(DateTime)
 
-    device = relationship("Device", back_populates="contacts")
+    user = relationship("User", back_populates="contacts")
 
     def __repr__(self):
-        return "<Contact(id='%d' device_id='%d' platform='%s' first_name='%s' last_name='%s' created='%s' updated='%s')" % \
-               (self.id, self.device_id, self.platform, self.first_name, self.last_name, str(self.created), str(self.updated))
+        return "<Contact(id='%d' user_id='%d' platform='%s' first_name='%s' last_name='%s' created='%s' updated='%s')" % \
+               (self.id, self.user_id, self.platform, self.first_name, self.last_name, str(self.created), str(self.updated))
 
-    def __init__(self, platform=None, first_name=None, last_name=None, created=datetime.datetime.now(), updated=datetime.datetime.now(), device=None):
+    def __init__(self, platform=None, first_name=None, last_name=None, created=datetime.datetime.now(), updated=datetime.datetime.now(), user=None):
         if platform is not None and platform != "":
             self.platform = platform
         if first_name is not None and first_name != "":
@@ -36,11 +36,11 @@ class Contact(Base):
             self.updated = DateParser.parse(updated)
         else:
             self.updated = updated
-        if device is not None:
-            self.device = device
-            device.contacts.append(self)
+        if user is not None:
+            self.user = user
+            user.contacts.append(self)
 
-    def updateContent(self, platform=None, first_name=None, last_name=None, created=None, updated=datetime.datetime.now(), device=None):
+    def updateContent(self, platform=None, first_name=None, last_name=None, created=None, updated=datetime.datetime.now(), user=None):
         if platform is not None and platform != "":
             self.platform = platform
         if first_name is not None and first_name != "":
@@ -55,9 +55,9 @@ class Contact(Base):
             self.updated = DateParser.parse(updated)
         else:
             self.updated = updated
-        if device is not None:
-            self.device = device
-            device.contacts.append(self)
+        if user is not None:
+            self.user = user
+            user.contacts.append(self)
         db_session.commit()
 
     def getNonSensitiveContent(self):

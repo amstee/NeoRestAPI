@@ -8,14 +8,14 @@ import datetime
 class Device(Base):
     __tablename__ = "devices"
     id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
     created = Column(DateTime)
     updated = Column(DateTime)
 
     # RELATIONS
-    user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship("User", back_populates="devices")
     device_user = relationship("DeviceUser", back_populates="device")
-    contacts = relationship("Contact", back_populates="device")
+    #contacts = relationship("Contact", back_populates="device")
 
     def __init__(self, created=None, updated=None, user=None, device_user=None, contacts=None):
         if created is not None:

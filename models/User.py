@@ -24,6 +24,7 @@ class User(Base):
 
     # RELATIONS
     devices = relationship("Device", back_populates="user")
+    contacts = relationship("Contact", back_populates="user")
 
     def __init__(self, email=None, password=None, first_name=None, last_name=None,
                  birthday=None, searchText=None, created=datetime.datetime.now(),
