@@ -16,7 +16,7 @@ class DeviceUser(Base):
     updated = Column(DateTime)
 
     # RELATIONS
-    device = relationship("Device", back_populates="devices")
+    #device = relationship("Device", back_populates="devices")
 
     def __repr__(self):
         return "<DeviceUser(id='%s' first_name='%s' last_name='%s' birthday='%s' created='%s' updated='%s')>" % \

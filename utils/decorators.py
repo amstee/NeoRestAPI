@@ -30,7 +30,7 @@ def checkContent(func):
                 kwargs['content'] = content
                 return (func(*args, **kwargs))
         except Exception as e:
-            resp = jsonify({"success": False, "message": str(e)})
+            resp = jsonify({"success": False, "message": "error " + str(e)})
             resp.status_code = 500
             return resp
     return func_wrapper

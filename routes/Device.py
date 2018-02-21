@@ -10,7 +10,7 @@ class DeviceAdd(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            new_device = Device(user=user)
+            new_device = Device(user=user, name=content["name"])
             db_session.commit()
             resp = SUCCESS()
         except Exception as e:
@@ -18,6 +18,7 @@ class DeviceAdd(Resource):
             resp.statuc_code = 409
         return resp
 
+#@mention Check DeviceUpdate
 class DeviceUpdate(Resource):
     @checkContent
     @securedRoute
@@ -50,7 +51,7 @@ class DeviceList(Resource):
     def post(self, user):
         arr = []
         try:
-            for device in user.devices:
+            for device in user.device:
                 arr.append(device.getNonSensitiveContent())
             resp = jsonify({"success": True, "content": arr})
         except Exception as e:

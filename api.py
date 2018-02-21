@@ -19,24 +19,24 @@ api.add_resource(AccountManager.AccountInfo, '/account/info')
 api.add_resource(AccountManager.AccountModify, '/account/modify')
 
 # CONTACT ROUTES
-api.add_resource(ContactManager.ContactAdd, '/account/contact/create')
+api.add_resource(ContactManager.ContactAdd, '/account/contact/add')
 api.add_resource(ContactManager.ContactUpdate, '/account/contact/update')
 api.add_resource(ContactManager.ContactInfo, '/account/contact/info')
 api.add_resource(ContactManager.ContactList, '/account/contact/list')
 api.add_resource(ContactManager.ContactDelete, '/account/contact/delete')
 
 # DEVICE ROUTES
-api.add_resource(DeviceManager.DeviceAdd, '/device/create')
-api.add_resource(DeviceManager.DeviceUpdate, '/device/update')
-api.add_resource(DeviceManager.DeviceInfo, '/device/info')
-api.add_resource(DeviceManager.DeviceList, '/device/list')
-api.add_resource(DeviceManager.DeviceDelete, '/device/delete')
+api.add_resource(DeviceManager.DeviceAdd, '/account/device/add')
+api.add_resource(DeviceManager.DeviceUpdate, '/account/device/update')
+api.add_resource(DeviceManager.DeviceInfo, '/account//device/info')
+api.add_resource(DeviceManager.DeviceList, '/account/device/list')
+api.add_resource(DeviceManager.DeviceDelete, '/account/device/delete')
 
 # DEVICE USER ROUTES
-api.add_resource(DeviceUserManager.DeviceUserCreate, '/device/user/create')
-api.add_resource(DeviceUserManager.DeviceUserUpdate, '/device/user/update')
-api.add_resource(DeviceUserManager.DeviceUserInfo, '/device/user/info')
-api.add_resource(DeviceUserManager.DeviceUserDelete, '/device/user/delete')
+#api.add_resource(DeviceUserManager.DeviceUserCreate, '/device/user/create')
+#api.add_resource(DeviceUserManager.DeviceUserUpdate, '/device/user/update')
+#api.add_resource(DeviceUserManager.DeviceUserInfo, '/device/user/info')
+#api.add_resource(DeviceUserManager.DeviceUserDelete, '/device/user/delete')
 
 
 db.init_db()

@@ -15,7 +15,8 @@ class Contact(Base):
     created = Column(DateTime)
     updated = Column(DateTime)
 
-    user = relationship("User", back_populates="contacts")
+    # RELATIONS
+    user = relationship("User", back_populates="contact")
 
     def __repr__(self):
         return "<Contact(id='%d' user_id='%d' platform='%s' first_name='%s' last_name='%s' created='%s' updated='%s')" % \
