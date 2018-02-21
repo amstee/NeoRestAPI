@@ -83,7 +83,7 @@ class ContactDelete(Resource):
                 contact.delete()
                 resp = SUCCESS()
             else:
-                resp = FAILED("Contact with id %d nto found" % content["contact_id"])
+                resp = FAILED("Contact with id %d not found" % content["contact_id"])
         except Exception as e:
             resp = FAILED(e)
         return resp
