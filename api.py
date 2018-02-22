@@ -4,7 +4,7 @@ from flask_cors import CORS
 import routes.Account as AccountManager
 import routes.Device as DeviceManager
 import routes.Contact as ContactManager
-import routes.DeviceUser as DeviceUserManager
+#import routes.DeviceUser as DeviceUserManager
 import source.database as db
 
 app = Flask(__name__)
@@ -28,7 +28,7 @@ api.add_resource(ContactManager.ContactDelete, '/account/contact/delete')
 # DEVICE ROUTES
 api.add_resource(DeviceManager.DeviceAdd, '/account/device/add')
 api.add_resource(DeviceManager.DeviceUpdate, '/account/device/update')
-api.add_resource(DeviceManager.DeviceInfo, '/account//device/info')
+api.add_resource(DeviceManager.DeviceInfo, '/account/device/info')
 api.add_resource(DeviceManager.DeviceList, '/account/device/list')
 api.add_resource(DeviceManager.DeviceDelete, '/account/device/delete')
 
@@ -38,9 +38,7 @@ api.add_resource(DeviceManager.DeviceDelete, '/account/device/delete')
 #api.add_resource(DeviceUserManager.DeviceUserInfo, '/device/user/info')
 #api.add_resource(DeviceUserManager.DeviceUserDelete, '/device/user/delete')
 
-
 db.init_db()
-
 
 if __name__ == '__main__':
      app.run(port=5000, host='0.0.0.0')

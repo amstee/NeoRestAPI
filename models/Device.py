@@ -50,6 +50,8 @@ class Device(Base):
         if user is not None:
             self.user = user
             self.user.device.append(self)
+        if name is not None and name != "":
+            self.name = name
         #if device_user is not None:
         #    self.device_user = device_user
         #    self.device_user.device = self

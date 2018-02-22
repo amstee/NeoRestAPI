@@ -15,7 +15,8 @@ class DeviceAdd(Resource):
             resp = SUCCESS()
         except Exception as e:
             resp = FAILED(e)
-            resp.statuc_code = 409
+            resp.status_code = 409
+            return resp
         return resp
 
 class DeviceUpdate(Resource):
@@ -23,13 +24,15 @@ class DeviceUpdate(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            for device in user.devices:
+            for device in user.device:
                 if device.id == content["device_id"]:
-                    device.updateContent(content["created"], content["updated"])
+                    content['name'] = None if 'name' not in content else content['name']
+                    device.updateContent(name=content['name'])
                     return SUCCESS()
             resp = FAILED("Device with id %s not found" + str(content["device_id"]))
+            resp.status_code = 401
         except Exception as e:
-            resp = FAILED(e)
+            return FAILED(e)
         return resp
 
 class DeviceInfo(Resource):
@@ -37,12 +40,13 @@ class DeviceInfo(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            for device in user.devices:
+            for device in user.device:
                 if device.id == content["device_id"]:
                     return jsonify({"success": True, "content": device.getNonSensitiveContent()})
             resp = FAILED("Device not with id %s found" % content["device_id"])
+            resp.status_code = 401
         except Exception as e:
-            resp = FAILED(e)
+            return FAILED(e)
         return resp
 
 class DeviceList(Resource):
@@ -54,7 +58,7 @@ class DeviceList(Resource):
                 arr.append(device.getNonSensitiveContent())
             resp = jsonify({"success": True, "content": arr})
         except Exception as e:
-            resp = FAILED(e)
+            return FAILED(e)
         return resp
 
 class DeviceDelete(Resource):
@@ -68,6 +72,7 @@ class DeviceDelete(Resource):
                     db_session.commit()
                     return SUCCESS()
             resp = FAILED("device with id %s not found" % content["device_id"])
+            resp.status_code = 401
         except Exception as e:
             return FAILED(e)
         return resp
