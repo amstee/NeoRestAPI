@@ -70,6 +70,8 @@ class User(Base):
             payload = jwt.decode(auth_token, SECRET_KEY)
             try:
                 user = db_session.query(User).filter(User.id == payload['sub']).first()
+                if user.jsonToken == "" or user.jsonToken == None:
+                    return (False, 'User not authenticated, please login')
                 return (True, user)
             except Exception as e:
                 return (False, "An error occurred : " + str(e))

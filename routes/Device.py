@@ -18,7 +18,6 @@ class DeviceAdd(Resource):
             resp.statuc_code = 409
         return resp
 
-#@mention Check DeviceUpdate
 class DeviceUpdate(Resource):
     @checkContent
     @securedRoute

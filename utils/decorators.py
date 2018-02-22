@@ -14,9 +14,11 @@ def securedRoute(func):
             else:
                 resp = jsonify({"success": False, "message": data})
                 resp.status_code = 401
+                return resp
         except Exception as e:
             resp = jsonify({"success": False, "message": str(e)})
             resp.status_code = 500
+            return resp
     return func_wrapper
 
 def checkContent(func):
@@ -26,11 +28,12 @@ def checkContent(func):
             if content is None:
                 resp = jsonify({"success": False, "message": "No json body found"})
                 resp.status_code = 405
+                return resp
             else:
                 kwargs['content'] = content
                 return (func(*args, **kwargs))
         except Exception as e:
-            resp = jsonify({"success": False, "message": "error " + str(e)})
+            resp = jsonify({"success": False, "message": str(e)})
             resp.status_code = 500
             return resp
     return func_wrapper
