@@ -66,9 +66,9 @@ class DeviceDelete(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            for device in user.devices:
+            for device in user.device:
                 if device.id == content["device_id"]:
-                    device.delete()
+                    Device.query.filter(Device.id == content['device_id']).delete()
                     db_session.commit()
                     return SUCCESS()
             resp = FAILED("device with id %s not found" % content["device_id"])
