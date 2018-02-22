@@ -72,10 +72,15 @@ class AccountModify(Resource):
     @checkContent
     @securedRoute
     def post(self, content, user):
+        content["email"] = None if 'email' not in content else content['email']
+        content['password'] = None if 'password' not in content else content['password']
+        content["first_name"] = None if 'first_name' not in content else content['first_name']
+        content["last_name"] = None if 'last_name' not in content else content['last_name']
+        content['birthday'] = None if 'birthday' not in content else content['birthday']
+        content["searchText"] = None if 'searchText' not in content else content['searchText']
         user.updateContent(email=content["email"], password=content["password"],
                            first_name=content["first_name"], last_name=content["last_name"],
-                        birthday=content["birthday"], searchText=content["searchText"],
-                           created=content["created"], updated=content["updated"])
+                        birthday=content["birthday"], searchText=content["searchText"])
         resp = jsonify({"success" : True})
         resp.status_code = 200
         return resp
