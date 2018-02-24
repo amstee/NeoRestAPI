@@ -39,7 +39,7 @@ class Contact(Base):
             self.updated = updated
         if user is not None:
             self.user = user
-            user.contacts.append(self)
+            user.contact.append(self)
 
     def updateContent(self, platform=None, first_name=None, last_name=None, created=None, updated=datetime.datetime.now(), user=None):
         if platform is not None and platform != "":
@@ -48,21 +48,15 @@ class Contact(Base):
             self.first_name = first_name
         if last_name is not None and last_name != "":
             self.last_name = last_name
-        if type(created) is str:
-            self.created = DateParser.parse(created)
-        elif created is not None:
-            self.created = created
         if type(updated) is str:
             self.updated = DateParser.parse(updated)
         else:
             self.updated = updated
-        if user is not None:
-            self.user = user
-            user.contacts.append(self)
         db_session.commit()
 
     def getNonSensitiveContent(self):
-        return {"platform": self.platform,
+        return {"id": self.id,
+                "platform": self.platform,
                 "first_name": self.first_name,
                 "last_name": self.last_name,
                 "created": self.created,

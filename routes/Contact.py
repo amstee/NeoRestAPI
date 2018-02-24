@@ -1,9 +1,9 @@
 from flask_restful import Resource
+from source.database import db_session
 from utils.decorators import checkContent
 from utils.decorators import securedRoute
 from models.Contact import Contact
-from models.Device import Device
-from source.database import db_session
+from models.User import User
 from utils.apiUtils import *
 
 class ContactAdd(Resource):
@@ -11,13 +11,14 @@ class ContactAdd(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
-            if device is not None:
-                contact = Contact(platform=content["platform"], first_name=content["first_name"], last_name=content["last_name"], device=device)
+            newContact = User.query.filter(User.email == content["email"]).first()
+            if newContact is not None:
+                #temporary
+                contact = Contact(user=user, platform="NEO", first_name=str(newContact.first_name), last_name=str(newContact.last_name))
                 db_session.commit()
                 resp = SUCCESS()
             else:
-                resp = FAILED("Device with id '%d' not found" % content["device_id"])
+                resp = FAILED("User with email '%s' not found" % content["email"])
         except Exception as e:
             resp = FAILED(e)
             resp.status_code = 409
@@ -28,20 +29,14 @@ class ContactUpdate(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            contact = db_session.query(Contact).filter(Contact.id == content["contact_id"]).first()
-            device = None
-            if content["device_id"] is not None and type(content["device_id"]) is int:
-                device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
-                if device is not None:
-                    contact.updateContent(content["platform"], content["first_name"], content["last_name"],
-                                          content["created"], content["updated"], device)
-                    resp = SUCCESS()
-                else:
-                    resp = FAILED("Device with id '%d' not found" % content["device_id"])
-            else:
-                contact.updateContent(content["platform"], content["first_name"], content["last_name"],
-                                      content["created"], content["updated"], device)
+            contact = Contact.query.filter(Contact.id == content["contact_id"] and Contact.user == user).first()
+            if contact is not None:
+                content['first_name'] = None if 'first_name' not in content else content['first_name']
+                content['last_name'] = None if 'last_name' not in content else content['last_name']
+                contact.updateContent(first_name=content["first_name"], last_name=content["last_name"], user=user)
                 resp = SUCCESS()
+            else:
+                resp = FAILED("Contact with id '%d' not found" % content["contact_id"])
         except Exception as e:
             resp = FAILED(e)
         return resp
@@ -52,7 +47,7 @@ class ContactList(Resource):
     def post(self, content, user):
         arr = []
         try:
-            for contact in user.contacts:
+            for contact in user.contact:
                 arr.append(contact.getNonSensitiveContent())
             resp = jsonify({"success": True, "content": arr})
         except Exception as e:
