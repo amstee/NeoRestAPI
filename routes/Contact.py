@@ -59,7 +59,7 @@ class ContactInfo(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            contact = db_session.query(Contact).filter(Contact.id == content["contact_id"]).first()
+            contact = db_session.query(Contact).filter(Contact.id == content["contact_id"] and Contact.user == user).first()
             if contact is not None:
                 resp = jsonify({"success": True, "content": contact.getNonSensitiveContent()})
             else:
@@ -73,7 +73,7 @@ class ContactDelete(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            contact = db_session.query(Contact).filter(Contact.id == content["contact_id"]).first()
+            contact = Contact.query.filter(Contact.id == content["contact_id"] and Contact.user == user).first()
             if contact is not None:
                 contact.delete()
                 resp = SUCCESS()
