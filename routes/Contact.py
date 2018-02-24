@@ -73,12 +73,13 @@ class ContactDelete(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            contact = Contact.query.filter(Contact.id == content["contact_id"] and Contact.user == user).first()
-            if contact is not None:
-                contact.delete()
-                resp = SUCCESS()
-            else:
-                resp = FAILED("Contact with id %d not found" % content["contact_id"])
+            for contacts in user.contact:
+                if contacts.id == content["contact_id"]:
+                    Contact.query.filter(Contact.id == content['contact_id']).delete()
+                    db_session.commit()
+                    resp = SUCCESS()
+                else:
+                    resp = FAILED("Contact with id %d not found" % content["contact_id"])
         except Exception as e:
             resp = FAILED(e)
         return resp
