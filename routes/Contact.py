@@ -14,7 +14,8 @@ class ContactAdd(Resource):
             newContact = User.query.filter(User.email == content["email"]).first()
             if newContact is not None:
                 #temporary
-                contact = Contact(user=user, platform="NEO", first_name=str(newContact.first_name), last_name=str(newContact.last_name))
+                Contact(user=user, platform="NEO", first_name=newContact.first_name, last_name=newContact.last_name)
+                Contact(user=newContact, platform="NEO", first_name=user.first_name, last_name=user.last_name)
                 db_session.commit()
                 resp = SUCCESS()
             else:
