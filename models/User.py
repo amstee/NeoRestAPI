@@ -111,8 +111,8 @@ class User(Base):
             self.first_name = first_name
         if last_name is not None and last_name is not "":
             self.last_name = last_name
-        if birthday is not None and birthday is not "":
-            self.birthday = birthday
+        if birthday is not None and birthday is not "" and type(birthday) is str:
+            self.birthday = DateParser.parse(birthday)
         if searchText is not None and searchText is not "":
             self.searchText = searchText
         if type(updated) is str:
