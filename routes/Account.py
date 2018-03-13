@@ -84,3 +84,14 @@ class AccountModify(Resource):
         resp = jsonify({"success" : True})
         resp.status_code = 200
         return resp
+
+class MailAvailability(Resource):
+    @checkContent
+    def post(self, content):
+        user = UserModel.query.filter(UserModel.email == content['email']).first()
+        if user != None:
+            resp = jsonify({"success" : False})
+        else:
+            resp = jsonify({"success" : True})
+        resp.status_code = 200
+        return resp
