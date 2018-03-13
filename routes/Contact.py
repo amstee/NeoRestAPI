@@ -19,7 +19,7 @@ class ContactAdd(Resource):
                 db_session.commit()
                 resp = SUCCESS()
             else:
-                resp = FAILED("User with email '%s' not found" % content["email"])
+                resp = FAILED("L'utilisateur avec email '%s' n'existe pas" % content["email"])
         except Exception as e:
             resp = FAILED(e)
             resp.status_code = 409
@@ -37,7 +37,7 @@ class ContactUpdate(Resource):
                 contact.updateContent(first_name=content["first_name"], last_name=content["last_name"], user=user)
                 resp = SUCCESS()
             else:
-                resp = FAILED("Contact with id '%d' not found" % content["contact_id"])
+                resp = FAILED("Le contact avec identifiant '%d' n'existe pas" % content["contact_id"])
         except Exception as e:
             resp = FAILED(e)
         return resp
@@ -64,7 +64,7 @@ class ContactInfo(Resource):
             if contact is not None:
                 resp = jsonify({"success": True, "content": contact.getNonSensitiveContent()})
             else:
-                resp = FAILED("Contact with id %d could not be found" % content["contact_id"])
+                resp = FAILED("Le contact avec identifiant id %d n'existe pas" % content["contact_id"])
         except Exception as e:
             resp = FAILED(e)
         return resp
@@ -80,7 +80,7 @@ class ContactDelete(Resource):
                     db_session.commit()
                     resp = SUCCESS()
                 else:
-                    resp = FAILED("Contact with id %d not found" % content["contact_id"])
+                    resp = FAILED("Le contact avec identifiant %d n'existe pas" % content["contact_id"])
         except Exception as e:
             resp = FAILED(e)
         return resp

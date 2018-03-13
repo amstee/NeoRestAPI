@@ -40,9 +40,15 @@ class AccountLogin(Resource):
                 resp = jsonify({"success": False, "message": data})
                 resp.status_code = 401
         else:
-            resp = jsonify({"succes": False, "message": "User not found"})
+            resp = jsonify({"succes": False, "message": "Utilisateur introuvable"})
             resp.status_code = 401
         return resp
+
+class checkToken(Resource):
+    @checkContent
+    @securedRoute
+    def post(self, content, user):
+        return jsonify({"success": True, "message": "Le token json est valide"})
 
 class AccountLogout(Resource):
     @checkContent

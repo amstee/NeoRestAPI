@@ -26,7 +26,7 @@ def checkContent(func):
         try:
             content = request.get_json()
             if content is None:
-                resp = jsonify({"success": False, "message": "No json body found"})
+                resp = jsonify({"success": False, "message": "Pas de JSON body dans la requete"})
                 resp.status_code = 405
                 return resp
             else:

@@ -29,7 +29,7 @@ class DeviceUpdate(Resource):
                     content['name'] = None if 'name' not in content else content['name']
                     device.updateContent(name=content['name'])
                     return SUCCESS()
-            resp = FAILED("Device with id %s not found" + str(content["device_id"]))
+            resp = FAILED("Le NEO avec identifiant %s n'existe pas" + str(content["device_id"]))
             resp.status_code = 401
         except Exception as e:
             return FAILED(e)
@@ -43,7 +43,7 @@ class DeviceInfo(Resource):
             for device in user.device:
                 if device.id == content["device_id"]:
                     return jsonify({"success": True, "content": device.getNonSensitiveContent()})
-            resp = FAILED("Device not with id %s found" % content["device_id"])
+            resp = FAILED("Le NEO avec identifiant %s n'existe pas" % content["device_id"])
             resp.status_code = 401
         except Exception as e:
             return FAILED(e)
@@ -71,7 +71,7 @@ class DeviceDelete(Resource):
                     Device.query.filter(Device.id == content['device_id']).delete()
                     db_session.commit()
                     return SUCCESS()
-            resp = FAILED("device with id %s not found" % content["device_id"])
+            resp = FAILED("Le NEO avec identifiant id %s n'existe pas" % content["device_id"])
             resp.status_code = 401
         except Exception as e:
             return FAILED(e)

@@ -18,6 +18,7 @@ api.add_resource(AccountManager.AccountLogout, '/account/logout')
 api.add_resource(AccountManager.AccountInfo, '/account/info')
 api.add_resource(AccountManager.AccountModify, '/account/modify')
 api.add_resource(AccountManager.MailAvailability, '/account/create/available')
+api.add_resource(AccountManager.checkToken, '/account/checkToken')
 
 # CONTACT ROUTES
 api.add_resource(ContactManager.ContactAdd, '/account/contact/add')
