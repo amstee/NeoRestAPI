@@ -23,8 +23,9 @@ class User(Base):
     jsonToken = Column(String(120))
 
     # RELATIONS
-    device = relationship("Device", back_populates="user")
-    contact = relationship("Contact", back_populates="user")
+    circleLink = relationship("UserHasCircle", back_populates="users", order_by="UserHasCircle.id",
+                              cascade="save-update, delete")
+    circleInvites = relationship("CircleInvite", back_populates="users", order_by="UserInvite.id", cascade="save-update, delete")
 
     def __init__(self, email=None, password=None, first_name=None, last_name=None,
                  birthday=None, searchText=None, created=datetime.datetime.now(),
@@ -94,6 +95,14 @@ class User(Base):
         except Exception as e:
             return (None)
 
+    def checkPassword(self, password=None):
+        if password != None and password != "":
+            if self.password != hashlib.sha512(password.encode("utf-8")).hexdigest():
+                return False
+            return True
+        return False
+
+
     def Authenticate(self, password=None):
         if password != None and password != "":
             if self.password != hashlib.sha512(password.encode('utf-8')).hexdigest():
@@ -101,12 +110,15 @@ class User(Base):
             return (True, self.encodeAuthToken())
         return (False, "No password provided.")
 
-    def updateContent(self, email=None, password=None, first_name=None, last_name=None, birthday=None,
+    def updatePassword(self, password=None):
+        if password != None and password != "":
+            self.password = hashlib.sha512(password.encode('utf-8')).hexdigest()
+        db_session.commit()
+
+    def updateContent(self, email=None, first_name=None, last_name=None, birthday=None,
                       searchText=None, created=None, updated=datetime.datetime.now()):
         if email is not None and email is not "":
             self.email = email
-        if password is not None and password is not "":
-            self.password = password
         if first_name is not None and first_name is not "":
             self.first_name = first_name
         if last_name is not None and last_name is not "":
@@ -125,12 +137,28 @@ class User(Base):
             self.created = created
         db_session.commit()
 
-    def getNonSensitiveContent(self):
-        return {"id": self.id,
-                "email": self.email,
-                "first_name": self.first_name,
-                "last_name": self.last_name,
-                "birthday": self.birthday,
-                "searchText": self.searchText,
-                "created": self.created,
-                "updated": self.updated}
+    def getSimpleContent(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "birthday": self.birthday,
+            "searchText": self.searchText,
+            "created": self.created,
+            "updated": self.updated,
+        }
+
+    def getContent(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "birthday": self.birthday,
+            "searchText": self.searchText,
+            "created": self.created,
+            "updated": self.updated,
+            "circles": [link.getContent() for link in self.circleLink],
+            "invites": [invite.getContent() for invite in self.circleInvites]
+        }
