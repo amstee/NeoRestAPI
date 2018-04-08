@@ -4,6 +4,7 @@ from flask_cors import CORS
 import routes.Account as AccountManager
 import routes.Device as DeviceManager
 import routes.Circle as CircleManager
+import routes.CircleLogic as CircleLogicManager
 import source.database as db
 
 app = Flask(__name__)
@@ -21,7 +22,14 @@ api.add_resource(AccountManager.modifyPassword, '/account/modify/password')
 api.add_resource(AccountManager.forgotPassword, '/account/forgot')
 api.add_resource(AccountManager.checkToken, '/token/verify')
 
-# CIRCLE ROUTES
+# CIRCLE LOGIC ROUTES
+api.add_resource(CircleLogicManager.CircleInvite, '/circle/invite')
+api.add_resource(CircleLogicManager.CircleJoin, '/circle/join')
+api.add_resource(CircleLogicManager.CircleReject, '/circle/reject')
+api.add_resource(CircleLogicManager.CircleQuit, '/circle/quit')
+api.add_resource(CircleLogicManager.CircleKick, '/circle/kick')
+
+# CIRCLE BASIC ROUTES
 api.add_resource(CircleManager.CircleCreate, '/circle/create')
 api.add_resource(CircleManager.CircleUpdate, '/circle/update')
 api.add_resource(CircleManager.CircleDelete, '/circle/delete')
