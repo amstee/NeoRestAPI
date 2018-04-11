@@ -52,13 +52,13 @@ class FakePayment(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            device = Device(name=content["device_name"])
-            circle = db_session.query(Circle).filter_by(Circle.id == content["circle_id"]).first()
+            device = Device(name=content["device_name"] if "device_name" in content else "Papie/Mamie")
+            circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
             if circle is not None:
                 circle.device = device
                 device.circle = circle
                 db_session.commit()
-                return jsonify({"success": True, "content": {"device_id": device.id}})
+                return jsonify({"success": True, "content": device.getSimpleContent()})
             return FAILED("Cercle spécifié introuvable")
         except Exception as e:
             return FAILED(e)

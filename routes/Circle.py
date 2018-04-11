@@ -19,6 +19,7 @@ class CircleCreate(Resource):
             db_session.commit()
             resp = jsonify({"success": True, "content": circle.getSimpleContent()})
         except Exception as e:
+            print(e)
             return FAILED(e)
         return resp
 
@@ -59,6 +60,7 @@ class CircleInfo(Resource):
     @securedRoute
     def post(self, content, user):
         try:
+            print(content["circle_id"])
             circle = db_session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:
                 return jsonify({"success": True, "content": circle.getContent()})

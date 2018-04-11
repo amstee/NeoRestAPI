@@ -11,7 +11,7 @@ class DeviceAdd(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            circle = db_session.query(Circle).filter_by(Circle.id==content["circle_id"]).first()
+            circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
             new_device = Device(name=content["name"])
             new_device.circle = circle
             db_session.commit()
@@ -43,7 +43,7 @@ class DeviceInfo(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            device = db_session.query(Device).filter_by(Device.id == content["device_id"]).first()
+            device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is not None:
                 return jsonify({"success": True, "content": device.getContent()})
             resp = FAILED("Le NEO avec identifiant %s n'existe pas" % content["device_id"])
@@ -57,7 +57,7 @@ class DeviceDelete(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            device = db_session.query(Device).filter_by(Device.id == content["device_id"]).first()
+            device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is not None:
                 db_session.delete(device)
                 return SUCCESS()

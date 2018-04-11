@@ -14,9 +14,9 @@ class CircleInvite(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            circle = db_session.query(Circle).filter_by(Circle.id == content["circle_id"]).first()
+            circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
             if circle is not None:
-                dest = db_session.query(UserModel).filter_by(UserModel.email == content["email"]).first()
+                dest = db_session.query(UserModel).filter(UserModel.email==content["email"]).first()
                 if dest is not None:
                     circle_invite = CircleInviteModel()
                     circle_invite.user = dest
@@ -33,7 +33,7 @@ class CircleJoin(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            invite = db_session.query(CircleInvite).filter_by(CircleInviteModel.id == content["circle_invite_id"]).first()
+            invite = db_session.query(CircleInvite).filter_by(CircleInviteModel.id == content["invite_id"]).first()
             if invite is not None:
                 link = UserToCircle(privilege="MEMBRE")
                 link.user = invite.user
@@ -49,7 +49,7 @@ class CircleReject(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            invite = db_session.query(CircleInvite).filter_by(CircleInviteModel.id == content["circle_invite_id"]).first()
+            invite = db_session.query(CircleInvite).filter_by(CircleInviteModel.id == content["invite_id"]).first()
             if invite is not None:
                 db_session.delete(invite)
                 return SUCCESS()
@@ -79,7 +79,7 @@ class CircleKick(Resource):
             if kick is not None:
                 circle = db_session.query(Circle).filter_by(Circle.id == content["circle_id"]).first()
                 if circle is not None:
-                    link = db_session.query(UserToCircle).filter_by(UserToCircle.user_id == user.id, UserToCircle.circle_id == circle.id).first()
+                    link = db_session.query(UserToCircle).filter(UserToCircle.user_id==user.id, UserToCircle.circle_id==circle.id).first()
                     if link is not None:
                         db_session.delete(link)
                         db_session.commit()

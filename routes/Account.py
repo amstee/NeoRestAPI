@@ -52,9 +52,9 @@ class forgotPassword(Resource):
 class modifyPassword(Resource):
     @checkContent
     def post(self, content):
-        email = content["email"]
-        prev = content["previous_password"]
-        new = content["new_password"]
+        email = content["email"] if "email" in content else ""
+        prev = content["previous_password"] if "previous_password" in content else ""
+        new = content["new_password"] if "new_password" in content else ""
         user = db_session.query(UserModel).filter_by(email=email).first()
         if user != None:
             if user.checkPassword(prev):
@@ -73,7 +73,7 @@ class checkToken(Resource):
 class AccountLogout(Resource):
     @checkContent
     def post(self, content):
-        res, data = UserModel.decodeAuthToken(content["token"])
+        res, data = UserModel.decodeAuthToken(content["token"] if "token" in content else "")
         if (res is True):
             disco_res, message = data.disconnect()
             if disco_res is True:

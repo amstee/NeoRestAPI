@@ -17,11 +17,11 @@ class Device(Base):
     circle = relationship("Circle", back_populates="device")
 
     def __init__(self, created=datetime.datetime.now(), updated=datetime.datetime.now(), name=None):
-        if created is not None:
+        if type(created) is str:
             self.created = DateParser.parse(created)
         else:
             self.created = datetime.datetime.now()
-        if updated is not None:
+        if type(updated) is str:
             self.updated = DateParser.parse(updated)
         else:
             self.updated = datetime.datetime.now()
@@ -40,7 +40,7 @@ class Device(Base):
             self.created = created
         if type(updated) is str:
             self.updated = DateParser.parse(updated)
-        else:
+        elif updated != None:
             self.updated = updated
         if name is not None and name != "":
             self.name = name

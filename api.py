@@ -38,10 +38,10 @@ api.add_resource(CircleManager.CircleInfo, '/circle/info')
 api.add_resource(CircleManager.CircleList, '/circle/list')
 
 # DEVICE ROUTES
-api.add_resource(DeviceManager.DeviceAdd, '/account/device/add')
-api.add_resource(DeviceManager.DeviceUpdate, '/account/device/update')
-api.add_resource(DeviceManager.DeviceInfo, '/account/device/info')
-api.add_resource(DeviceManager.DeviceDelete, '/account/device/delete')
+api.add_resource(DeviceManager.DeviceAdd, '/device/add')
+api.add_resource(DeviceManager.DeviceUpdate, '/device/update')
+api.add_resource(DeviceManager.DeviceInfo, '/device/info')
+api.add_resource(DeviceManager.DeviceDelete, '/device/delete')
 
 # PAYMENT ROUTES
 api.add_resource(PaymentManager.FakePayment, '/device/buy')
