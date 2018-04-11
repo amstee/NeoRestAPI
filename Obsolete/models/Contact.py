@@ -1,8 +1,8 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from source.database import Base
+from config.database import Base
 from dateutil import parser as DateParser
-from source.database import db_session
+from config.database import db_session
 import datetime
 
 class Contact(Base):

@@ -1,8 +1,8 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from source.database import Base
+from config.database import Base
 from dateutil import parser as DateParser
-from source.database import db_session
+from config.database import db_session
 import datetime
 
 class Device(Base):
@@ -25,7 +25,10 @@ class Device(Base):
             self.updated = DateParser.parse(updated)
         else:
             self.updated = datetime.datetime.now()
-        self.name = name
+        if name != None and name != "":
+            self.name = name
+        else:
+            self.name = "My Device %d"%(self.id)
 
     def __repr__(self):
         return "<Device(id='%s' name='%s' created='%s' updated='%s')>" % (self.id, self.name, str(self.created), str(self.updated))

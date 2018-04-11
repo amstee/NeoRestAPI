@@ -5,7 +5,8 @@ import routes.Account as AccountManager
 import routes.Device as DeviceManager
 import routes.Circle as CircleManager
 import routes.CircleLogic as CircleLogicManager
-import source.database as db
+import routes.Payment as PaymentManager
+import config.database as db
 
 app = Flask(__name__)
 api = Api(app)
@@ -41,6 +42,9 @@ api.add_resource(DeviceManager.DeviceAdd, '/account/device/add')
 api.add_resource(DeviceManager.DeviceUpdate, '/account/device/update')
 api.add_resource(DeviceManager.DeviceInfo, '/account/device/info')
 api.add_resource(DeviceManager.DeviceDelete, '/account/device/delete')
+
+# PAYMENT ROUTES
+api.add_resource(PaymentManager.FakePayment, '/device/buy')
 
 db.init_db()
 

@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from source.database import Base
-from source.database import db_session
+from config.database import Base
+from config.database import db_session
 from models.UserToCircle import UserToCircle
 from dateutil import parser as DateParser
 import datetime

@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from source.database import Base
-from source.database import db_session
+from config.database import Base
+from config.database import db_session
 from dateutil import parser as DateParser
 import hashlib
 import jwt
@@ -23,7 +23,7 @@ class User(Base):
     jsonToken = Column(String(120))
 
     # RELATIONS
-    circleLink = relationship("UserHasCircle", back_populates="users", order_by="UserHasCircle.id",
+    circleLink = relationship("UserToCircle", back_populates="users", order_by="UserToCircle.id",
                               cascade="save-update, delete")
     circleInvites = relationship("CircleInvite", back_populates="users", order_by="UserInvite.id", cascade="save-update, delete")
 

@@ -1,8 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from source.database import Base
-from source.database import db_session
-from models.UserToCircle import UserToCircle
+from config.database import Base
+from config.database import db_session
 from dateutil import parser as DateParser
 import datetime
 
@@ -14,7 +13,7 @@ class Circle(Base):
     update = Column(DateTime)
 
     device = relationship("Device", back_populates="circles", cascade="save-update")
-    userLink = relationship("UserHasCircle", back_populates="circles", order_by="UserHasCircle.id",
+    userLink = relationship("UserToCircle", back_populates="circles", order_by="UserToCircle.id",
                             cascade="save-update, delete")
     circleInvites = relationship("CircleInvite", back_populates="circles", order_by="CircleInvite.id",
                                 cascade="save-update, delete")

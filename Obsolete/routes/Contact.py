@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from source.database import db_session
+from config.database import db_session
 from utils.decorators import checkContent
 from utils.decorators import securedRoute
 from models.Contact import Contact

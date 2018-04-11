@@ -3,7 +3,7 @@ from utils.decorators import checkContent
 from utils.decorators import securedRoute
 from models.Device import Device
 from models.Circle import Circle
-from source.database import db_session
+from config.database import db_session
 from utils.apiUtils import *
 
 class DeviceAdd(Resource):

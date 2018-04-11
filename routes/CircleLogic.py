@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource
-from source.database import db_session
+from config.database import db_session
 from models.User import User as UserModel
 from models.Circle import Circle
 from models.CircleInvite import CircleInvite as CircleInviteModel

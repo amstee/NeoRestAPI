@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource
-from source.database import db_session
+from config.database import db_session
 from models.User import User as UserModel
 from models.Circle import Circle
 from utils.decorators import securedRoute, checkContent
@@ -13,7 +13,7 @@ class CircleCreate(Resource):
     def post(self, content, user):
         try:
             circle = Circle(content["Name"])
-            link = UserToCircle(privilege="ADMIN")
+            link = UserToCircle(privilege="REGULAR")
             link.circle = circle
             link.user = user
             db_session.commit()

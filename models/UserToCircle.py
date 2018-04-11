@@ -1,21 +1,20 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from source.database import Base
-from source.database import db_session
+from config.database import Base
 from dateutil import parser as DateParser
 import datetime
 
 class UserToCircle(Base):
-    __tablename__ = "user_has_circle"
+    __tablename__ = "user_to_circle"
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("User"))
-    circle_id = Column(Integer, ForeignKey("Circle"))
+    user_id = Column(Integer, ForeignKey("users.id"))
+    circle_id = Column(Integer, ForeignKey("circles.id"))
     created = Column(DateTime)
     updated = Column(DateTime)
     privilege = Column(String(10))
 
-    user = relationship("User", back_populates="user_has_circle")
-    circle = relationship("Circle", back_populates="user_has_circle")
+    user = relationship("User", back_populates="user_to_circle")
+    circle = relationship("Circle", back_populates="user_to_circle")
 
     def __repr__(self):
         return "<UserToCircle(id='%d' user_id='%d' circle_id='%d' created='%s' updated='%s' privilege='%s')>"%(self.id, self.user_id, self.circle_id, str(self.created), str(self.updated), self.privilege)
