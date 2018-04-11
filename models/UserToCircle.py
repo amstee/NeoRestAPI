@@ -13,8 +13,8 @@ class UserToCircle(Base):
     updated = Column(DateTime)
     privilege = Column(String(10))
 
-    user = relationship("User", back_populates="user_to_circle")
-    circle = relationship("Circle", back_populates="user_to_circle")
+    user = relationship("User", back_populates="circleLink")
+    circle = relationship("Circle", back_populates="userLink")
 
     def __repr__(self):
         return "<UserToCircle(id='%d' user_id='%d' circle_id='%d' created='%s' updated='%s' privilege='%s')>"%(self.id, self.user_id, self.circle_id, str(self.created), str(self.updated), self.privilege)

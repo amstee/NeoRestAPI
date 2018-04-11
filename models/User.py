@@ -20,12 +20,12 @@ class User(Base):
     searchText = Column(String(120))
     created = Column(DateTime)
     updated = Column(DateTime)
-    jsonToken = Column(String(120))
+    jsonToken = Column(String(4096))
 
     # RELATIONS
-    circleLink = relationship("UserToCircle", back_populates="users", order_by="UserToCircle.id",
+    circleLink = relationship("UserToCircle", back_populates="user", order_by="UserToCircle.id",
                               cascade="save-update, delete")
-    circleInvites = relationship("CircleInvite", back_populates="users", order_by="UserInvite.id", cascade="save-update, delete")
+    circleInvites = relationship("CircleInvite", back_populates="user", order_by="CircleInvite.id", cascade="save-update, delete")
 
     def __init__(self, email=None, password=None, first_name=None, last_name=None,
                  birthday=None, searchText=None, created=datetime.datetime.now(),
@@ -93,6 +93,7 @@ class User(Base):
             db_session.commit()
             return token.decode()
         except Exception as e:
+            print(e)
             return (None)
 
     def checkPassword(self, password=None):

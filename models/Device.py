@@ -14,7 +14,7 @@ class Device(Base):
     updated = Column(DateTime)
 
     # RELATIONS
-    circle = relationship("Circle", back_populates="devices")
+    circle = relationship("Circle", back_populates="device")
 
     def __init__(self, created=datetime.datetime.now(), updated=datetime.datetime.now(), name=None):
         if created is not None:

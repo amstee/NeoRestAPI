@@ -12,10 +12,10 @@ class Circle(Base):
     created = Column(DateTime)
     update = Column(DateTime)
 
-    device = relationship("Device", back_populates="circles", cascade="save-update")
-    userLink = relationship("UserToCircle", back_populates="circles", order_by="UserToCircle.id",
+    device = relationship("Device", back_populates="circle", cascade="save-update")
+    userLink = relationship("UserToCircle", back_populates="circle", order_by="UserToCircle.id",
                             cascade="save-update, delete")
-    circleInvites = relationship("CircleInvite", back_populates="circles", order_by="CircleInvite.id",
+    circleInvites = relationship("CircleInvite", back_populates="circle", order_by="CircleInvite.id",
                                 cascade="save-update, delete")
 
     def __repr__(self):

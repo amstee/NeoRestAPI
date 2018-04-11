@@ -12,7 +12,7 @@ class CircleCreate(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            circle = Circle(content["Name"])
+            circle = Circle(content["name"])
             link = UserToCircle(privilege="REGULAR")
             link.circle = circle
             link.user = user
