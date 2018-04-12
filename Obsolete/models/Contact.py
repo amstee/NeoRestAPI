@@ -1,8 +1,8 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from source.database import Base
+from config.database import Base
 from dateutil import parser as DateParser
-from source.database import db_session
+from config.database import db_session
 import datetime
 
 class Contact(Base):
@@ -16,7 +16,7 @@ class Contact(Base):
     updated = Column(DateTime)
 
     # RELATIONS
-    user = relationship("User", back_populates="contact")
+    user = relationship("User", back_populates="contacts")
 
     def __repr__(self):
         return "<Contact(id='%d' user_id='%d' platform='%s' first_name='%s' last_name='%s' created='%s' updated='%s')" % \

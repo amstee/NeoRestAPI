@@ -3,9 +3,10 @@ from flask_restful import Api
 from flask_cors import CORS
 import routes.Account as AccountManager
 import routes.Device as DeviceManager
-import routes.Contact as ContactManager
-#import routes.DeviceUser as DeviceUserManager
-import source.database as db
+import routes.Circle as CircleManager
+import routes.CircleLogic as CircleLogicManager
+import routes.Payment as PaymentManager
+import config.database as db
 
 app = Flask(__name__)
 api = Api(app)
@@ -18,27 +19,32 @@ api.add_resource(AccountManager.AccountLogout, '/account/logout')
 api.add_resource(AccountManager.AccountInfo, '/account/info')
 api.add_resource(AccountManager.AccountModify, '/account/modify')
 api.add_resource(AccountManager.MailAvailability, '/account/create/available')
-api.add_resource(AccountManager.checkToken, '/account/checkToken')
+api.add_resource(AccountManager.modifyPassword, '/account/modify/password')
+api.add_resource(AccountManager.forgotPassword, '/account/forgot')
+api.add_resource(AccountManager.checkToken, '/token/verify')
 
-# CONTACT ROUTES
-api.add_resource(ContactManager.ContactAdd, '/account/contact/add')
-api.add_resource(ContactManager.ContactUpdate, '/account/contact/update')
-api.add_resource(ContactManager.ContactInfo, '/account/contact/info')
-api.add_resource(ContactManager.ContactList, '/account/contact/list')
-api.add_resource(ContactManager.ContactDelete, '/account/contact/delete')
+# CIRCLE LOGIC ROUTES
+api.add_resource(CircleLogicManager.CircleInvite, '/circle/invite')
+api.add_resource(CircleLogicManager.CircleJoin, '/circle/join')
+api.add_resource(CircleLogicManager.CircleReject, '/circle/reject')
+api.add_resource(CircleLogicManager.CircleQuit, '/circle/quit')
+api.add_resource(CircleLogicManager.CircleKick, '/circle/kick')
+
+# CIRCLE BASIC ROUTES
+api.add_resource(CircleManager.CircleCreate, '/circle/create')
+api.add_resource(CircleManager.CircleUpdate, '/circle/update')
+api.add_resource(CircleManager.CircleDelete, '/circle/delete')
+api.add_resource(CircleManager.CircleInfo, '/circle/info')
+api.add_resource(CircleManager.CircleList, '/circle/list')
 
 # DEVICE ROUTES
-api.add_resource(DeviceManager.DeviceAdd, '/account/device/add')
-api.add_resource(DeviceManager.DeviceUpdate, '/account/device/update')
-api.add_resource(DeviceManager.DeviceInfo, '/account/device/info')
-api.add_resource(DeviceManager.DeviceList, '/account/device/list')
-api.add_resource(DeviceManager.DeviceDelete, '/account/device/delete')
+api.add_resource(DeviceManager.DeviceAdd, '/device/add')
+api.add_resource(DeviceManager.DeviceUpdate, '/device/update')
+api.add_resource(DeviceManager.DeviceInfo, '/device/info')
+api.add_resource(DeviceManager.DeviceDelete, '/device/delete')
 
-# DEVICE USER ROUTES
-#api.add_resource(DeviceUserManager.DeviceUserCreate, '/device/user/create')
-#api.add_resource(DeviceUserManager.DeviceUserUpdate, '/device/user/update')
-#api.add_resource(DeviceUserManager.DeviceUserInfo, '/device/user/info')
-#api.add_resource(DeviceUserManager.DeviceUserDelete, '/device/user/delete')
+# PAYMENT ROUTES
+api.add_resource(PaymentManager.FakePayment, '/device/buy')
 
 db.init_db()
 
