@@ -21,10 +21,13 @@ class User(Base):
     created = Column(DateTime)
     updated = Column(DateTime)
     jsonToken = Column(String(4096))
+    type = Column(String(10))
 
     # RELATIONS
     circleLink = relationship("UserToCircle", back_populates="user", order_by="UserToCircle.id",
                               cascade="save-update, delete")
+    conversationLinks = relationship("UserToConversation", back_populates="user", order_by="UserToConversation.id",
+                                     cascade="save-update, delete")
     circleInvites = relationship("CircleInvite", back_populates="user", order_by="CircleInvite.id", cascade="save-update, delete")
 
     def __init__(self, email=None, password=None, first_name=None, last_name=None,
@@ -53,6 +56,7 @@ class User(Base):
                 self.updated = DateParser.parse(updated)
             else:
                 self.updated = updated
+        self.type = "DEFAULT"
 
     def __repr__(self):
         return '<User %r %r>' % (self.first_name, self.last_name)
@@ -138,6 +142,10 @@ class User(Base):
             self.created = created
         db_session.commit()
 
+    def promoteAdmin(self):
+        self.type = "ADMIN"
+        db_session.commit()
+
     def getSimpleContent(self):
         return {
             "id": self.id,
@@ -148,6 +156,7 @@ class User(Base):
             "searchText": self.searchText,
             "created": self.created,
             "updated": self.updated,
+            "type": self.type,
         }
 
     def getContent(self):
@@ -160,6 +169,8 @@ class User(Base):
             "searchText": self.searchText,
             "created": self.created,
             "updated": self.updated,
+            "type": self.type,
             "circles": [link.getContent() for link in self.circleLink],
-            "invites": [invite.getContent() for invite in self.circleInvites]
+            "invites": [invite.getContent() for invite in self.circleInvites],
+            "conversations": [link.getSimpleContent() for link in self.conversationLinks]
         }

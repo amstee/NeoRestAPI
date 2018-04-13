@@ -1,6 +1,5 @@
 from flask_restful import Resource
-from utils.decorators import checkContent
-from utils.decorators import securedRoute
+from utils.decorators import checkContent, securedAdminRoute, securedRoute
 from models.Device import Device
 from models.Circle import Circle
 from config.database import db_session
@@ -8,8 +7,8 @@ from utils.apiUtils import *
 
 class DeviceAdd(Resource):
     @checkContent
-    @securedRoute
-    def post(self, content, user):
+    @securedAdminRoute
+    def post(self, content, admin):
         try:
             circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
             new_device = Device(name=content["name"])
@@ -54,8 +53,8 @@ class DeviceInfo(Resource):
 
 class DeviceDelete(Resource):
     @checkContent
-    @securedRoute
-    def post(self, content, user):
+    @securedAdminRoute
+    def post(self, content, admin):
         try:
             device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is not None:

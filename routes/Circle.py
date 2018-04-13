@@ -3,7 +3,7 @@ from flask_restful import Resource
 from config.database import db_session
 from models.User import User as UserModel
 from models.Circle import Circle
-from utils.decorators import securedRoute, checkContent
+from utils.decorators import securedRoute, checkContent, securedAdminRoute
 from models.UserToCircle import UserToCircle
 from utils.apiUtils import *
 
@@ -25,8 +25,8 @@ class CircleCreate(Resource):
 
 class CircleDelete(Resource):
     @checkContent
-    @securedRoute
-    def post(self, content, user):
+    @securedAdminRoute
+    def post(self, content, admin):
         try:
             circle = db_session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:

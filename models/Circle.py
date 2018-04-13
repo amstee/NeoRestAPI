@@ -18,6 +18,8 @@ class Circle(Base):
                             cascade="save-update, delete")
     circleInvites = relationship("CircleInvite", back_populates="circle", order_by="CircleInvite.id",
                                 cascade="save-update, delete")
+    conversations = relationship("Conversation", back_populates="circle", order_by="Conversation.id",
+                                 cascade="save-update, delete")
 
     def __repr__(self):
         return "<Circle(id='%d' device_id='%d' users='%s')>"%(self.id, self.device.id, str(self.userLink))
@@ -86,5 +88,6 @@ class Circle(Base):
             "updated": self.updated,
             "users": [link.getContent(False) for link in self.userLink],
             "device": self.device.getSimpleContent() if self.device is not None else {},
-            "invites": [invite.getContent(False) for invite in self.circleInvites]
+            "invites": [invite.getContent(False) for invite in self.circleInvites],
+            "conversations": [conv.getSimpleContent() for conv in self.conversations]
         }
