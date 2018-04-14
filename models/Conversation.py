@@ -34,6 +34,16 @@ class Conversation(Base):
         else:
             self.name = "Conversation %d"%self.id
 
+    def hasMembers(self, *args):
+        for member in args:
+            tf = False
+            for link in self.links:
+                if link.user_id == member.id:
+                    tf = True
+            if tf is False:
+                return False
+        return True
+
     def updateContent(self, created=None, updated=datetime.datetime.now(), name=None):
         if created is not None:
             if type(created) is str:

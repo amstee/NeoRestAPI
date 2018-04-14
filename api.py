@@ -7,7 +7,9 @@ import routes.Circle as CircleManager
 import routes.CircleLogic as CircleLogicManager
 import routes.Payment as PaymentManager
 import routes.Message as BasicMessageManager
+import routes.MessageLogic as MessageLogicManager
 import routes.Media as MediaManager
+import routes.MediaLogic as MediaLogicManager
 import config.database as db
 
 app = Flask(__name__)
@@ -46,6 +48,13 @@ api.add_resource(BasicMessageManager.MessageDelete, '/message/delete')
 api.add_resource(BasicMessageManager.MessageInfo, '/message/info')
 api.add_resource(BasicMessageManager.MessageUpdate, '/message/update')
 api.add_resource(BasicMessageManager.MessageList, '/conversation/message/list')
+
+# MESSAGE LOGIC ROUTES
+api.add_resource(MessageLogicManager.FirstMessageSend, '/message/first-message')
+api.add_resource(MessageLogicManager.MessageSend, '/message/send')
+
+# MEDIA LOGIC ROUTES
+api.add_resource(MediaLogicManager.MediaRequest, '/media/get-media')
 
 # BASIC MEDIA ROUTES
 api.add_resource(MediaManager.MediaCreate, '/admin/media/create')

@@ -5,8 +5,7 @@ from models.Message import Message
 from models.Media import Media
 from utils.decorators import securedRoute, checkContent, securedAdminRoute
 from utils.apiUtils import *
-from werkzeug.utils import secure_filename
-import os
+from utils.contentChecker import contentChecker
 
 
 class MediaCreate(Resource):
@@ -14,6 +13,7 @@ class MediaCreate(Resource):
     @securedAdminRoute
     def post(self, content):
         try:
+            contentChecker("message_id", "files", "directory_name")
             message = db_session.query(Message).filter(Message.id==content["message_id"]).first()
             if message is None:
                 return FAILED("Message auquel attacher le media introuvable")
@@ -32,6 +32,7 @@ class MediaInfo(Resource):
     @securedRoute
     def post(self, content):
         try:
+            contentChecker("media_id")
             media = db_session.query(Media).filter(Media.id==content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
@@ -45,6 +46,7 @@ class MediaInfoAdmin(Resource):
     @securedAdminRoute
     def post(self, content):
         try:
+            contentChecker("media_id")
             media = db_session.query(Media).filter(Media.id==content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
@@ -58,6 +60,7 @@ class MediaDelete(Resource):
     @securedAdminRoute
     def post(self, content):
         try:
+            contentChecker("media_id")
             media = db_session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
@@ -72,6 +75,7 @@ class MediaList(Resource):
     @securedRoute
     def post(self, content):
         try:
+            contentChecker("message_id")
             message = db_session.query(Message).filter(Message.id==content["message_id"]).first()
             if message is None:
                 return FAILED("Message introuvable")
@@ -85,10 +89,13 @@ class MediaUpdate(Resource):
     @securedAdminRoute
     def post(self, content):
         try:
+            contentChecker("media_id")
             media = db_session.query(Media).filter(Media.id==content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
-            media.updateContent(filename=content["filename"], extension=content["extension"], directory=content["directory"])
+            media.updateContent(filename=content["filename"] if "filename" in content else None,
+                                extension=content["extension"] if "extension" in content else None,
+                                directory=content["directory"] if "directory" in content else None)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)

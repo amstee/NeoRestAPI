@@ -4,6 +4,7 @@ from models.Device import Device
 from models.Circle import Circle
 from config.database import db_session
 from utils.apiUtils import *
+from utils.contentChecker import contentChecker
 
 
 class DeviceAdd(Resource):
@@ -11,6 +12,7 @@ class DeviceAdd(Resource):
     @securedAdminRoute
     def post(self, content):
         try:
+            contentChecker("circle_id", "name")
             circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
             new_device = Device(name=content["name"])
             new_device.circle = circle
@@ -28,6 +30,7 @@ class DeviceUpdate(Resource):
     @securedRoute
     def post(self, content, user):
         try:
+            contentChecker("device_id")
             for device in user.device:
                 if device.id == content["device_id"]:
                     device.updateContent(created=content["created"] if "created" in content else None,
@@ -45,6 +48,7 @@ class DeviceInfo(Resource):
     @securedRoute
     def post(self, content):
         try:
+            contentChecker("device_id")
             device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is not None:
                 return jsonify({"success": True, "content": device.getContent()})
@@ -60,6 +64,7 @@ class DeviceDelete(Resource):
     @securedAdminRoute
     def post(self, content):
         try:
+            contentChecker("device_id")
             device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is not None:
                 db_session.delete(device)

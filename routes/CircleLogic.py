@@ -1,12 +1,11 @@
-from flask import request
 from flask_restful import Resource
 from config.database import db_session
 from models.User import User as UserModel
 from models.Circle import Circle
 from models.CircleInvite import CircleInvite as CircleInviteModel
-from models.UserToCircle import UserToCircle
 from utils.decorators import securedRoute, checkContent
 from models.UserToCircle import UserToCircle
+from utils.contentChecker import contentChecker
 from utils.apiUtils import *
 
 
@@ -15,6 +14,7 @@ class CircleInvite(Resource):
     @securedRoute
     def post(self, content):
         try:
+            contentChecker("circle_id", "email")
             circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
             if circle is not None:
                 dest = db_session.query(UserModel).filter(UserModel.email==content["email"]).first()
@@ -35,6 +35,7 @@ class CircleJoin(Resource):
     @securedRoute
     def post(self, content):
         try:
+            contentChecker("invite_id")
             invite = db_session.query(CircleInvite).filter_by(CircleInviteModel.id == content["invite_id"]).first()
             if invite is not None:
                 link = UserToCircle(privilege="MEMBRE")
@@ -52,6 +53,7 @@ class CircleReject(Resource):
     @securedRoute
     def post(self, content):
         try:
+            contentChecker("invite_id")
             invite = db_session.query(CircleInvite).filter_by(CircleInviteModel.id == content["invite_id"]).first()
             if invite is not None:
                 db_session.delete(invite)
@@ -66,6 +68,7 @@ class CircleQuit(Resource):
     @securedRoute
     def post(self, content):
         try:
+            contentChecker("link_id")
             link = db_session.query(UserToCircle).filter_by(UserToCircle.id == content["link_id"]).first()
             if link is not None:
                 db_session.delete(link)
@@ -78,13 +81,14 @@ class CircleQuit(Resource):
 class CircleKick(Resource):
     @checkContent
     @securedRoute
-    def post(self, content, user):
+    def post(self, content):
         try:
+            contentChecker("email", "circle_id")
             kick = db_session.query(UserModel).filter_by(UserModel.email == content["email"]).first()
             if kick is not None:
                 circle = db_session.query(Circle).filter_by(Circle.id == content["circle_id"]).first()
                 if circle is not None:
-                    link = db_session.query(UserToCircle).filter(UserToCircle.user_id==user.id, UserToCircle.circle_id==circle.id).first()
+                    link = db_session.query(UserToCircle).filter(UserToCircle.user_id==kick.id, UserToCircle.circle_id==circle.id).first()
                     if link is not None:
                         db_session.delete(link)
                         db_session.commit()

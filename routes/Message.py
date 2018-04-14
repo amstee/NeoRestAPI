@@ -6,8 +6,9 @@ from models.Conversation import Conversation
 from models.Media import Media
 from models.Message import Message
 from utils.decorators import securedRoute, checkContent, securedAdminRoute
+from utils.contentChecker import contentChecker
 from utils.apiUtils import *
-import os
+from utils.security import userHasAccessToMessage, userIsOwnerOfMessage
 
 
 class MessageCreate(Resource):
@@ -15,6 +16,7 @@ class MessageCreate(Resource):
     @securedAdminRoute
     def post(self, content):
         try:
+            contentChecker("files", "link_id", "text", "directory_name")
             file_list = content["files"]
             link = db_session.query(UserToConversation).filter(UserToConversation.id==content["link_id"]).first()
             if link is None:
@@ -34,11 +36,14 @@ class MessageCreate(Resource):
 class MessageDelete(Resource):
     @checkContent
     @securedRoute
-    def post(self, content):
+    def post(self, content, user):
         try:
+            contentChecker("message_id")
             message = db_session.query(Message).filter(Message.id==content["message_id"]).first()
             if message is None:
                 return FAILED("Message spécifié introuvable")
+            if not userIsOwnerOfMessage(message, user):
+                return FAILED("Cet utilisateur ne peut pas supprimer ce message")
             db_session.delete(message)
             return SUCCESS()
         except Exception as e:
@@ -48,12 +53,15 @@ class MessageDelete(Resource):
 class MessageInfo(Resource):
     @checkContent
     @securedRoute
-    def post(self, content):
+    def post(self, content, user):
         try:
+            contentChecker("message_id")
             message = db_session.query(Message).filter(Message.id==content["message_id"]).first()
             if message is None:
                 return FAILED("Message spécifié introuvable")
-            return jsonify({"success": True, "content": message.getContent()})
+            if userHasAccessToMessage(message, user):
+                return jsonify({"success": True, "content": message.getContent()})
+            return FAILED("Cer utilisateur ne peut pas voir ce message")
         except Exception as e:
             return FAILED(e)
 
@@ -61,9 +69,12 @@ class MessageInfo(Resource):
 class MessageList(Resource):
     @checkContent
     @securedRoute
-    def post(self, content):
+    def post(self, content, user):
         try:
+            contentChecker("conversation_id")
             conversation = db_session.query(Conversation).filter(Conversation.id==content["conversation_id"]).first()
+            if not conversation.hasMembers(user):
+                return FAILED("Cet utilisateur ne peut pas acceder a cette conversation")
             conv_content = []
             for link in conversation.links:
                 conv_content.append(link.getMessages())
@@ -74,11 +85,14 @@ class MessageList(Resource):
 class MessageUpdate(Resource):
     @checkContent
     @securedRoute
-    def post(self, content):
+    def post(self, content, user):
         try:
+            contentChecker("message_id", "text_content")
             message = db_session.query(Message).filter(Message.id==content["message_id"]).first()
             if message is None:
                 return FAILED("Message spécifié introuvable")
+            if not userIsOwnerOfMessage(message, user):
+                return FAILED("Cet utilisateur ne peut pas modifier ce message")
             message.updateContent(content=content["text_content"])
             return SUCCESS()
         except Exception as e:

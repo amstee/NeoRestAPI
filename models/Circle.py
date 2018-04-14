@@ -41,6 +41,12 @@ class Circle(Base):
             else:
                 self.updated = updated
 
+    def hasMember(self, member):
+        for link in self.userLink:
+            if link.user_id == member.id:
+                return True
+        return False
+
     def updateContent(self, name=None, created=None, updated=datetime.datetime.now()):
         if name is not None and name != "":
             self.name = name

@@ -3,6 +3,7 @@ from flask_restful import Resource
 from config.database import db_session
 from models.User import User as UserModel
 from utils.decorators import securedRoute, checkContent, securedAdminRoute
+from utils.contentChecker import contentChecker
 from utils.apiUtils import *
 
 
@@ -20,6 +21,7 @@ class AccountCreate(Resource):
     @checkContent
     def post(self, content):
         try:
+            contentChecker("email", "password", "first_name", "last_name", "birthday")
             new_user = UserModel(email=content['email'], password=content['password'], first_name=content['first_name'],
                     last_name=content['last_name'], birthday=content["birthday"])
             db_session.add(new_user)
@@ -36,6 +38,7 @@ class AccountLogin(Resource):
     @checkContent
     def post(self, content):
         try:
+            contentChecker("email", "password")
             user = db_session.query(UserModel).filter_by(email=content["email"]).first()
             if user != None:
                 res, data = user.Authenticate(content["password"])
@@ -63,9 +66,10 @@ class ModifyPassword(Resource):
     @checkContent
     def post(self, content):
         try:
-            email = content["email"] if "email" in content else ""
-            prev = content["previous_password"] if "previous_password" in content else ""
-            new = content["new_password"] if "new_password" in content else ""
+            contentChecker("email", "previous_password", "new_password")
+            email = content["email"]
+            prev = content["previous_password"]
+            new = content["new_password"]
             user = db_session.query(UserModel).filter_by(email=email).first()
             if user != None:
                 if user.checkPassword(prev):
@@ -88,7 +92,8 @@ class AccountLogout(Resource):
     @checkContent
     def post(self, content):
         try:
-            res, data = UserModel.decodeAuthToken(content["token"] if "token" in content else "")
+            contentChecker("token")
+            res, data = UserModel.decodeAuthToken(content["token"])
             if (res is True):
                 disco_res, message = data.disconnect()
                 if disco_res is True:
@@ -137,6 +142,7 @@ class MailAvailability(Resource):
     @checkContent
     def post(self, content):
         try:
+            contentChecker("email")
             user = db_session.query(UserModel).filter(UserModel.email == content['email']).first()
             if user != None:
                 resp = jsonify({"success" : False})
@@ -153,7 +159,8 @@ class PromoteAdmin(Resource):
     @securedAdminRoute
     def post(self, content):
         try:
-            user = db_session.query(UserModel).filter(UserModel.id == content["id"]).first()
+            contentChecker("user_id")
+            user = db_session.query(UserModel).filter(UserModel.id == content["user_id"]).first()
             if user is not None:
                 user.promoteAdmin()
                 return SUCCESS()

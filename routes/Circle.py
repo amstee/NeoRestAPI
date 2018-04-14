@@ -2,6 +2,7 @@ from flask_restful import Resource
 from config.database import db_session
 from models.Circle import Circle
 from utils.decorators import securedRoute, checkContent, securedAdminRoute
+from utils.contentChecker import contentChecker
 from models.UserToCircle import UserToCircle
 from utils.apiUtils import *
 
@@ -11,6 +12,7 @@ class CircleCreate(Resource):
     @securedRoute
     def post(self, content, user):
         try:
+            contentChecker("name")
             circle = Circle(content["name"])
             link = UserToCircle(privilege="REGULAR")
             link.circle = circle
@@ -28,6 +30,7 @@ class CircleDelete(Resource):
     @securedAdminRoute
     def post(self, content):
         try:
+            contentChecker("circle_id")
             circle = db_session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:
                 db_session.delete(circle)
@@ -45,6 +48,7 @@ class CircleUpdate(Resource):
     @securedRoute
     def post(self, content):
         try:
+            contentChecker("circle_id")
             circle = db_session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:
                 circle.updateContent(name=content["name"] if "name" in content else None,
@@ -62,7 +66,7 @@ class CircleInfo(Resource):
     @securedRoute
     def post(self, content):
         try:
-            print(content["circle_id"])
+            contentChecker("circle_id")
             circle = db_session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:
                 return jsonify({"success": True, "content": circle.getContent()})

@@ -4,6 +4,7 @@ from config.database import db_session
 from models.Device import Device
 from models.Circle import Circle
 from models.User import User as UserModel
+from utils.contentChecker import contentChecker
 from utils.decorators import securedRoute, checkContent
 from utils.apiUtils import *
 from config.paypal import *
@@ -54,6 +55,7 @@ class FakePayment(Resource):
     @securedRoute
     def post(self, content):
         try:
+            contentChecker("circle_id")
             device = Device(name=content["device_name"] if "device_name" in content else "Papie/Mamie")
             circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
             if circle is not None:
