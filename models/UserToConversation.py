@@ -1,9 +1,10 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from config.database import Base
+from config.database import Base, db_session
 from dateutil import parser as DateParser
 import datetime
 
+# GERER LE FAIT QU'UNE UTILSATEUR PEUT QUITTER LA CONV ET SES MESSAGES DOIVENT RESTER
 class UserToConversation(Base):
     __tablename__ = "user_to_conversation"
     id = Column(Integer, primary_key=True)
@@ -13,7 +14,8 @@ class UserToConversation(Base):
     created = Column(DateTime)
     updated = Column(DateTime)
 
-    messages = relationship("Message", back_populates="link")
+    messages = relationship("Message", back_populates="link", order_by="Message.id",
+                                     cascade="save-update, delete")
     conversation = relationship("Conversation", back_populates="links")
     user = relationship("User", back_populates="conversationLinks")
 
@@ -52,6 +54,7 @@ class UserToConversation(Base):
                 self.updated = updated
         if privilege is not None and privilege != "":
             self.privilege = privilege
+        db_session.commit()
 
     def getSimpleContent(self):
         return {
@@ -72,4 +75,10 @@ class UserToConversation(Base):
             "user_id": self.user.getSimpleContent(),
             "conversation_id": self.conversation.getSimpleContent(),
             "messages": [message.getSimpleContent() for message in self.messages]
+        }
+
+    def getMessages(self):
+        return {
+            "id": self.id,
+            "messages": [message.getContent() for message in self.messages]
         }

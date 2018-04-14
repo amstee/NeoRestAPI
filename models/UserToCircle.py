@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from config.database import Base
+from config.database import Base, db_session
 from dateutil import parser as DateParser
 import datetime
 
@@ -51,6 +51,7 @@ class UserToCircle(Base):
                 self.updated = updated
         if privilege is not None and privilege != "":
             self.privilege = privilege
+        db_session.commit()
 
     def getContent(self, user=True):
         if user:

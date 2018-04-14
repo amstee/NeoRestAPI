@@ -54,6 +54,7 @@ class Circle(Base):
                 self.updated = DateParser.parse(updated)
             else:
                 self.updated = updated
+        db_session.commit()
 
     def addUser(self, user):
         link = UserToCircle()

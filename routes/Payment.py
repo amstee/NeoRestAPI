@@ -8,6 +8,7 @@ from utils.decorators import securedRoute, checkContent
 from utils.apiUtils import *
 from config.paypal import *
 
+
 class PaypalCreatePayment(Resource):
     @checkContent
     @securedRoute
@@ -47,10 +48,11 @@ class PaypalCreatePayment(Resource):
         else:
             return FAILED(str(payment.error))
 
+
 class FakePayment(Resource):
     @checkContent
     @securedRoute
-    def post(self, content, user):
+    def post(self, content):
         try:
             device = Device(name=content["device_name"] if "device_name" in content else "Papie/Mamie")
             circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()

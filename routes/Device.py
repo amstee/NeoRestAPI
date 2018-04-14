@@ -5,10 +5,11 @@ from models.Circle import Circle
 from config.database import db_session
 from utils.apiUtils import *
 
+
 class DeviceAdd(Resource):
     @checkContent
     @securedAdminRoute
-    def post(self, content, admin):
+    def post(self, content):
         try:
             circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
             new_device = Device(name=content["name"])
@@ -20,6 +21,7 @@ class DeviceAdd(Resource):
             resp.status_code = 409
             return resp
         return resp
+
 
 class DeviceUpdate(Resource):
     @checkContent
@@ -37,10 +39,11 @@ class DeviceUpdate(Resource):
             return FAILED(e)
         return resp
 
+
 class DeviceInfo(Resource):
     @checkContent
     @securedRoute
-    def post(self, content, user):
+    def post(self, content):
         try:
             device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is not None:
@@ -51,10 +54,11 @@ class DeviceInfo(Resource):
             return FAILED(e)
         return resp
 
+
 class DeviceDelete(Resource):
     @checkContent
     @securedAdminRoute
-    def post(self, content, admin):
+    def post(self, content):
         try:
             device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is not None:

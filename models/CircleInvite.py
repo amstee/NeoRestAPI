@@ -43,6 +43,7 @@ class CircleInvite(Base):
                 self.updated = DateParser.parse(updated)
             else:
                 self.updated = updated
+        db_session.commit()
 
     def getContent(self, user=True):
         if user:

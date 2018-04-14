@@ -1,11 +1,10 @@
-from flask import request
 from flask_restful import Resource
 from config.database import db_session
-from models.User import User as UserModel
 from models.Circle import Circle
 from utils.decorators import securedRoute, checkContent, securedAdminRoute
 from models.UserToCircle import UserToCircle
 from utils.apiUtils import *
+
 
 class CircleCreate(Resource):
     @checkContent
@@ -23,10 +22,11 @@ class CircleCreate(Resource):
             return FAILED(e)
         return resp
 
+
 class CircleDelete(Resource):
     @checkContent
     @securedAdminRoute
-    def post(self, content, admin):
+    def post(self, content):
         try:
             circle = db_session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:
@@ -39,10 +39,11 @@ class CircleDelete(Resource):
             return FAILED(e)
         return resp
 
+
 class CircleUpdate(Resource):
     @checkContent
     @securedRoute
-    def post(self, content, user):
+    def post(self, content):
         try:
             circle = db_session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:
@@ -55,10 +56,11 @@ class CircleUpdate(Resource):
             return FAILED(e)
         return resp
 
+
 class CircleInfo(Resource):
     @checkContent
     @securedRoute
-    def post(self, content, user):
+    def post(self, content):
         try:
             print(content["circle_id"])
             circle = db_session.query(Circle).filter_by(id=content["circle_id"]).first()
@@ -70,10 +72,11 @@ class CircleInfo(Resource):
             return FAILED(e)
         return resp
 
+
 class CircleList(Resource):
     @checkContent
     @securedRoute
-    def post(self, content, user):
+    def post(self, user):
         try:
             circle_list = []
             for link in user.circleLink:

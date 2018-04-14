@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from config.database import Base
+from config.database import Base, db_session
 from dateutil import parser as DateParser
 import datetime
 
@@ -47,6 +47,7 @@ class Conversation(Base):
                 self.updated = updated
         if name is not None and name != "":
             self.name = name
+        db_session.commit()
 
     def getContent(self):
         return {

@@ -9,10 +9,11 @@ from utils.decorators import securedRoute, checkContent
 from models.UserToCircle import UserToCircle
 from utils.apiUtils import *
 
+
 class CircleInvite(Resource):
     @checkContent
     @securedRoute
-    def post(self, content, user):
+    def post(self, content):
         try:
             circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
             if circle is not None:
@@ -28,10 +29,11 @@ class CircleInvite(Resource):
         except Exception as e:
             return FAILED(e)
 
+
 class CircleJoin(Resource):
     @checkContent
     @securedRoute
-    def post(self, content, user):
+    def post(self, content):
         try:
             invite = db_session.query(CircleInvite).filter_by(CircleInviteModel.id == content["invite_id"]).first()
             if invite is not None:
@@ -44,10 +46,11 @@ class CircleJoin(Resource):
         except Exception as e:
             return FAILED(e)
 
+
 class CircleReject(Resource):
     @checkContent
     @securedRoute
-    def post(self, content, user):
+    def post(self, content):
         try:
             invite = db_session.query(CircleInvite).filter_by(CircleInviteModel.id == content["invite_id"]).first()
             if invite is not None:
@@ -57,10 +60,11 @@ class CircleReject(Resource):
         except Exception as e:
             return FAILED(e)
 
+
 class CircleQuit(Resource):
     @checkContent
     @securedRoute
-    def post(self, content, user):
+    def post(self, content):
         try:
             link = db_session.query(UserToCircle).filter_by(UserToCircle.id == content["link_id"]).first()
             if link is not None:
@@ -69,6 +73,7 @@ class CircleQuit(Resource):
             return FAILED("Cercle introuvable")
         except Exception as e:
             return FAILED(e)
+
 
 class CircleKick(Resource):
     @checkContent

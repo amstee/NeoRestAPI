@@ -5,6 +5,7 @@ from models.User import User as UserModel
 from utils.decorators import securedRoute, checkContent, securedAdminRoute
 from utils.apiUtils import *
 
+
 class AccountCreate(Resource):
     def get(sefl):
         try:
@@ -30,6 +31,7 @@ class AccountCreate(Resource):
             resp.status_code = 409
         return resp
 
+
 class AccountLogin(Resource):
     @checkContent
     def post(self, content):
@@ -50,12 +52,14 @@ class AccountLogin(Resource):
         except Exception as e:
             return FAILED(e)
 
-class forgotPassword(Resource):
+
+class ForgotPassword(Resource):
     @checkContent
     def post(self, content):
         return SUCCESS()
 
-class modifyPassword(Resource):
+
+class ModifyPassword(Resource):
     @checkContent
     def post(self, content):
         try:
@@ -73,11 +77,12 @@ class modifyPassword(Resource):
             return FAILED(e)
 
 
-class checkToken(Resource):
+class CheckToken(Resource):
     @checkContent
     @securedRoute
     def post(self, content, user):
         return jsonify({"success": True, "message": "Le token json est valide"})
+
 
 class AccountLogout(Resource):
     @checkContent
@@ -98,6 +103,7 @@ class AccountLogout(Resource):
         except Exception as e:
             return FAILED(e)
 
+
 class AccountInfo(Resource):
     @checkContent
     @securedRoute
@@ -105,6 +111,7 @@ class AccountInfo(Resource):
         resp = jsonify({"success": True, "content": user.getContent()})
         resp.status_code = 200
         return resp
+
 
 class AccountModify(Resource):
     @checkContent
@@ -125,6 +132,7 @@ class AccountModify(Resource):
         except Exception as e:
             return FAILED(e)
 
+
 class MailAvailability(Resource):
     @checkContent
     def post(self, content):
@@ -139,10 +147,11 @@ class MailAvailability(Resource):
         except Exception as e:
             return FAILED(e)
 
-class promoteAdmin(Resource):
+
+class PromoteAdmin(Resource):
     @checkContent
     @securedAdminRoute
-    def post(self, content, admin):
+    def post(self, content):
         try:
             user = db_session.query(UserModel).filter(UserModel.id == content["id"]).first()
             if user is not None:
