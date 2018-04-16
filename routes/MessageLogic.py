@@ -28,17 +28,18 @@ class FirstMessageSend(Resource):
                 return FAILED("Ce cercle ne contient pas l'utilisateur recherché")
             conversation = Conversation()
             conversation.circle = circle
-            link1 = UserToConversation(privilege="STANDARD")
+            link1 = UserToConversation(privilege="ADMIN")
             link2 = UserToConversation(privilege="STANDARD")
             link1.user = user
             link1.conversation = conversation
             link2.user = dest
             link2.conversation = conversation
-            message = Message(content=content["text_message"])
+            message = Message(content=content["text_message"] if "text_message" in content else None)
+            message.conversation = conversation
             if "files" in content:
                 for file in content["files"]:
                     if file in request.files:
-                        new_file = Media().setContent(request.files[file], content["directory_name"], message)
+                        new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
             return SUCCESS()
@@ -58,11 +59,12 @@ class MessageSend(Resource):
                 return FAILED("Lien vers la conversation introuvable")
             if link.user_id != user.id:
                 return FAILED("Cet utilisateur ne peut pas envoyer de message dans cette conversation")
-            message = Message(content=content["text_message"])
+            message = Message(content=content["text_message"] if "text_message" in content else None)
+            message.conversation = link.conversation
             if "files" in content:
                 for file in content["files"]:
                     if file in request.files:
-                        new_file = Media().setContent(request.files[file], content["directory_name"], message)
+                        new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
             return SUCCESS()

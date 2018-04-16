@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, event
+from sqlalchemy import Column, Integer, String, ForeignKey, event, Boolean
 from sqlalchemy.orm import relationship
 from config.database import Base
 from config.database import db_session
@@ -9,7 +9,8 @@ import os
 class Media(Base):
     __tablename__ = "medias"
     id = Column(Integer, primary_key=True)
-    message_id = Column(Integer, ForeignKey('messages.id'))
+    message_id = Column(Integer, ForeignKey('messages.id'), nullable=True)
+    device_message_id = Column(Integer, ForeignKey('device_messages.id'), nullable=True)
     filename = Column(String(120))
     extension = Column(String(10))
     directory = Column(String(1024))
@@ -17,8 +18,8 @@ class Media(Base):
     message = relationship("Message", back_populates="medias")
 
     def __repr__(self):
-        return "<Media(id='%d' message_id='%d' filename='%s' extension='%s' directory='%s')>"%(
-            self.id, self.message_id, self.filename, self.extension, self.directory
+        return "<Media(id='%d' filename='%s' extension='%s' directory='%s')>"%(
+            self.id, self.filename, self.extension, self.directory
         )
 
     def upload(self, file):

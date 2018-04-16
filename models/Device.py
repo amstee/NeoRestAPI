@@ -28,6 +28,7 @@ class Device(Base):
 
     # RELATIONS
     circle = relationship("Circle", back_populates="device")
+    messages = relationship("Message", back_populates="device")
 
     def __init__(self, created=datetime.datetime.now(), updated=datetime.datetime.now(),
                  username=None, name=None, activated=False):
@@ -162,5 +163,6 @@ class Device(Base):
             "updated": self.updated,
             "activated": self.activated,
             "username": self.username,
-            "circle": self.circle.getSimpleContent() if self.circle is not None else {}
+            "circle": self.circle.getSimpleContent() if self.circle is not None else {},
+            "messages" : [message.getSimpleContent() for message in self.messages]
         }

@@ -23,6 +23,7 @@ class MessageCreate(Resource):
                 return FAILED("Lien entre utilisateur et conversation introuvable")
             message = Message(content=content["text"])
             message.link = link
+            message.conversation = link.conversation
             for file in file_list:
                 if file in request.files:
                     new_file = Media().setContent(request.files[file], content["directory_name"], message)

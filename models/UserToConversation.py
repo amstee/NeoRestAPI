@@ -4,7 +4,6 @@ from config.database import Base, db_session
 from dateutil import parser as DateParser
 import datetime
 
-# GERER LE FAIT QU'UNE UTILSATEUR PEUT QUITTER LA CONV ET SES MESSAGES DOIVENT RESTER
 class UserToConversation(Base):
     __tablename__ = "user_to_conversation"
     id = Column(Integer, primary_key=True)
@@ -14,8 +13,7 @@ class UserToConversation(Base):
     created = Column(DateTime)
     updated = Column(DateTime)
 
-    messages = relationship("Message", back_populates="link", order_by="Message.id",
-                                     cascade="save-update, delete")
+    messages = relationship("Message", back_populates="link", order_by="Message.sent")
     conversation = relationship("Conversation", back_populates="links")
     user = relationship("User", back_populates="conversationLinks")
 
