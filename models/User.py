@@ -7,7 +7,8 @@ import hashlib
 import jwt
 import datetime
 
-SECRET_KEY = "defaultsecretkey"
+SECRET_KEY = "defaultusersecretkey"
+
 
 class User(Base):
     __tablename__ = 'users'
@@ -17,7 +18,6 @@ class User(Base):
     first_name = Column(String(50))
     last_name = Column(String(50))
     birthday = Column(DateTime)
-    searchText = Column(String(120))
     created = Column(DateTime)
     updated = Column(DateTime)
     jsonToken = Column(String(4096))
@@ -31,7 +31,7 @@ class User(Base):
     circleInvites = relationship("CircleInvite", back_populates="user", order_by="CircleInvite.id", cascade="save-update, delete")
 
     def __init__(self, email=None, password=None, first_name=None, last_name=None,
-                 birthday=None, searchText=None, created=datetime.datetime.now(),
+                 birthday=None, created=datetime.datetime.now(),
                  updated=datetime.datetime.now()):
         user = db_session.query(User).filter_by(email=email).first()
         if user is not None:
@@ -43,9 +43,10 @@ class User(Base):
         self.password = hashlib.sha512(password.encode('utf-8')).hexdigest()
         self.first_name = first_name
         self.last_name = last_name
-        self.birthday = DateParser.parse(birthday)
-        if searchText is not None:
-            self.searchText = searchText
+        if type(birthday) is str:
+            self.birthday = DateParser.parse(birthday)
+        else:
+            self.birthday = birthday
         if created is not None:
             if type(created) is str:
                 self.created = DateParser.parse(created)
@@ -74,16 +75,19 @@ class User(Base):
         try:
             payload = jwt.decode(auth_token, SECRET_KEY)
             try:
-                user = User.query.filter(User.id == payload['sub']).first()
-                if user.jsonToken == "" or user.jsonToken == None:
-                    return (False, 'User not authenticated, please login')
-                return (True, user)
+                user = db_session.query(User).filter(User.id == payload['sub']).first()
+                if user is not None:
+                    if user.jsonToken == "" or user.jsonToken == None:
+                        return (False, 'Utilisateur non authentifié')
+                    return (True, user)
+                else:
+                    return (False, 'Utilisateur introuvable')
             except Exception as e:
-                return (False, "An error occurred : " + str(e))
+                return (False, "Une erreur est survenue : " + str(e))
         except jwt.ExpiredSignatureError:
-            return (False, 'Signature expired. Please log in again')
+            return (False, 'La session a expiré, authentifiez vous a nouveau')
         except jwt.InvalidTokenError:
-            return (False, 'Invalid token. Please log in again')
+            return (False, 'Token invalide, authentifiez vous a nouveau')
 
     def encodeAuthToken(self):
         try:
@@ -111,14 +115,14 @@ class User(Base):
     def Authenticate(self, password=None):
         if password != None and password != "":
             if self.password != hashlib.sha512(password.encode('utf-8')).hexdigest():
-                return (False, "Wrong password")
+                return (False, "Mot de passe invalide")
             return (True, self.encodeAuthToken())
-        return (False, "No password provided.")
+        return (False, "Aucun mot de passe fourni")
 
     def updatePassword(self, password=None):
         if password != None and password != "":
             self.password = hashlib.sha512(password.encode('utf-8')).hexdigest()
-        db_session.commit()
+            db_session.commit()
 
     def updateContent(self, email=None, first_name=None, last_name=None, birthday=None,
                       searchText=None, created=None, updated=datetime.datetime.now()):
@@ -146,6 +150,12 @@ class User(Base):
         self.type = "ADMIN"
         db_session.commit()
 
+    @staticmethod
+    def CreateNeoAdmin():
+        user = User(email="contact.projetneo@gmail.com", password="PapieNeo2019",
+                    first_name="Neo", last_name="Admin", birthday=datetime.datetime.now())
+        user.promoteAdmin()
+
     def getSimpleContent(self):
         return {
             "id": self.id,
@@ -153,7 +163,6 @@ class User(Base):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "birthday": self.birthday,
-            "searchText": self.searchText,
             "created": self.created,
             "updated": self.updated,
             "type": self.type,
@@ -166,7 +175,6 @@ class User(Base):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "birthday": self.birthday,
-            "searchText": self.searchText,
             "created": self.created,
             "updated": self.updated,
             "type": self.type,

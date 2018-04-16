@@ -53,12 +53,15 @@ class PaypalCreatePayment(Resource):
 class FakePayment(Resource):
     @checkContent
     @securedRoute
-    def post(self, content):
+    def post(self, content, user):
         try:
             contentChecker("circle_id")
-            device = Device(name=content["device_name"] if "device_name" in content else "Papie/Mamie")
+            device = Device(name=content["device_name"] if "device_name" in content else "Papie/Mamie",
+                            username=content["device_username" if "device_username" in content else None])
             circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
             if circle is not None:
+                if not circle.hasMember(user):
+                    return FAILED("Cet utilisateur ne fait pas parti du cercle spécifié")
                 circle.device = device
                 device.circle = circle
                 db_session.commit()

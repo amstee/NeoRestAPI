@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 from flask_cors import CORS
+from models.User import User
 import routes.Account as AccountManager
 import routes.Device as DeviceManager
 import routes.Circle as CircleManager
@@ -69,6 +70,13 @@ api.add_resource(DeviceManager.DeviceAdd, '/admin/device/add')
 api.add_resource(DeviceManager.DeviceUpdate, '/device/update')
 api.add_resource(DeviceManager.DeviceInfo, '/device/info')
 api.add_resource(DeviceManager.DeviceDelete, '/admin/device/delete')
+api.add_resource(DeviceManager.DeviceActivate, '/device/activate')
+api.add_resource(DeviceManager.DeviceLogin, '/device/authenticate')
+api.add_resource(DeviceManager.DeviceCredentials, '/admin/device/credentials')
+api.add_resource(DeviceManager.DeviceLogout, '/device/logout')
+api.add_resource(DeviceManager.UsernameAvailability, '/device/username/available')
+api.add_resource(DeviceManager.CheckDeviceToken, '/device/token/verify')
+api.add_resource(DeviceManager.ModifyDevicePassword, '/device/modify/password')
 
 # PAYMENT ROUTES
 api.add_resource(PaymentManager.FakePayment, '/device/buy')
@@ -76,4 +84,5 @@ api.add_resource(PaymentManager.FakePayment, '/device/buy')
 db.init_db()
 
 if __name__ == '__main__':
+     User.CreateNeoAdmin()
      app.run(port=5000, host='0.0.0.0')

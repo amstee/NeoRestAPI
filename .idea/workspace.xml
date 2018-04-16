@@ -2,24 +2,30 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32b1a9b9-7457-4a1a-91e3-06d7851c1013" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/routes/MediaLogic.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/routes/MessageLogic.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/utils/contentChecker.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/utils/security.py" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/api.py" afterPath="$PROJECT_DIR$/api.py" />
-      <change beforePath="$PROJECT_DIR$/models/Circle.py" afterPath="$PROJECT_DIR$/models/Circle.py" />
-      <change beforePath="$PROJECT_DIR$/models/Conversation.py" afterPath="$PROJECT_DIR$/models/Conversation.py" />
-      <change beforePath="$PROJECT_DIR$/routes/Account.py" afterPath="$PROJECT_DIR$/routes/Account.py" />
-      <change beforePath="$PROJECT_DIR$/routes/Circle.py" afterPath="$PROJECT_DIR$/routes/Circle.py" />
-      <change beforePath="$PROJECT_DIR$/routes/CircleLogic.py" afterPath="$PROJECT_DIR$/routes/CircleLogic.py" />
+      <change beforePath="$PROJECT_DIR$/models/Device.py" afterPath="$PROJECT_DIR$/models/Device.py" />
+      <change beforePath="$PROJECT_DIR$/models/User.py" afterPath="$PROJECT_DIR$/models/User.py" />
       <change beforePath="$PROJECT_DIR$/routes/Device.py" afterPath="$PROJECT_DIR$/routes/Device.py" />
-      <change beforePath="$PROJECT_DIR$/routes/Media.py" afterPath="$PROJECT_DIR$/routes/Media.py" />
-      <change beforePath="$PROJECT_DIR$/routes/Message.py" afterPath="$PROJECT_DIR$/routes/Message.py" />
       <change beforePath="$PROJECT_DIR$/routes/Payment.py" afterPath="$PROJECT_DIR$/routes/Payment.py" />
-      <change beforePath="$PROJECT_DIR$/venv/.Python" afterPath="$PROJECT_DIR$/venv/.Python" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/python2" afterPath="$PROJECT_DIR$/venv/bin/python2" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/python2.7" afterPath="$PROJECT_DIR$/venv/bin/python2.7" />
+      <change beforePath="$PROJECT_DIR$/utils/decorators.py" afterPath="$PROJECT_DIR$/utils/decorators.py" />
+      <change beforePath="$PROJECT_DIR$/venv/.Python" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/bin/activate" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/bin/activate.csh" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/bin/activate.fish" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/bin/activate_this.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/bin/easy_install" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/bin/easy_install-2.7" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/bin/flask" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/bin/pip" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/bin/pip2" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/bin/pip2.7" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/bin/python" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/bin/python-config" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/bin/python2" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/bin/python2.7" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/bin/wheel" afterPath="" />
       <change beforePath="$PROJECT_DIR$/venv/include/python2.7" afterPath="" />
       <change beforePath="$PROJECT_DIR$/venv/lib/python2.7/UserDict.py" afterPath="" />
       <change beforePath="$PROJECT_DIR$/venv/lib/python2.7/_abcoll.py" afterPath="" />
@@ -1495,6 +1501,7 @@
       <change beforePath="$PROJECT_DIR$/venv/lib/python2.7/stat.py" afterPath="" />
       <change beforePath="$PROJECT_DIR$/venv/lib/python2.7/types.py" afterPath="" />
       <change beforePath="$PROJECT_DIR$/venv/lib/python2.7/warnings.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/venv/pip-selfcheck.json" afterPath="$PROJECT_DIR$/venv/pip-selfcheck.json" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -1504,22 +1511,42 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="Account.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/routes/Account.py">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="api.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/api.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+            <state relative-caret-position="733">
+              <caret line="78" column="43" lean-forward="false" selection-start-line="78" selection-start-column="43" selection-end-line="78" selection-end-column="43" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="api.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/api.py">
+      <file leaf-file-name="Device.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/routes/Device.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
-              <caret line="57" column="0" lean-forward="false" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+            <state relative-caret-position="198">
+              <caret line="116" column="18" lean-forward="false" selection-start-line="116" selection-start-column="18" selection-end-line="116" selection-end-column="18" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Account.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/routes/Account.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2340">
+              <caret line="142" column="28" lean-forward="false" selection-start-line="142" selection-start-column="28" selection-end-line="142" selection-end-column="28" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="User.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/models/User.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="648">
+              <caret line="49" column="0" lean-forward="false" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -1567,10 +1594,6 @@
         <option value="$PROJECT_DIR$/routes/Buy.py" />
         <option value="$PROJECT_DIR$/routes/DeviceLogic.py" />
         <option value="$PROJECT_DIR$/config/paypal.py" />
-        <option value="$PROJECT_DIR$/requirements.txt" />
-        <option value="$PROJECT_DIR$/models/Device.py" />
-        <option value="$PROJECT_DIR$/models/User.py" />
-        <option value="$PROJECT_DIR$/utils/decorators.py" />
         <option value="$PROJECT_DIR$/models/CircleInvite.py" />
         <option value="$PROJECT_DIR$/models/UserToCircle.py" />
         <option value="$PROJECT_DIR$/models/UserToConversation.py" />
@@ -1579,18 +1602,22 @@
         <option value="$PROJECT_DIR$/utils/contentChecker.py" />
         <option value="$PROJECT_DIR$/routes/Circle.py" />
         <option value="$PROJECT_DIR$/routes/CircleLogic.py" />
-        <option value="$PROJECT_DIR$/routes/Device.py" />
         <option value="$PROJECT_DIR$/routes/Media.py" />
-        <option value="$PROJECT_DIR$/routes/Payment.py" />
         <option value="$PROJECT_DIR$/models/Conversation.py" />
         <option value="$PROJECT_DIR$/models/Circle.py" />
-        <option value="$PROJECT_DIR$/api.py" />
         <option value="$PROJECT_DIR$/models/Message.py" />
         <option value="$PROJECT_DIR$/routes/MediaLogic.py" />
         <option value="$PROJECT_DIR$/routes/MessageLogic.py" />
         <option value="$PROJECT_DIR$/utils/security.py" />
         <option value="$PROJECT_DIR$/routes/Message.py" />
         <option value="$PROJECT_DIR$/routes/Account.py" />
+        <option value="$PROJECT_DIR$/utils/decorators.py" />
+        <option value="$PROJECT_DIR$/requirements.txt" />
+        <option value="$PROJECT_DIR$/routes/Payment.py" />
+        <option value="$PROJECT_DIR$/models/Device.py" />
+        <option value="$PROJECT_DIR$/api.py" />
+        <option value="$PROJECT_DIR$/routes/Device.py" />
+        <option value="$PROJECT_DIR$/models/User.py" />
       </list>
     </option>
   </component>
@@ -1622,6 +1649,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -1653,7 +1681,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -1911,31 +1938,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="18" column="15" lean-forward="true" selection-start-line="18" selection-start-column="15" selection-end-line="18" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/models/CircleInvite.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="630">
           <caret line="45" column="26" lean-forward="false" selection-start-line="45" selection-start-column="26" selection-end-line="45" selection-end-column="26" />
-          <folding>
-            <element signature="e#0#68#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/Device.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-324">
-          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="5" selection-end-column="15" />
-          <folding>
-            <element signature="e#0#68#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1943,15 +1949,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="36">
           <caret line="2" column="44" lean-forward="false" selection-start-line="2" selection-start-column="44" selection-end-line="2" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/User.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="26" column="67" lean-forward="true" selection-start-line="26" selection-start-column="67" selection-end-line="27" selection-end-column="59" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1959,9 +1956,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1368">
           <caret line="76" column="39" lean-forward="false" selection-start-line="76" selection-start-column="39" selection-end-line="76" selection-end-column="39" />
-          <folding>
-            <element signature="e#0#65#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1969,14 +1963,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="7" column="16" lean-forward="false" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/decorators.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="20" lean-forward="true" selection-start-line="0" selection-start-column="20" selection-end-line="0" selection-end-column="20" />
           <folding />
         </state>
       </provider>
@@ -1995,29 +1981,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="625">
           <caret line="83" column="12" lean-forward="true" selection-start-line="83" selection-start-column="12" selection-end-line="83" selection-end-column="12" />
-          <folding>
-            <element signature="e#0#34#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/Device.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="643">
-          <caret line="66" column="37" lean-forward="false" selection-start-line="66" selection-start-column="37" selection-end-line="66" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#34#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/Payment.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="17" column="29" lean-forward="true" selection-start-line="17" selection-start-column="29" selection-end-line="17" selection-end-column="29" />
-          <folding>
-            <element signature="e#0#25#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2025,9 +1988,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1494">
           <caret line="83" column="26" lean-forward="true" selection-start-line="83" selection-start-column="26" selection-end-line="83" selection-end-column="26" />
-          <folding>
-            <element signature="e#0#34#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2043,9 +2003,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="648">
           <caret line="40" column="39" lean-forward="true" selection-start-line="40" selection-start-column="39" selection-end-line="40" selection-end-column="39" />
-          <folding>
-            <element signature="e#0#68#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2061,7 +2018,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1620">
           <caret line="97" column="98" lean-forward="false" selection-start-line="97" selection-start-column="98" selection-end-line="97" selection-end-column="98" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2069,19 +2025,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="612">
           <caret line="34" column="0" lean-forward="true" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#68#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/MessageLogic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="661">
-          <caret line="60" column="0" lean-forward="false" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#25#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2089,9 +2032,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="342">
           <caret line="19" column="16" lean-forward="true" selection-start-line="19" selection-start-column="16" selection-end-line="19" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#38#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2099,9 +2039,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="648">
           <caret line="44" column="19" lean-forward="false" selection-start-line="44" selection-start-column="19" selection-end-line="44" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#68#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2109,9 +2046,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1566">
           <caret line="87" column="32" lean-forward="false" selection-start-line="87" selection-start-column="32" selection-end-line="87" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#25#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2119,24 +2053,82 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
           <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/MessageLogic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-455">
+          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="18" column="15" lean-forward="false" selection-start-line="18" selection-start-column="15" selection-end-line="18" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/decorators.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="32" lean-forward="false" selection-start-line="3" selection-start-column="32" selection-end-line="3" selection-end-column="32" />
           <folding>
-            <element signature="e#0#37#0" expanded="false" />
+            <element signature="e#0#25#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/Device.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="647">
+          <caret line="141" column="35" lean-forward="false" selection-start-line="141" selection-start-column="35" selection-end-line="141" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#77#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/Payment.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="571">
+          <caret line="59" column="104" lean-forward="false" selection-start-line="59" selection-start-column="104" selection-end-line="59" selection-end-column="104" />
+          <folding>
+            <element signature="e#0#25#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/api.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="57" column="0" lean-forward="false" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+        <state relative-caret-position="733">
+          <caret line="78" column="43" lean-forward="false" selection-start-line="78" selection-start-column="43" selection-end-line="78" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/Device.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="116" column="18" lean-forward="false" selection-start-line="116" selection-start-column="18" selection-end-line="116" selection-end-column="18" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/Account.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+        <state relative-caret-position="2340">
+          <caret line="142" column="28" lean-forward="false" selection-start-line="142" selection-start-column="28" selection-end-line="142" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/User.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="648">
+          <caret line="49" column="0" lean-forward="false" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
           <folding />
         </state>
       </provider>
