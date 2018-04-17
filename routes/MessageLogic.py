@@ -12,6 +12,35 @@ from utils.contentChecker import contentChecker
 from utils.apiUtils import *
 
 
+class FirstMessageToDeviceSend(Resource):
+    @checkContent
+    @securedRoute
+    def post(self, content, user):
+        try:
+            contentChecker("circle_id")
+            circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
+            if circle is None:
+                return FAILED("Cercle spécifié introuvable")
+            if not circle.hasMember(user):
+                return FAILED("Impossible de communiquer avec ce device")
+            conversation = Conversation(device_access=True)
+            conversation.circle = circle
+            link = UserToConversation(privilege="ADMIN")
+            link.user = user
+            link.conversation = conversation
+            message = Message(content=content["text_message"] if "text_message" in content else None)
+            message.conversation = conversation
+            message.link = link
+            if "files" in content:
+                for file in content["files"]:
+                    if file in request.files:
+                        new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
+                        message.medias.append(new_file)
+            db_session.commit()
+            return SUCCESS()
+        except Exception as e:
+            return FAILED(e)
+
 class FirstMessageSend(Resource):
     @checkContent
     @securedRoute
@@ -36,6 +65,7 @@ class FirstMessageSend(Resource):
             link2.conversation = conversation
             message = Message(content=content["text_message"] if "text_message" in content else None)
             message.conversation = conversation
+            message.link = link1
             if "files" in content:
                 for file in content["files"]:
                     if file in request.files:

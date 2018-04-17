@@ -14,6 +14,7 @@ import routes.MediaLogic as MediaLogicManager
 import routes.DeviceMessage as DeviceMessageManager
 import routes.ConversationLogic as ConversationLogicManager
 import routes.Conversation as ConversationManager
+import routes.DeviceMessageLogic as DeviceMessageLogicManager
 import config.database as db
 
 app = Flask(__name__)
@@ -64,9 +65,13 @@ api.add_resource(BasicMessageManager.MessageDelete, '/message/delete')
 api.add_resource(BasicMessageManager.MessageInfo, '/message/info')
 api.add_resource(BasicMessageManager.MessageUpdate, '/message/update')
 api.add_resource(BasicMessageManager.MessageList, '/conversation/message/list')
+# DEVICE MESSAGE LOGIC MANAGER
+api.add_resource(DeviceMessageLogicManager.FirstDeviceMessageSend, '/device/message/first-send')
+api.add_resource(DeviceMessageLogicManager.DeviceMessageSend, '/device/message/send')
 # MESSAGE LOGIC ROUTES
 api.add_resource(MessageLogicManager.FirstMessageSend, '/message/first-message')
 api.add_resource(MessageLogicManager.MessageSend, '/message/send')
+api.add_resource(MessageLogicManager.FirstMessageToDeviceSend, '/message/device/first-message')
 # MEDIA LOGIC ROUTES
 api.add_resource(MediaLogicManager.MediaRequest, '/media/get-media')
 # BASIC MEDIA ROUTES
