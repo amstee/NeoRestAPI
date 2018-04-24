@@ -11,6 +11,8 @@ class AccountCreate(unittest.TestCase):
     def setUp(self):
         neo = neoapi()
         self.api = neo.activate_testing()
+        db_session.query(UserModel).delete()
+        db_session.commit()
 
     def test_valide_request(self):
         json_data = {
@@ -112,4 +114,59 @@ class AccountCreate(unittest.TestCase):
         response = self.api.post('/account/create', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 409
+        assert response_json['success'] == False
+
+class AccountLogin(unittest.TestCase):
+    def setUp(self):
+        neo = neoapi()
+        self.api = neo.activate_testing()
+        db_session.query(UserModel).delete()
+        db_session.commit()
+
+        new_user = UserModel(
+            email="clone2@gmail.com",
+            password="password",
+            first_name="first_name",
+            last_name="last_name",
+            birthday="1999-02-02"
+            )
+        db_session.add(new_user)
+        db_session.commit()
+
+    def test_valide_request(self):
+        json_data = {
+            "email": "clone2@gmail.com",
+            "password": "password"
+        }
+        response = self.api.post('/account/login', data=json.dumps(json_data), content_type='application/json')
+        response_json = json.loads(response.data)
+        assert response.status_code == 200
+        assert response_json['success'] == True
+
+    def test_missing_email(self):
+        json_data = {
+            "password": "password"
+        }
+        response = self.api.post('/account/login', data=json.dumps(json_data), content_type='application/json')
+        response_json = json.loads(response.data)
+        assert response.status_code == 400
+        assert response_json['success'] == False
+
+    def test_missing_password(self):
+        json_data = {
+            "email": "clone2@gmail.com"
+        }
+        response = self.api.post('/account/login', data=json.dumps(json_data), content_type='application/json')
+        response_json = json.loads(response.data)
+        assert response.status_code == 400
+        assert response_json['success'] == False
+
+    def test_wrong_password(self):
+        json_data = {
+            "email": "clone2@gmail.com",
+            "password": "passwordWrong"
+        }
+        response = self.api.post('/account/login', data=json.dumps(json_data), content_type='application/json')
+        response_json = json.loads(response.data)
+        assert response.status_code == 401
         assert response_json['success'] == False
