@@ -10,7 +10,6 @@ class Media(Base):
     __tablename__ = "medias"
     id = Column(Integer, primary_key=True)
     message_id = Column(Integer, ForeignKey('messages.id'), nullable=True)
-    #device_message_id = Column(Integer, ForeignKey('device_messages.id'), nullable=True)
     filename = Column(String(120))
     extension = Column(String(10))
     directory = Column(String(1024))
