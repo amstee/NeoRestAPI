@@ -31,6 +31,7 @@ class CircleInvite(Base):
                 self.updated = DateParser.parse(updated)
             else:
                 self.updated = updated
+        db_session.add(self)
 
     def updateContent(self, created=None, updated=datetime.datetime.now()):
         if created is not None:

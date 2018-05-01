@@ -57,7 +57,7 @@ def securedAdminRoute(func):
             jsonToken = content["token"]
             res, data = User.decodeAuthToken(jsonToken)
             if (res is True):
-                if data.type == "Admin":
+                if data.type == "ADMIN":
                     kwargs['admin'] = data
                     return (func(*args, **kwargs))
                 else:

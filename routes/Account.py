@@ -24,7 +24,6 @@ class AccountCreate(Resource):
             contentChecker("email", "password", "first_name", "last_name", "birthday")
             new_user = UserModel(email=content['email'], password=content['password'], first_name=content['first_name'],
                     last_name=content['last_name'], birthday=content["birthday"])
-            db_session.add(new_user)
             db_session.commit()
             resp = jsonify({"success": True})
             resp.status_code = 201

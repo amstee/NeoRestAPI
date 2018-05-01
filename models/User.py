@@ -58,6 +58,7 @@ class User(Base):
             else:
                 self.updated = updated
         self.type = "DEFAULT"
+        db_session.add(self)
 
     def __repr__(self):
         return '<User %r %r>' % (self.first_name, self.last_name)
@@ -152,9 +153,11 @@ class User(Base):
 
     @staticmethod
     def CreateNeoAdmin():
-        user = User(email="contact.projetneo@gmail.com", password="PapieNeo2019",
-                    first_name="Neo", last_name="Admin", birthday=datetime.datetime.now())
-        user.promoteAdmin()
+        admin = db_session.query(User).filter(User.email=="contact.projetneo@gmail.com").first()
+        if admin is None:
+            user = User(email="contact.projetneo@gmail.com", password="PapieNeo2019",
+                        first_name="Neo", last_name="Admin", birthday=datetime.datetime.now())
+            user.promoteAdmin()
 
     def getSimpleContent(self):
         return {

@@ -40,6 +40,7 @@ class Circle(Base):
                 self.updated = DateParser.parse(updated)
             else:
                 self.updated = updated
+        db_session.add(self)
 
     def hasMember(self, member):
         for link in self.userLink:

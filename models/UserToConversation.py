@@ -37,6 +37,7 @@ class UserToConversation(Base):
             self.privilege = privilege
         else:
             self.privilege = "STANDARD"
+        db_session.add(self)
 
     def updateContent(self, created=None, updated=datetime.datetime.now(),
                  privilege=None):

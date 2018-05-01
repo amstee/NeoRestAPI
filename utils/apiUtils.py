@@ -5,7 +5,7 @@ def SUCCESS():
     resp.status_code = 200
     return resp
 
-def FAILED(error):
+def FAILED(error, error_code=400):
     resp = jsonify({"success": False, "message": str(error)})
-    resp.status_code = 400
+    resp.status_code = error_code
     return resp

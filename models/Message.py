@@ -38,6 +38,7 @@ class Message(Base):
         if content is not None:
             self.text_content = content
         self.isUser = isUser
+        db_session.add(self)
 
     def updateContent(self, sent=None, read=datetime.datetime.now(), content=None, isUser=None):
         if sent is not None:

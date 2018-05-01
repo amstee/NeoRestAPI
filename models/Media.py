@@ -38,6 +38,7 @@ class Media(Base):
         if extension is not None and extension != "":
             self.extension = extension
         self.directory = directory
+        db_session.add(self)
 
     def setContent(self, file=None, directory="default", message=None):
         if file is not None:

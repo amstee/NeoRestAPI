@@ -20,7 +20,6 @@ class CircleCreate(Resource):
             db_session.commit()
             resp = jsonify({"success": True, "content": circle.getSimpleContent()})
         except Exception as e:
-            print(e)
             return FAILED(e)
         return resp
 
@@ -28,7 +27,7 @@ class CircleCreate(Resource):
 class CircleDelete(Resource):
     @checkContent
     @securedAdminRoute
-    def post(self, content):
+    def post(self, content, admin):
         try:
             contentChecker("circle_id")
             circle = db_session.query(Circle).filter_by(id=content["circle_id"]).first()
@@ -46,11 +45,13 @@ class CircleDelete(Resource):
 class CircleUpdate(Resource):
     @checkContent
     @securedRoute
-    def post(self, content):
+    def post(self, content, user):
         try:
             contentChecker("circle_id")
             circle = db_session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:
+                if not circle.hasMember(user):
+                    return FAILED("Cet utilisateur n'a pas access a ce cercle", 403)
                 circle.updateContent(name=content["name"] if "name" in content else None,
                                      created=content["created"] if "created" in content else None)
                 return SUCCESS()
@@ -64,11 +65,13 @@ class CircleUpdate(Resource):
 class CircleInfo(Resource):
     @checkContent
     @securedRoute
-    def post(self, content):
+    def post(self, content, user):
         try:
             contentChecker("circle_id")
             circle = db_session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:
+                if not circle.hasMember(user):
+                    return FAILED("Cet utilisateur n'a pas access a ce cercle", 403)
                 return jsonify({"success": True, "content": circle.getContent()})
             resp = FAILED("Le cercle est introuvable")
             resp.status_code = 401
@@ -80,13 +83,13 @@ class CircleInfo(Resource):
 class CircleList(Resource):
     @checkContent
     @securedRoute
-    def post(self, user):
+    def post(self, content, user):
         try:
             circle_list = []
             for link in user.circleLink:
                 if link.circle not in circle_list:
                     circle_list.append(link.circle)
-            resp = jsonify({"success": True, "circles": [circle.getSimpleContent() for circle in circle_list]})
+            resp = jsonify({"success": True, "content": [circle.getSimpleContent() for circle in circle_list]})
         except Exception as e:
             return FAILED(e)
         return resp

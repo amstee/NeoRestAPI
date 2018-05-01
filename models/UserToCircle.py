@@ -37,6 +37,7 @@ class UserToCircle(Base):
             self.user = user
         if circle is not None:
             self.circle = circle
+        db_session.add(self)
 
     def updateContent(self, created=None, updated=datetime.datetime.now(), privilege=None):
         if created is not None:

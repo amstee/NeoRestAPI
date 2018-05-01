@@ -38,6 +38,7 @@ class Conversation(Base):
         else:
             self.name = "Conversation %d"%self.id
         self.device_access = device_access
+        db_session.add(self)
 
     def hasMembers(self, *args):
         for member in args:
