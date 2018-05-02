@@ -30,14 +30,14 @@ def SendMessage(recipient_id, message_text):
 class Webhook(Resource):
     messenger_hook = {
         "hub.mode": fields.Str(missing=None),
-        "hub.challenge": fields.Str(missing=None),
+        "hub.challenge": fields.Int(missing=None),
         "hub.verify_token": fields.Str(missing=None)
     }
 
     @use_args(messenger_hook)
     def get(self, args):
         if args["hub"]["mode"] == "subscribe" and args["hub"]["challenge"]:
-            if not args["hub"]["verify_token"] == SECRET_TOKEN:
+            if args["hub"]["verify_token"] != SECRET_TOKEN:
                 return "Verification token mismatch", 403
             return args["hub"]["challenge"], 200
         return "Hello Facebook", 200
