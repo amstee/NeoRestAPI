@@ -182,6 +182,6 @@ class User(Base):
             "updated": self.updated,
             "type": self.type,
             "circles": [link.getContent() for link in self.circleLink],
-            "invites": [invite.getContent() for invite in self.circleInvites],
+            "invites": [invite.getContent() for invite in self.circleInvite],
             "conversations": [link.getSimpleContent() for link in self.conversationLinks]
         }
