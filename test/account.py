@@ -170,3 +170,20 @@ class AccountLogin(unittest.TestCase):
         response_json = json.loads(response.data)
         assert response.status_code == 401
         assert response_json['success'] == False
+
+class AccountInfo(unittest.TestCase):
+    def setUp(self):
+        neo = neoapi()
+        self.api = neo.activate_testing()
+        db_session.query(UserModel).delete()
+        db_session.commit()
+
+        new_user = UserModel(
+            email="clone2@gmail.com",
+            password="password",
+            first_name="first_name",
+            last_name="last_name",
+            birthday="1999-02-02"
+            )
+        db_session.add(new_user)
+        db_session.commit()
