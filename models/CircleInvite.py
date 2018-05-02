@@ -14,8 +14,8 @@ class CircleInvite(Base):
     created = Column(DateTime)
     updated = Column(DateTime)
 
-    circle = relationship("Circle", back_populates="circleInvites")
-    user = relationship("User", back_populates="circleInvites")
+    user = relationship("User", back_populates="circleInvite")
+    circle = relationship("Circle", back_populates="circleInvite")
 
     def __repr__(self):
         return "<CircleInvite(id='%d' circle_id='%d' user_id='%d' created='%s' updated='%s')>"%(self.id, self.circle_id, self.user_id, str(self.created), str(self.updated))

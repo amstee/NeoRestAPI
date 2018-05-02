@@ -16,7 +16,7 @@ class Circle(Base):
     device = relationship("Device", uselist=False, back_populates="circle", cascade="save-update")
     userLink = relationship("UserToCircle", back_populates="circle", order_by="UserToCircle.id",
                             cascade="save-update, delete")
-    circleInvites = relationship("CircleInvite", back_populates="circle", order_by="CircleInvite.id",
+    circleInvite = relationship("CircleInvite", back_populates="circle", order_by="CircleInvite.id",
                                 cascade="save-update, delete")
     conversations = relationship("Conversation", back_populates="circle", order_by="Conversation.id",
                                  cascade="save-update, delete")
@@ -48,6 +48,23 @@ class Circle(Base):
                 return True
         return False
 
+    def hasAdmin(self, member):
+        for link in self.userLink:
+            if link.user_id == member.id and link.privilege == "ADMIN":
+                return True
+        return False
+
+    def hasInvite(self, user):
+        for invite in self.circleInvite:
+            if invite.user_id == user.id:
+                return True
+        return False
+
+    def checkValidity(self):
+        if len(self.userLink) == 0:
+            db_session.delete(self)
+            db_session.commit()
+
     def updateContent(self, name=None, created=None, updated=datetime.datetime.now()):
         if name is not None and name != "":
             self.name = name
@@ -63,18 +80,10 @@ class Circle(Base):
                 self.updated = updated
         db_session.commit()
 
-    def addUser(self, user):
-        link = UserToCircle()
-        link.circle = self
-        link.user = user
-        self.userLink.append(link)
-        user.circleLink.append(link)
-        db_session.commit()
-
     def removeUser(self, user):
         for userlink in self.userLink:
             if userlink.user_id == user.id:
-                db_session.remove(userlink)
+                db_session.delete(userlink)
                 db_session.commit()
                 return True
         return False
@@ -96,6 +105,6 @@ class Circle(Base):
             "updated": self.updated,
             "users": [link.getContent(False) for link in self.userLink],
             "device": self.device.getSimpleContent() if self.device is not None else {},
-            "invites": [invite.getContent(False) for invite in self.circleInvites],
+            "invites": [invite.getContent(False) for invite in self.circleInvite],
             "conversations": [conv.getSimpleContent() for conv in self.conversations]
         }

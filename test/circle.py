@@ -71,6 +71,7 @@ class TestCircleDelete(unittest.TestCase):
         db_session.commit()
 
     def test_valid_deletion(self):
+        id = self.circle.id
         json_data = {
             "token": self.tokenAdmin,
             "circle_id": self.circle.id
@@ -79,6 +80,8 @@ class TestCircleDelete(unittest.TestCase):
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success'] == True
+        c = db_session.query(Circle).filter(Circle.id==id).first()
+        assert c == None
 
     def test_invalid_user(self):
         json_data = {
@@ -209,6 +212,7 @@ class TestCircleInfo(unittest.TestCase):
         }
         response = self.api.post('/circle/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
+        print(response_json)
         assert response.status_code == 200
         assert response_json['success'] == True
         assert self.circle.name == response_json["content"]["name"]

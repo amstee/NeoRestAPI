@@ -28,7 +28,7 @@ class User(Base):
                               cascade="save-update, delete")
     conversationLinks = relationship("UserToConversation", back_populates="user", order_by="UserToConversation.id",
                                      cascade="save-update, delete")
-    circleInvites = relationship("CircleInvite", back_populates="user", order_by="CircleInvite.id", cascade="save-update, delete")
+    circleInvite = relationship("CircleInvite", back_populates="user", order_by="CircleInvite.id", cascade="save-update, delete")
 
     def __init__(self, email=None, password=None, first_name=None, last_name=None,
                  birthday=None, created=datetime.datetime.now(),
