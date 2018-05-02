@@ -15,6 +15,7 @@ import routes.DeviceMessage as DeviceMessageManager
 import routes.ConversationLogic as ConversationLogicManager
 import routes.Conversation as ConversationManager
 import routes.DeviceMessageLogic as DeviceMessageLogicManager
+import routes.Facebook as Facebook
 import config.database as db
 
 class neoapi(object):
@@ -102,6 +103,8 @@ class neoapi(object):
         self.api.add_resource(DeviceMessageManager.DeviceMessageUpdate, '/device/message/update')
         # PAYMENT ROUTES
         self.api.add_resource(PaymentManager.FakePayment, '/device/buy')
+        # API ROUTE
+        self.api.add_resource(Facebook.Webhook, '/api/messenger/webhook')
 
         db.init_db()
         User.CreateNeoAdmin()
