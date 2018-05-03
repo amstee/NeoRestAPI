@@ -9,6 +9,7 @@ from utils.apiUtils import *
 from webargs import fields, validate
 from webargs.flaskparser import use_args, use_kwargs, parser, abort
 import requests
+import sys
 
 SECRET_TOKEN = "abcdef12345"
 PAGE_ACCESS_TOKEN = "EAACr1x9RQUwBAN7T2V2fhZCLKhXsjeWRXSeHrB6OUbPs8wcSQeKwPlcNPTbLXgENzdMcI2JZCjdVZCSSr7AYBgVRMZC5RSclC6ZBEm9ZCHINZB1TWTXy1M450ikhYX8qy0lbzKPcHeVcbmMZAAdjj5179kz5MiHclwc7v2yq1OvDNIIA04z6iWyC"
@@ -44,9 +45,9 @@ class Webhook(Resource):
 
     @checkContent
     def post(self, content):
-        print("----facebook content----")
+        print("----facebook content----", file=sys.stderr)
         print(content, file=sys.stderr)
-        print("----facebook content end---")
+        print("----facebook content end---", file=sys.stderr)
         #if data["object"] == "page":
         #    for entry in data["entry"]:
         #        for messaging_event in entry["messaging"]:
