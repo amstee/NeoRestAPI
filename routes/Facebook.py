@@ -42,22 +42,23 @@ class Webhook(Resource):
             return args["hub"]["challenge"], 200
         return "Hello Facebook", 200
 
+    @checkContent
     def post(self, content):
         print("----facebook content----")
         print(content)
         print("----facebook content end---")
-        if data["object"] == "page":
-            for entry in data["entry"]:
-                for messaging_event in entry["messaging"]:
-                    if messaging_event.get("message"):
-                        sender_id = messaging_event["sender"]["id"]        
-                        recipient_id = messaging_event["recipient"]["id"]  
-                        message_text = messaging_event["message"]["text"]
-                        print("----messenger content----")
-                        print("sender id : " + str(sender_id))
-                        print("recipient_id : " + str(recipient_id))
-                        print("message_text : " + message_text)
-                        print("----messenger content end----")
-                        send_message(sender_id, "Message received")
+        #if data["object"] == "page":
+        #    for entry in data["entry"]:
+        #        for messaging_event in entry["messaging"]:
+        #            if messaging_event.get("message"):
+        #                sender_id = messaging_event["sender"]["id"]        
+        #                recipient_id = messaging_event["recipient"]["id"]  
+        #                message_text = messaging_event["message"]["text"]
+        #                print("----messenger content----")
+        #                print("sender id : " + str(sender_id))
+        #                print("recipient_id : " + str(recipient_id))
+        #                print("message_text : " + message_text)
+        #                print("----messenger content end----")
+        #                send_message(sender_id, "Message received")
 
-        return "Ok", 200
+        return "ok", 200
