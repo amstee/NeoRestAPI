@@ -48,18 +48,17 @@ class Webhook(Resource):
         print("----facebook content----", file=sys.stderr)
         print(content, file=sys.stderr)
         print("----facebook content end---", file=sys.stderr)
-        #if data["object"] == "page":
-        #    for entry in data["entry"]:
-        #        for messaging_event in entry["messaging"]:
-        #            if messaging_event.get("message"):
-        #                sender_id = messaging_event["sender"]["id"]        
-        #                recipient_id = messaging_event["recipient"]["id"]  
-        #                message_text = messaging_event["message"]["text"]
-        #                print("----messenger content----")
-        #                print("sender id : " + str(sender_id))
-        #                print("recipient_id : " + str(recipient_id))
-        #                print("message_text : " + message_text)
-        #                print("----messenger content end----")
-        #                send_message(sender_id, "Message received")
-
+        if content["object"] == "page":
+            for entry in content["entry"]:
+                for messaging_event in entry["messaging"]:
+                    if messaging_event.get("message"):
+                        sender_id = messaging_event["sender"]["id"]        
+                        recipient_id = messaging_event["recipient"]["id"]  
+                        message_text = messaging_event["message"]["text"]
+                        print("----messenger content----", file=sys.stderr)
+                        print("sender id : " + str(sender_id), file=sys.stderr)
+                        print("recipient_id : " + str(recipient_id), file=sys.stderr)
+                        print("message_text : " + message_text, file=sys.stderr)
+                        print("----messenger content end----", file=sys.stderr)
+                        send_message(sender_id, "Message received")
         return "ok", 200
