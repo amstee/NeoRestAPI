@@ -45,7 +45,7 @@ class Webhook(Resource):
     @checkContent
     def post(self, content):
         print("----facebook content----")
-        print(content)
+        print(content, file=sys.stderr)
         print("----facebook content end---")
         #if data["object"] == "page":
         #    for entry in data["entry"]:
