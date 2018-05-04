@@ -166,3 +166,10 @@ class PromoteAdmin(Resource):
             return FAILED("Utilisateur introuvable")
         except Exception as e:
             return FAILED(e)
+
+class CreateApiToken(Resource):
+    @checkContent
+    @securedRoute
+    def post(self, content, user):
+        token = user.encodeApiToken()
+        return token, 200

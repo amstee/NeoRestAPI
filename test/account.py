@@ -171,7 +171,7 @@ class AccountLogin(unittest.TestCase):
         assert response.status_code == 401
         assert response_json['success'] == False
 
-class AccountInfo(unittest.TestCase):
+class AccountApiToken(unittest.TestCase):
     def setUp(self):
         neo = neoapi()
         self.api = neo.activate_testing()
