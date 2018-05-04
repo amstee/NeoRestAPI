@@ -79,18 +79,17 @@ class CircleQuit(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            contentChecker("link_id")
-            link = db_session.query(UserToCircle).filter(UserToCircle.id == content["link_id"]).first()
+            contentChecker("circle_id")
+            link = db_session.query(UserToCircle).filter(UserToCircle.circle_id==content["circle_id"],
+                                                         UserToCircle.user_id==user.id).first()
             if link is not None:
-                if link.user_id != user.id:
-                    return FAILED("Action non authorisée", 403)
                 id = link.circle.id
                 db_session.delete(link)
                 db_session.commit()
                 circle = db_session.query(Circle).filter(Circle.id==id).first()
                 circle.checkValidity()
                 return SUCCESS()
-            return FAILED("Lien introuvable")
+            return FAILED("L'utilisateur n'appartient pas a ce cercle", 403)
         except Exception as e:
             return FAILED(e)
 

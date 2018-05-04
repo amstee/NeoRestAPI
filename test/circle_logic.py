@@ -296,7 +296,7 @@ class TestCircleQuit(unittest.TestCase):
     def test_valid_quit(self):
         json_data = {
             "token": self.token3,
-            "link_id": self.link1.id
+            "circle_id": self.circle.id
         }
         response = self.api.post('/circle/quit', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
@@ -306,7 +306,7 @@ class TestCircleQuit(unittest.TestCase):
     def test_invalid_user(self):
         json_data = {
             "token": self.token2,
-            "link_id": self.link1.id
+            "circle_id": self.circle.id
         }
         response = self.api.post('/circle/quit', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
@@ -326,13 +326,13 @@ class TestCircleQuit(unittest.TestCase):
         id = self.circle.id
         json_data = {
             "token": self.token1,
-            "link_id": self.link.id
+            "circle_id": self.circle.id
         }
         response1 = self.api.post('/circle/quit', data=json.dumps(json_data), content_type='application/json')
         response_json1 = json.loads(response1.data)
         json_data_2 = {
             "token": self.token3,
-            "link_id": self.link1.id
+            "circle_id": self.circle.id
         }
         response2 = self.api.post('/circle/quit', data=json.dumps(json_data_2), content_type='application/json')
         response_json2 = json.loads(response2.data)
