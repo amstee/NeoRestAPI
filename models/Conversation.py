@@ -36,7 +36,7 @@ class Conversation(Base):
         if name is not None and name != "":
             self.name = name
         else:
-            self.name = "Conversation %d"%self.id
+            self.name = "Conversation"
         self.device_access = device_access
         db_session.add(self)
 
