@@ -21,6 +21,8 @@ class User(Base):
     created = Column(DateTime)
     updated = Column(DateTime)
     jsonToken = Column(String(4096))
+    apiToken = Column(String(4096))
+    facebookPSID = Column(Integer)
     type = Column(String(10))
 
     # RELATIONS
@@ -58,6 +60,7 @@ class User(Base):
             else:
                 self.updated = updated
         self.type = "DEFAULT"
+        self.facebookPSID = -1
         db_session.add(self)
 
     def __repr__(self):
@@ -100,6 +103,20 @@ class User(Base):
             token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
             self.jsonToken = token.decode()
             db_session.commit()
+            return token.decode()
+        except Exception as e:
+            print(e)
+            return (None)
+
+    def encodeApiToken(self):
+        try:
+            payload = {
+                'sub': self.id,
+                'first_name': self.first_name,
+                'last_name': self.last_name
+            }
+            token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+            self.apiToken = token.decode()
             return token.decode()
         except Exception as e:
             print(e)
