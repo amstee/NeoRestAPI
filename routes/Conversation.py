@@ -11,7 +11,7 @@ from utils.apiUtils import *
 class ConversationCreate(Resource):
     @checkContent
     @securedAdminRoute
-    def post(self, content):
+    def post(self, content, admin):
         try:
             contentChecker("conversation_name", "circle_id")
             circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
@@ -52,7 +52,7 @@ class ConversationInfo(Resource):
                 return FAILED("Conversation introuvable")
             if conv.hasMembers(user):
                 return jsonify({"success": True, "content": conv.getContent()})
-            return FAILED("L'utilisateur n'a pas acces a cette conversation")
+            return FAILED("L'utilisateur n'a pas acces a cette conversation", 403)
         except Exception as e:
             return FAILED(e)
 
@@ -82,8 +82,8 @@ class ConversationList(Resource):
             circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
             if circle is None:
                 return FAILED("Cercle introuvable")
-            if circle.hasMember(user):
-                return FAILED("L'utilisateur n'appartient pas au cercle spécifié")
+            if not circle.hasMember(user):
+                return FAILED("L'utilisateur n'appartient pas au cercle spécifié", 403)
             convs = db_session.query(Conversation).join(UserToConversation).filter(
                 Conversation.circle_id==circle.id,
                 UserToConversation.user_id==user.id
@@ -118,14 +118,17 @@ class ConversationUpdate(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            contentChecker("link_id")
-            link = db_session.query(UserToConversation).filter(UserToConversation.id==content["link_id"]).first()
+            contentChecker("conversation_id")
+            link = db_session.query(UserToConversation).filter(UserToConversation.user_id==user.id,
+                                                               UserToConversation.conversation_id==content["conversation_id"]).first()
             if link is None:
-                return FAILED("Lien introuvable")
-            if link.privilege == "ADMIN" and link.user_id == user.id:
+                return FAILED("Cet utilisateur n'appartient pas a cette conversation", 403)
+            if link.privilege == "ADMIN":
                 link.conversation.updateContent(name=content["conversation_name"] if "conversation_name" in content else None,
                                                 created=content["created"] if "created" in content else None,
                                                 device_access=content["device_access"] if "device_access" in content else None)
-            return SUCCESS()
+                return jsonify({"success": True, "content": link.conversation.getSimpleContent()})
+            else:
+                return FAILED("Cet utilisateur n'a pas les droits suffisants pour modifier cette conversation", 403)
         except Exception as e:
             return FAILED(e)
