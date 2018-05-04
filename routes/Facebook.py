@@ -9,6 +9,7 @@ from utils.apiUtils import *
 from webargs import fields, validate
 from webargs.flaskparser import use_args, use_kwargs, parser, abort
 import requests
+import sys
 
 SECRET_TOKEN = "abcdef12345"
 PAGE_ACCESS_TOKEN = "EAACr1x9RQUwBAN7T2V2fhZCLKhXsjeWRXSeHrB6OUbPs8wcSQeKwPlcNPTbLXgENzdMcI2JZCjdVZCSSr7AYBgVRMZC5RSclC6ZBEm9ZCHINZB1TWTXy1M450ikhYX8qy0lbzKPcHeVcbmMZAAdjj5179kz5MiHclwc7v2yq1OvDNIIA04z6iWyC"
@@ -42,22 +43,22 @@ class Webhook(Resource):
             return args["hub"]["challenge"], 200
         return "Hello Facebook", 200
 
+    @checkContent
     def post(self, content):
-        print("----facebook content----")
-        print(content)
-        print("----facebook content end---")
-        if data["object"] == "page":
-            for entry in data["entry"]:
+        print("----facebook content----", file=sys.stderr)
+        print(content, file=sys.stderr)
+        print("----facebook content end---", file=sys.stderr)
+        if content["object"] == "page":
+            for entry in content["entry"]:
                 for messaging_event in entry["messaging"]:
                     if messaging_event.get("message"):
                         sender_id = messaging_event["sender"]["id"]        
                         recipient_id = messaging_event["recipient"]["id"]  
                         message_text = messaging_event["message"]["text"]
-                        print("----messenger content----")
-                        print("sender id : " + str(sender_id))
-                        print("recipient_id : " + str(recipient_id))
-                        print("message_text : " + message_text)
-                        print("----messenger content end----")
+                        print("----messenger content----", file=sys.stderr)
+                        print("sender id : " + str(sender_id), file=sys.stderr)
+                        print("recipient_id : " + str(recipient_id), file=sys.stderr)
+                        print("message_text : " + message_text, file=sys.stderr)
+                        print("----messenger content end----", file=sys.stderr)
                         send_message(sender_id, "Message received")
-
-        return "Ok", 200
+        return "ok", 200
