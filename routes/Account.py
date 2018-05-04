@@ -171,5 +171,14 @@ class CreateApiToken(Resource):
     @checkContent
     @securedRoute
     def post(self, content, user):
-        token = user.encodeApiToken()
-        return token, 200
+        try:
+            token = user.encodeApiToken()
+            user.updateContent(apiToken=token)
+            resp = jsonify({
+                "success" : True,
+                "apiToken": token
+            })
+            resp.status_code = 200
+            return resp
+        except Exception as e:
+            return FAILED(e)

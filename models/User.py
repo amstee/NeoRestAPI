@@ -60,6 +60,7 @@ class User(Base):
             else:
                 self.updated = updated
         self.type = "DEFAULT"
+        self.apiToken = None
         self.facebookPSID = -1
         db_session.add(self)
 
@@ -143,7 +144,7 @@ class User(Base):
             db_session.commit()
 
     def updateContent(self, email=None, first_name=None, last_name=None, birthday=None,
-                      searchText=None, created=None, updated=datetime.datetime.now()):
+                      searchText=None, apiToken=None, created=None, updated=datetime.datetime.now()):
         if email is not None and email is not "":
             self.email = email
         if first_name is not None and first_name is not "":
@@ -151,7 +152,7 @@ class User(Base):
         if last_name is not None and last_name is not "":
             self.last_name = last_name
         if birthday is not None and birthday is not "" and type(birthday) is str:
-            self.birthday = DateParser.parse(birthday)
+            self.birthday = DateParser.parse(birthdsay)
         if searchText is not None and searchText is not "":
             self.searchText = searchText
         if type(updated) is str:
@@ -162,6 +163,7 @@ class User(Base):
             self.created = DateParser.parse(created)
         elif created is not None:
             self.created = created
+        self.apiToken = apiToken
         db_session.commit()
 
     def promoteAdmin(self):
