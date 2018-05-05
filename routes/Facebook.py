@@ -1,8 +1,7 @@
 from flask_restful import Resource
 from flask.views import MethodView
 from config.database import db_session
-from models.Circle import Circle
-from models.Conversation import Conversation
+from models.User import User
 from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
@@ -10,7 +9,9 @@ from webargs import fields, validate
 from webargs.flaskparser import use_args, use_kwargs, parser, abort
 import requests
 import sys
+import jwt
 
+SECRET_KEY = "defaultusersecretkey"
 SECRET_TOKEN = "abcdef12345"
 PAGE_ACCESS_TOKEN = "EAACr1x9RQUwBAN7T2V2fhZCLKhXsjeWRXSeHrB6OUbPs8wcSQeKwPlcNPTbLXgENzdMcI2JZCjdVZCSSr7AYBgVRMZC5RSclC6ZBEm9ZCHINZB1TWTXy1M450ikhYX8qy0lbzKPcHeVcbmMZAAdjj5179kz5MiHclwc7v2yq1OvDNIIA04z6iWyC"
 
@@ -27,6 +28,23 @@ def SendMessage(recipient_id, message_text):
     if r.status_code != 200:
         return False
     return True
+
+def LinkUserToFacebook(apiToken, psid):
+        try:
+            payload = jwt.decode(auth_token, SECRET_KEY)
+            try:
+                user = db_session.query(User).filter(User.id == payload['sub']).first()
+                if user is not None:
+                    user.updateContent(facebookPSID=psid)
+                    return ("Bienvenue sur NEO, " + payload['first_name'] + " " + payload['last_name'] + " !")
+                else:
+                    return 'Utilisateur introuvable'
+            except Exception as e:
+                return "Une erreur est survenue, merci de réessayer ultérieurement"
+        except jwt.ExpiredSignatureError:
+            return 'La session a expiré, authentifiez vous a nouveau'
+        except jwt.InvalidTokenError:
+            return 'Token invalide, authentifiez vous a nouveau'
 
 class Webhook(Resource):
     messenger_hook = {

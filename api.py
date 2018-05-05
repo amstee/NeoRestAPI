@@ -104,6 +104,7 @@ class neoapi(object):
         # PAYMENT ROUTES
         self.api.add_resource(PaymentManager.FakePayment, '/device/buy')
         # API ROUTE
+        self.api.add_resource(AccountManager.CreateApiToken, '/api/token')
         self.api.add_resource(Facebook.Webhook, '/api/messenger/webhook')
 
         db.init_db()

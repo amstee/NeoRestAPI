@@ -21,6 +21,7 @@ class User(Base):
     created = Column(DateTime)
     updated = Column(DateTime)
     jsonToken = Column(String(4096))
+    facebookPSID = Column(Integer)
     type = Column(String(10))
 
     # RELATIONS
@@ -58,6 +59,7 @@ class User(Base):
             else:
                 self.updated = updated
         self.type = "DEFAULT"
+        self.facebookPSID = -1
         db_session.add(self)
 
     def __repr__(self):
@@ -105,6 +107,21 @@ class User(Base):
             print(e)
             return (None)
 
+    def encodeApiToken(self):
+        try:
+            payload = {
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1, seconds=1),
+                'iat': datetime.datetime.utcnow(),
+                'sub': self.id,
+                'first_name': self.first_name,
+                'last_name': self.last_name
+            }
+            token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+            return token.decode()
+        except Exception as e:
+            print(e)
+            return (None)
+
     def checkPassword(self, password=None):
         if password != None and password != "":
             if self.password != hashlib.sha512(password.encode("utf-8")).hexdigest():
@@ -126,7 +143,7 @@ class User(Base):
             db_session.commit()
 
     def updateContent(self, email=None, first_name=None, last_name=None, birthday=None,
-                      searchText=None, created=None, updated=datetime.datetime.now()):
+                      searchText=None, facebookPSID=None, created=None, updated=datetime.datetime.now()):
         if email is not None and email is not "":
             self.email = email
         if first_name is not None and first_name is not "":
@@ -134,7 +151,7 @@ class User(Base):
         if last_name is not None and last_name is not "":
             self.last_name = last_name
         if birthday is not None and birthday is not "" and type(birthday) is str:
-            self.birthday = DateParser.parse(birthday)
+            self.birthday = DateParser.parse(birthdsay)
         if searchText is not None and searchText is not "":
             self.searchText = searchText
         if type(updated) is str:
@@ -145,6 +162,7 @@ class User(Base):
             self.created = DateParser.parse(created)
         elif created is not None:
             self.created = created
+        self.facebookPSID = facebookPSID
         db_session.commit()
 
     def promoteAdmin(self):
