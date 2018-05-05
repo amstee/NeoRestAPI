@@ -124,7 +124,7 @@ class ModifyDevicePassword(Resource):
     def post(self, content):
         try:
             contentChecker("device_username", "previous_password", "new_password")
-            device = db_session.query(Device).filter_by(Device.username==content["device_username"]).first()
+            device = db_session.query(Device).filter(Device.username==content["device_username"]).first()
             if device is not None:
                 if device.checkPassword(content["previous_password"]):
                     device.updatePassword(content["new_password"])
@@ -149,12 +149,8 @@ class DeviceLogout(Resource):
             contentChecker("device_token")
             res, data = Device.decodeAuthToken(content["device_token"])
             if res is True:
-                disco_res, message = data.disconnect()
-                if disco_res:
-                    return SUCCESS()
-                else:
-                    resp = jsonify({"success": False, "message": message})
-                    resp.status_code = 403
+                data.disconnect()
+                return SUCCESS()
             else:
                 resp = jsonify({"success": True, "message": data})
                 resp.status_code = 403
@@ -186,7 +182,7 @@ class DeviceCredentials(Resource):
             device = db_session.query(Device).filter(Device.id==content["device_id"]).first()
             if device is None:
                 return FAILED("Device Neo introuvable")
-            return jsonify({"sucess": True, "content": {
+            return jsonify({"success": True, "content": {
                                 "key": device.key,
                                 "username": device.username,
                                 "password": device.getPreActivationPassword()

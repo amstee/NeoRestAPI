@@ -20,7 +20,7 @@ def userIsOwnerOfMessage(message, user):
     return False
 
 def deviceHasAccessToMessage(message, device):
-    if message.conversation.circle.device_id == device.id:
+    if message.conversation.circle.device.id== device.id:
         if message.conversation.device_access is True:
             return True
     return False
