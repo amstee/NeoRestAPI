@@ -24,7 +24,8 @@ class Message(Base):
     def __repr__(self):
         return "<NeoMessage(id='%d' sent='%s' read='%s')>"%(self.id, str(self.sent), str(self.read))
 
-    def __init__(self, sent=datetime.datetime.now(), read=None, content=None, isUser=True):
+    def __init__(self, sent=datetime.datetime.now(), read=None, content=None, isUser=True,
+                 link=None, conversation=None):
         if sent is not None:
             if type(sent) is str:
                 self.sent = DateParser.parse(sent)
@@ -37,6 +38,10 @@ class Message(Base):
                 self.reed = read
         if content is not None:
             self.text_content = content
+        if link is not None:
+            self.link = link
+        if conversation is not None:
+            self.conversation = conversation
         self.isUser = isUser
         db_session.add(self)
 

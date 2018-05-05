@@ -22,7 +22,7 @@ class UserToConversation(Base):
             self.id, self.user_id, self.conversation_id, self.privilege)
 
     def __init__(self, created=datetime.datetime.now(), updated=datetime.datetime.now(),
-                 privilege=None):
+                 privilege=None, user=None, conversation=None):
         if created is not None:
             if type(created) is str:
                 self.created = DateParser.parse(created)
@@ -37,6 +37,10 @@ class UserToConversation(Base):
             self.privilege = privilege
         else:
             self.privilege = "STANDARD"
+        if user is not None:
+            self.user = user
+        if conversation is not None:
+            self.conversation = conversation
         db_session.add(self)
 
     def updateContent(self, created=None, updated=datetime.datetime.now(),

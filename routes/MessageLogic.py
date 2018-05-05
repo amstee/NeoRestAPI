@@ -22,8 +22,8 @@ class FirstMessageToDeviceSend(Resource):
             if circle is None:
                 return FAILED("Cercle spécifié introuvable")
             if not circle.hasMember(user):
-                return FAILED("Impossible de communiquer avec ce device")
-            conversation = Conversation(device_access=True)
+                return FAILED("Vous n'appartenez pas a ce cercle", 403)
+            conversation = Conversation(name=content["conversation_name"] if "conversation_name" in content else circle.name, device_access=True)
             conversation.circle = circle
             link = UserToConversation(privilege="ADMIN")
             link.user = user
@@ -46,23 +46,21 @@ class FirstMessageSend(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            contentChecker("user_id", "circle_id")
-            dest = db_session.query(UserModel).filter(UserModel.id==content["user_id"]).first()
+            contentChecker("email", "circle_id")
+            dest = db_session.query(UserModel).filter(UserModel.email==content["email"]).first()
             circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
             if dest is None:
                 return FAILED("Destinataire introuvable")
             if circle is None:
                 return FAILED("Cercle spécifié introuvable")
+            if not circle.hasMember(user):
+                return FAILED("Vous n'appartenez pas a ce cercle", 403)
             if not circle.hasMember(dest) and circle.hasMember(user):
-                return FAILED("Ce cercle ne contient pas l'utilisateur recherché")
+                return FAILED("Ce cercle ne contient pas l'utilisateur recherché", 403)
             conversation = Conversation()
             conversation.circle = circle
-            link1 = UserToConversation(privilege="ADMIN")
-            link2 = UserToConversation(privilege="STANDARD")
-            link1.user = user
-            link1.conversation = conversation
-            link2.user = dest
-            link2.conversation = conversation
+            link1 = UserToConversation(privilege="ADMIN", user=user, conversation=conversation)
+            link2 = UserToConversation(privilege="STANDARD", user=dest, conversation=conversation)
             message = Message(content=content["text_message"] if "text_message" in content else None)
             message.conversation = conversation
             message.link = link1
@@ -73,7 +71,6 @@ class FirstMessageSend(Resource):
                         message.medias.append(new_file)
             db_session.commit()
             return SUCCESS()
-            # conversation = db_session.query(Conversation).join(UserToConversation).filter(UserToConversation.user_id.in_((dest.id, user.id))).first()
         except Exception as e:
             return FAILED(e)
 
@@ -83,12 +80,11 @@ class MessageSend(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            contentChecker("link_id")
-            link = db_session.query(UserToConversation).filter(UserToConversation.id==content["link_id"]).first()
+            contentChecker("conversation_id")
+            link = db_session.query(UserToConversation).filter(UserToConversation.conversation_id==content["conversation_id"],
+                                                               UserToConversation.user_id==user.id).first()
             if link is None:
-                return FAILED("Lien vers la conversation introuvable")
-            if link.user_id != user.id:
-                return FAILED("Cet utilisateur ne peut pas envoyer de message dans cette conversation")
+                return FAILED("Conversation introuvable", 403)
             message = Message(content=content["text_message"] if "text_message" in content else None)
             message.conversation = link.conversation
             if "files" in content:

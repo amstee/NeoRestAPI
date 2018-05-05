@@ -7,7 +7,7 @@ def userHasAccessToMessage(message, user):
     if message.link is not None and message.link.user_id == user.id:
         return True
     link = db_session.query(UserToConversation).filter(UserToConversation.conversation_id==message.conversation_id,
-                                                       UserToConversation.user_id==user.id)
+                                                       UserToConversation.user_id==user.id).first()
     if link is None:
         return False
     return True

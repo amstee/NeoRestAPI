@@ -22,7 +22,7 @@ class Conversation(Base):
         return "<Conversation(id='%d' name='%s' created='%s' updated='%s')>"%(self.id, self.name, str(self.created), str(self.updated))
 
     def __init__(self, name=None, created=datetime.datetime.now(), updated=datetime.datetime.now(),
-                 device_access=False):
+                 device_access=False, circle=None):
         if created is not None:
             if type(created) is str:
                 self.created = DateParser.parse(created)
@@ -37,6 +37,8 @@ class Conversation(Base):
             self.name = name
         else:
             self.name = "Conversation"
+        if circle is not None:
+            self.circle = circle
         self.device_access = device_access
         db_session.add(self)
 
