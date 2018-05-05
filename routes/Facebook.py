@@ -2,6 +2,7 @@ from flask_restful import Resource
 from flask.views import MethodView
 from config.database import db_session
 from models.User import User
+from models.Conversation import Conversation
 from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
@@ -29,6 +30,18 @@ def SendMessage(recipient_id, message_text):
         return False
     return True
 
+def MessengerUserModelSend(userTarget, text_message):
+    if userTarget.facebookPSID != -1:
+        SendMessage(userTarget.facebookPSID, text_message)
+        return True
+    return False
+
+def IsUserLinked(facebookPSID):
+    user = db_session.query(User).filter(User.facebookPSID == facebookPSID).first()
+    if user is not None:
+        return True
+    return False
+
 def LinkUserToFacebook(apiToken, psid):
         try:
             payload = jwt.decode(auth_token, SECRET_KEY)
@@ -38,11 +51,11 @@ def LinkUserToFacebook(apiToken, psid):
                     user.updateContent(facebookPSID=psid)
                     return ("Bienvenue sur NEO, " + payload['first_name'] + " " + payload['last_name'] + " !")
                 else:
-                    return 'Utilisateur introuvable'
+                    return 'Token invalide !'
             except Exception as e:
                 return "Une erreur est survenue, merci de réessayer ultérieurement"
         except jwt.ExpiredSignatureError:
-            return 'La session a expiré, authentifiez vous a nouveau'
+            return 'La token a expiré, authentifiez vous a nouveau'
         except jwt.InvalidTokenError:
             return 'Token invalide, authentifiez vous a nouveau'
 
@@ -73,6 +86,15 @@ class Webhook(Resource):
                         sender_id = messaging_event["sender"]["id"]        
                         recipient_id = messaging_event["recipient"]["id"]  
                         message_text = messaging_event["message"]["text"]
+                        # messenger
+                        #if IsUserLinked(sender_id):
+                        #    print("send message to conversation")
+                        #elif len(message_text) == 4096:
+                        #    message = LinkUserToFacebook(message_text, sender_id)
+                        #    SendMessage(sender_id, message)
+                        #else:
+                        #    send_message(sender_id, "Votre compte messenger n'est lié a aucun compte messenger")
+                        # messenger
                         print("----messenger content----", file=sys.stderr)
                         print("sender id : " + str(sender_id), file=sys.stderr)
                         print("recipient_id : " + str(recipient_id), file=sys.stderr)
