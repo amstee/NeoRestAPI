@@ -15,8 +15,8 @@ class FirstDeviceMessageSend(Resource):
     @securedDeviceRoute
     def post(self, content, device):
         try:
-            contentChecker("user_id")
-            user = db_session.query(UserModel).filter(UserModel.id==content["user_id"]).first()
+            contentChecker("email")
+            user = db_session.query(UserModel).filter(UserModel.email==content["email"]).first()
             if user is None:
                 return FAILED("Utilisateur spécifié introuvable")
             if not device.circle.hasMember(user):
@@ -50,7 +50,7 @@ class DeviceMessageSend(Resource):
             if conv is None:
                 return FAILED("Conversation introuvable")
             if conv.device_access is False or conv.circle.id != device.circle.id:
-                return FAILED("Vous ne pouvez pas acceder a cette conversation")
+                return FAILED("Vous ne pouvez pas acceder a cette conversation", 403)
             message = Message(content=content["text_message"] if "text_message" in content else None, isUser=False)
             message.conversation = conv
             message.device = device

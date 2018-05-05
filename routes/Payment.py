@@ -60,8 +60,7 @@ class FakePayment(Resource):
             if circle is not None:
                 if not circle.hasMember(user):
                     return FAILED("Cet utilisateur ne fait pas parti du cercle spécifié")
-                device = Device(name=content["device_name"] if "device_name" in content else "Papie/Mamie",
-                                username=content["device_username"] if "device_username" in content else None)
+                device = Device(name=content["device_name"] if "device_name" in content else "Papie/Mamie")
                 circle.device = device
                 device.circle = circle
                 db_session.commit()

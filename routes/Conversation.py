@@ -88,8 +88,6 @@ class ConversationList(Resource):
                 Conversation.circle_id==circle.id,
                 UserToConversation.user_id==user.id
             ).all()
-            if len(convs) <= 0:
-                return FAILED("Aucune conversation trouvée")
             return jsonify({"success": True, "content": [conv.getSimpleContent() for conv in convs]})
         except Exception as e:
             return FAILED(e)

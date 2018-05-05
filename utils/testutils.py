@@ -12,3 +12,16 @@ def AuthenticateUser(api, user, password):
     response = api.post('/account/login', data=json.dumps(json_data), content_type='application/json')
     response_json = json.loads(response.data)
     return response_json['token']
+
+def AuthenticateDevice(api, device, password):
+    if type(device) is str:
+        varia = device
+    else:
+        varia = device.username
+    json_data = {
+        "device_username": varia,
+        "device_password": password
+    }
+    response = api.post('/device/authenticate', data=json.dumps(json_data), content_type='application/json')
+    response_json = json.loads(response.data)
+    return response_json['device_token']

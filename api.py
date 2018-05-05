@@ -46,6 +46,7 @@ class neoapi(object):
         self.api.add_resource(CircleManager.CircleDelete, '/admin/circle/delete')
         self.api.add_resource(CircleManager.CircleInfo, '/circle/info')
         self.api.add_resource(CircleManager.CircleList, '/circle/list')
+        self.api.add_resource(CircleManager.CircleDeviceInfo, '/device/circle/info')
         # CONVERSATION BASIC ROUTES
         self.api.add_resource(ConversationManager.ConversationCreate, '/admin/conversation/create')
         self.api.add_resource(ConversationManager.ConversationDelete, '/admin/conversation/delete')
@@ -68,7 +69,7 @@ class neoapi(object):
         self.api.add_resource(BasicMessageManager.MessageUpdate, '/message/update')
         self.api.add_resource(BasicMessageManager.MessageList, '/conversation/message/list')
         # DEVICE MESSAGE LOGIC MANAGER
-        self.api.add_resource(DeviceMessageLogicManager.FirstDeviceMessageSend, '/device/message/first-send')
+        self.api.add_resource(DeviceMessageLogicManager.FirstDeviceMessageSend, '/device/message/first-message')
         self.api.add_resource(DeviceMessageLogicManager.DeviceMessageSend, '/device/message/send')
         # MESSAGE LOGIC ROUTES
         self.api.add_resource(MessageLogicManager.FirstMessageSend, '/message/first-message')
@@ -96,7 +97,7 @@ class neoapi(object):
         self.api.add_resource(DeviceManager.CheckDeviceToken, '/device/token/verify')
         self.api.add_resource(DeviceManager.ModifyDevicePassword, '/device/modify/password')
         # DEVICE MESSAGE ROUTES
-        self.api.add_resource(DeviceMessageManager.DeviceMessageCreate, '/device/message/create')
+        self.api.add_resource(DeviceMessageManager.DeviceMessageCreate, '/admin/device/message/create')
         self.api.add_resource(DeviceMessageManager.DeviceMessageDelete, '/device/message/delete')
         self.api.add_resource(DeviceMessageManager.DeviceMessageInfo, '/device/message/info')
         self.api.add_resource(DeviceMessageManager.DeviceMessageList, '/device/message/list')

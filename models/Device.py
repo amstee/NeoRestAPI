@@ -51,7 +51,12 @@ class Device(Base):
         if username is not None:
             self.username = username
         else:
-            self.username = ''.join(random.choice(string.ascii_uppercase) for _ in range(8))
+            c = True
+            while c:
+                username = ''.join(random.choice(string.ascii_uppercase) for _ in range(12))
+                if db_session.query(Device).filter(Device.username==username).first() is None:
+                    c = False
+            self.username = username
         password = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
         self.password = base64.b64encode(str.encode(password)).decode('utf-8')
         self.key = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
