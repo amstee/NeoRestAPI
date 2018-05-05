@@ -46,6 +46,7 @@ class neoapi(object):
         self.api.add_resource(CircleManager.CircleDelete, '/admin/circle/delete')
         self.api.add_resource(CircleManager.CircleInfo, '/circle/info')
         self.api.add_resource(CircleManager.CircleList, '/circle/list')
+        self.api.add_resource(CircleManager.CircleDeviceInfo, '/device/circle/info')
         # CONVERSATION BASIC ROUTES
         self.api.add_resource(ConversationManager.ConversationCreate, '/admin/conversation/create')
         self.api.add_resource(ConversationManager.ConversationDelete, '/admin/conversation/delete')
