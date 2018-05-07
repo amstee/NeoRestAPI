@@ -103,7 +103,7 @@ class Webhook(Resource):
                                 message = LinkUserToFacebook(message_text, sender_id)
                                 SendMessage(sender_id, message)
                             else:
-                                send_message(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
+                                SendMessage(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
                             # messenger
                             print("----messenger content----", file=sys.stderr)
                             print("sender id : " + str(sender_id), file=sys.stderr)
