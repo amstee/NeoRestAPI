@@ -43,7 +43,7 @@ def MessengerUserModelSend(userTarget, text_message):
         return True
     return False
 
-def MessengerCircleModelSend(SenderID, CircleTarget, text_message)
+#def MessengerCircleModelSend(SenderID, CircleTarget, text_message)
 
 def IsUserLinked(facebookPSID):
     user = db_session.query(User).filter(User.facebookPSID == facebookPSID).first()
