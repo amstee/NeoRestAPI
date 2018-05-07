@@ -17,15 +17,21 @@ SECRET_TOKEN = "abcdef12345"
 PAGE_ACCESS_TOKEN = "EAACr1x9RQUwBAN7T2V2fhZCLKhXsjeWRXSeHrB6OUbPs8wcSQeKwPlcNPTbLXgENzdMcI2JZCjdVZCSSr7AYBgVRMZC5RSclC6ZBEm9ZCHINZB1TWTXy1M450ikhYX8qy0lbzKPcHeVcbmMZAAdjj5179kz5MiHclwc7v2yq1OvDNIIA04z6iWyC"
 
 def SendMessage(recipient_id, message_text):
-    data = {
+    params = {
+        "access_token": PAGE_ACCESS_TOKEN
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    data = json.dumps({
         "recipient": {
             "id": recipient_id
         },
         "message": {
             "text": message_text
         }
-    }
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params={"access_token": PAGE_ACCESS_TOKEN}, json=data)
+    })
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
     if r.status_code != 200:
         return False
     return True
