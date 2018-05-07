@@ -43,6 +43,8 @@ def MessengerUserModelSend(userTarget, text_message):
         return True
     return False
 
+def MessengerCircleModelSend(SenderID, CircleTarget, text_message)
+
 def IsUserLinked(facebookPSID):
     user = db_session.query(User).filter(User.facebookPSID == facebookPSID).first()
     if user is not None:
@@ -83,29 +85,33 @@ class Webhook(Resource):
 
     @checkContent
     def post(self, content):
-        print("----facebook content----", file=sys.stderr)
-        print(content, file=sys.stderr)
-        print("----facebook content end---", file=sys.stderr)
-        if content["object"] == "page":
-            for entry in content["entry"]:
-                for messaging_event in entry["messaging"]:
-                    if messaging_event.get("message"):
-                        sender_id = messaging_event["sender"]["id"]        
-                        recipient_id = messaging_event["recipient"]["id"]  
-                        message_text = messaging_event["message"]["text"]
-                        # messenger
-                        if IsUserLinked(sender_id):
-                            print("send message to conversation", file=sys.stderr)
-                        elif len(message_text) == 4096:
-                            message = LinkUserToFacebook(message_text, sender_id)
-                            SendMessage(sender_id, message)
-                        else:
-                            send_message(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
-                        # messenger
-                        print("----messenger content----", file=sys.stderr)
-                        print("sender id : " + str(sender_id), file=sys.stderr)
-                        print("recipient_id : " + str(recipient_id), file=sys.stderr)
-                        print("message_text : " + message_text, file=sys.stderr)
-                        print("----messenger content end----", file=sys.stderr)
-                        return "ok", 200
-        return "ok", 200
+        try:
+            print("----facebook content----", file=sys.stderr)
+            print(content, file=sys.stderr)
+            print("----facebook content end---", file=sys.stderr)
+            if content["object"] == "page":
+                for entry in content["entry"]:
+                    for messaging_event in entry["messaging"]:
+                        if messaging_event.get("message"):
+                            sender_id = messaging_event["sender"]["id"]        
+                            recipient_id = messaging_event["recipient"]["id"]  
+                            message_text = messaging_event["message"]["text"]
+                            # messenger
+                            if IsUserLinked(sender_id):
+                                print("send message to conversation", file=sys.stderr)
+                            elif len(message_text) == 4096:
+                                message = LinkUserToFacebook(message_text, sender_id)
+                                SendMessage(sender_id, message)
+                            else:
+                                send_message(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
+                            # messenger
+                            print("----messenger content----", file=sys.stderr)
+                            print("sender id : " + str(sender_id), file=sys.stderr)
+                            print("recipient_id : " + str(recipient_id), file=sys.stderr)
+                            print("message_text : " + message_text, file=sys.stderr)
+                            print("----messenger content end----", file=sys.stderr)
+            return "ok", 200
+        except Exception as e:
+            print(e, file=sys.stderr)
+            return "Failed", 500
+        
