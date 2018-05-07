@@ -94,19 +94,18 @@ class Webhook(Resource):
                         recipient_id = messaging_event["recipient"]["id"]  
                         message_text = messaging_event["message"]["text"]
                         # messenger
-                        #if IsUserLinked(sender_id):
-                        #    print("send message to conversation")
-                        #elif len(message_text) == 4096:
-                        #    message = LinkUserToFacebook(message_text, sender_id)
-                        #    SendMessage(sender_id, message)
-                        #else:
-                        #    send_message(sender_id, "Votre compte messenger n'est lié a aucun compte messenger")
+                        if IsUserLinked(sender_id):
+                            print("send message to conversation", file=sys.stderr)
+                        elif len(message_text) == 4096:
+                            message = LinkUserToFacebook(message_text, sender_id)
+                            SendMessage(sender_id, message)
+                        else:
+                            send_message(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
                         # messenger
                         print("----messenger content----", file=sys.stderr)
                         print("sender id : " + str(sender_id), file=sys.stderr)
                         print("recipient_id : " + str(recipient_id), file=sys.stderr)
                         print("message_text : " + message_text, file=sys.stderr)
                         print("----messenger content end----", file=sys.stderr)
-                        send_message(sender_id, "Message received")
                         return "ok", 200
         return "ok", 200
