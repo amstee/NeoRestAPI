@@ -11,6 +11,7 @@ from webargs.flaskparser import use_args, use_kwargs, parser, abort
 import requests
 import sys
 import jwt
+import json
 
 SECRET_KEY = "defaultusersecretkey"
 SECRET_TOKEN = "abcdef12345"
@@ -106,6 +107,6 @@ class Webhook(Resource):
                         print("recipient_id : " + str(recipient_id), file=sys.stderr)
                         print("message_text : " + message_text, file=sys.stderr)
                         print("----messenger content end----", file=sys.stderr)
-                        #send_message(sender_id, "Message received")
+                        send_message(sender_id, "Message received")
                         return "ok", 200
         return "ok", 200
