@@ -2,6 +2,8 @@ from flask_restful import Resource
 from flask.views import MethodView
 from config.database import db_session
 from models.User import User
+from models.Circle import Circle
+from models.UserToCircle import UserToCircle
 from models.Conversation import Conversation
 from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute
 from utils.contentChecker import contentChecker
@@ -43,7 +45,12 @@ def MessengerUserModelSend(userTarget, text_message):
         return True
     return False
 
-#def MessengerCircleModelSend(SenderID, CircleTarget, text_message)
+#def MessengerCircleModelSend(SenderID, Circle, text_message):
+#    circleTargets = db_session.query(UserToCircle).filter(UserToCircle.circle_id == Circle.id)#
+#
+#    for targetUser in circleTargets:
+#        targetUserData = db_session.query(UserToCircle).filter(UserToCircle.circle_id == Circle.id)
+#        if SenderID != targetUser.id and targetUser.facebookPSID 
 
 def IsUserLinked(facebookPSID):
     user = db_session.query(User).filter(User.facebookPSID == facebookPSID).first()
@@ -53,7 +60,7 @@ def IsUserLinked(facebookPSID):
 
 def LinkUserToFacebook(apiToken, psid):
         try:
-            payload = jwt.decode(auth_token, SECRET_KEY)
+            payload = jwt.decode(apiToken, SECRET_KEY)
             try:
                 user = db_session.query(User).filter(User.id == payload['sub']).first()
                 if user is not None:
