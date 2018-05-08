@@ -9,7 +9,7 @@ from utils.decorators import securedRoute, checkContent, securedAdminRoute
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
 from utils.security import userHasAccessToMessage, userIsOwnerOfMessage
-
+from .Facebook import *
 
 class MessageCreate(Resource):
     @checkContent
@@ -29,6 +29,8 @@ class MessageCreate(Resource):
                     new_file = Media().setContent(request.files[file], content["directory_name"], message)
                     message.medias.append(new_file)
             db_session.commit()
+            conversation = db_session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
+            MessengerConversationModelSend(link.user_id, conversation, message.text_content)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)

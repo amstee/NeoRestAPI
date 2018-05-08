@@ -9,6 +9,7 @@ from utils.decorators import checkContent, securedAdminRoute, securedDeviceRoute
 from models.Conversation import Conversation
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
+from .Facebook import *
 
 class FirstDeviceMessageSend(Resource):
     @checkContent
@@ -35,6 +36,7 @@ class FirstDeviceMessageSend(Resource):
                         new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
+            MessengerUserModelSend(userTarget=user, text_message=message.text_content)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
@@ -60,6 +62,7 @@ class DeviceMessageSend(Resource):
                         new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
+            MessengerConversationModelSend(0, conv, message.text_content)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)

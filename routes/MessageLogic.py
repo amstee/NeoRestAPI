@@ -10,6 +10,7 @@ from models.User import User as UserModel
 from utils.decorators import securedRoute, checkContent
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
+from .Facebook import *
 
 
 class FirstMessageToDeviceSend(Resource):
@@ -37,6 +38,7 @@ class FirstMessageToDeviceSend(Resource):
                         new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
+            MessengerCircleModelSend(0, circle, message.text_content)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
@@ -70,6 +72,7 @@ class FirstMessageSend(Resource):
                         new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
+            MessengerCircleModelSend(0, circle, message.text_content)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
@@ -93,6 +96,8 @@ class MessageSend(Resource):
                         new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
+            conversation = db_session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
+            MessengerConversationModelSend(link.user_id, conversation, message.text_content)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)

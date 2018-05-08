@@ -46,6 +46,7 @@ class TestMessageCreate(unittest.TestCase):
         }
         response = self.api.post('/admin/message/create', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
+        print(response_json)
         assert response.status_code == 200
         assert response_json['success'] == True
         assert len(self.linkConversation.messages) == 1
