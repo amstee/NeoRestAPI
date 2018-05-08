@@ -90,6 +90,7 @@ class MessageSend(Resource):
                 return FAILED("Conversation introuvable", 403)
             message = Message(content=content["text_message"] if "text_message" in content else None)
             message.conversation = link.conversation
+            message.link = link
             if "files" in content:
                 for file in content["files"]:
                     if file in request.files:
