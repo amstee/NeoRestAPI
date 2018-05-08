@@ -80,14 +80,14 @@ class CircleInfo(Resource):
         return resp
 
 
-class CircleDeviceInfo(Resource):
-    @contentChecker
-    @securedDeviceRoute
-    def post(self, content, device):
-        try:
-            return jsonify({"success": True, "content": device.circle.getContent()})
-        except Exception as e:
-            return FAILED(e)
+#class CircleDeviceInfo(Resource):
+#    @contentChecker
+#    @securedDeviceRoute
+#    def post(self, content, device):
+#        try:
+#            return jsonify({"success": True, "content": device.circle.getContent()})
+#        except Exception as e:
+#            return FAILED(e)
 
 
 class CircleList(Resource):
