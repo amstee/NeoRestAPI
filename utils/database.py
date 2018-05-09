@@ -29,7 +29,7 @@ def initDefaultContent():
             device = Device(name="Device beta 1")
             device.circle = circle
             device.username = "device1"
-            device.password = "test"
+            device.setPassword("test")
             device.activate(device.key)
         if len(circle.conversations) == 0:
             conversation = Conversation(device_access=True, name="Conversation avec device", circle=circle)

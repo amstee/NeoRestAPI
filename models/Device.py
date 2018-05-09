@@ -62,6 +62,9 @@ class Device(Base):
         self.key = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
         db_session.add(self)
 
+    def setPassword(self, password):
+        self.password = base64.b64encode(str.encode(password)).decode('utf-8')
+
     def __repr__(self):
         return "<Device(id='%s' name='%s' created='%s' updated='%s')>" % (self.id, self.name, str(self.created), str(self.updated))
 
