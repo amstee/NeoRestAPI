@@ -111,7 +111,7 @@ class neoapi(object):
 
         db.init_db()
         User.CreateNeoAdmin()
-        initDefaultContent()
+#        initDefaultContent()
 
     def activate_testing(self):
         self.app.config['TESTING'] = True

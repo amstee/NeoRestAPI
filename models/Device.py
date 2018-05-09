@@ -16,13 +16,13 @@ SECRET_KEY = "defaultdevicesecretkey"
 class Device(Base):
     __tablename__ = "devices"
     id = Column(Integer, primary_key=True)
+    circle_id = Column(Integer, ForeignKey('circles.id'))
     key = Column(String(20))
     activated = Column(Boolean)
     username = Column(String(120), unique=True)
     password = Column(String(2048))
     jsonToken = Column(String(2048))
     name = Column(String(120))
-    circle_id = Column(Integer, ForeignKey('circles.id'))
     created = Column(DateTime)
     updated = Column(DateTime)
 
