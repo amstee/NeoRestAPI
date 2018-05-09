@@ -45,12 +45,16 @@ def MessengerUserModelSend(userTarget, text_message):
         return True
     return False
 
-#def MessengerCircleModelSend(SenderID, Circle, text_message):
-#    circleTargets = db_session.query(UserToCircle).filter(UserToCircle.circle_id == Circle.id)#
-#
-#    for targetUser in circleTargets:
-#        targetUserData = db_session.query(UserToCircle).filter(UserToCircle.circle_id == Circle.id)
-#        if SenderID != targetUser.id and targetUser.facebookPSID 
+def MessengerCircleModelSend(senderID, circle, text_message):
+    circleTargets = db_session.query(UserToCircle).filter(UserToCircle.circle_id == circle.id)
+    for targetUser in circleTargets:
+        targetUserData = db_session.query(User).filter(targetUser.user_id == User.id).first()
+        if senderID != targetUserData.id and targetUserData.facebookPSID != -1:
+            SendMessage(targetUserData.facebookPSID, text_message)
+
+def MessengerConversationModelSend(senderID, conversation, text_message):
+    circle = db_session.query(Circle).filter(Circle.id == conversation.circle_id).first()
+    MessengerCircleModelSend(senderID, circle, text_message)
 
 def IsUserLinked(facebookPSID):
     user = db_session.query(User).filter(User.facebookPSID == facebookPSID).first()

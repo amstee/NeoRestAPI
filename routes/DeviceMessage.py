@@ -9,7 +9,7 @@ from utils.security import deviceHasAccessToMessage
 from models.Conversation import Conversation
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
-
+from .Facebook import *
 
 class DeviceMessageCreate(Resource):
     @checkContent
@@ -32,6 +32,7 @@ class DeviceMessageCreate(Resource):
                     new_file = Media().setContent(request.files[file], content["directory_name"], message)
                     message.medias.append(new_file)
             db_session.commit()
+            MessengerConversationModelSend(0, conversation, message.text_content)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
