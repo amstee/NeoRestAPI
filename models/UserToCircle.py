@@ -19,7 +19,7 @@ class UserToCircle(Base):
     def __repr__(self):
         return "<UserToCircle(id='%d' user_id='%d' circle_id='%d' created='%s' updated='%s' privilege='%s')>"%(self.id, self.user_id, self.circle_id, str(self.created), str(self.updated), self.privilege)
 
-    def __init__(self, created=datetime.datetime.now(), updated=datetime.datetime.now(), privilege=None,
+    def __init__(self, created=datetime.datetime.now(), updated=datetime.datetime.now(), privilege="DEFAULT",
                  user=None, circle=None):
         if created is not None:
             if type(created) is str:

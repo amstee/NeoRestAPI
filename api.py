@@ -16,6 +16,7 @@ import routes.ConversationLogic as ConversationLogicManager
 import routes.Conversation as ConversationManager
 import routes.DeviceMessageLogic as DeviceMessageLogicManager
 import routes.Facebook as Facebook
+from utils.database import initDefaultContent
 import config.database as db
 
 class neoapi(object):
@@ -110,6 +111,7 @@ class neoapi(object):
 
         db.init_db()
         User.CreateNeoAdmin()
+        initDefaultContent()
 
     def activate_testing(self):
         self.app.config['TESTING'] = True
