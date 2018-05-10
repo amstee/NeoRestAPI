@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource
 from config.database import db_session
 from models.User import User as UserModel
-from utils.decorators import securedRoute, checkContent, securedAdminRoute
+from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
 
@@ -115,6 +115,20 @@ class AccountInfo(Resource):
         resp = jsonify({"success": True, "content": user.getContent()})
         resp.status_code = 200
         return resp
+
+class DeviceAccountInfo(Resource):
+    @checkContent
+    @securedDeviceRoute
+    def post(self, content, device):
+        try:
+            user = db_session.query(UserModel).filter(UserModel.id==content["user_id"]).first()
+            if user is None:
+                return FAILED("Utilisateur introuvable")
+            if device.circle.hasMember(user):
+                return FAILED("Vous ne pouvez pas voir cet utilisateur")
+            return jsonify({"success": True, "content": user.getContent()})
+        except Exception as e:
+            return FAILED(e)
 
 
 class AccountModify(Resource):

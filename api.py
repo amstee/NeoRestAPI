@@ -35,6 +35,7 @@ class neoapi(object):
         self.api.add_resource(AccountManager.ForgotPassword, '/account/forgot')
         self.api.add_resource(AccountManager.CheckToken, '/token/verify')
         self.api.add_resource(AccountManager.PromoteAdmin, '/admin/account/promote')
+        self.api.add_resource(AccountManager.DeviceAccountInfo, '/device/account/info')
         # CIRCLE LOGIC ROUTES
         self.api.add_resource(CircleLogicManager.CircleInvite, '/circle/invite')
         self.api.add_resource(CircleLogicManager.CircleJoin, '/circle/join')
@@ -47,7 +48,7 @@ class neoapi(object):
         self.api.add_resource(CircleManager.CircleDelete, '/admin/circle/delete')
         self.api.add_resource(CircleManager.CircleInfo, '/circle/info')
         self.api.add_resource(CircleManager.CircleList, '/circle/list')
-        #self.api.add_resource(CircleManager.CircleDeviceInfo, '/device/circle/info')
+        self.api.add_resource(CircleManager.CircleDeviceInfo, '/device/circle/info')
         # CONVERSATION BASIC ROUTES
         self.api.add_resource(ConversationManager.ConversationCreate, '/admin/conversation/create')
         self.api.add_resource(ConversationManager.ConversationDelete, '/admin/conversation/delete')
@@ -88,7 +89,7 @@ class neoapi(object):
         # DEVICE ROUTES
         self.api.add_resource(DeviceManager.DeviceAdd, '/admin/device/add')
         self.api.add_resource(DeviceManager.DeviceUpdate, '/device/update')
-        self.api.add_resource(DeviceManager.DeviceInfo, '/device/info')
+        self.api.add_resource(DeviceManager.DeviceInfo, '/user/device/info')
         self.api.add_resource(DeviceManager.DeviceDelete, '/admin/device/delete')
         self.api.add_resource(DeviceManager.DeviceActivate, '/device/activate')
         self.api.add_resource(DeviceManager.DeviceLogin, '/device/authenticate')
@@ -97,6 +98,7 @@ class neoapi(object):
         self.api.add_resource(DeviceManager.UsernameAvailability, '/device/username/available')
         self.api.add_resource(DeviceManager.CheckDeviceToken, '/device/token/verify')
         self.api.add_resource(DeviceManager.ModifyDevicePassword, '/device/modify/password')
+        self.api.add_resource(DeviceManager.InforForDevice, '/device/info')
         # DEVICE MESSAGE ROUTES
         self.api.add_resource(DeviceMessageManager.DeviceMessageCreate, '/admin/device/message/create')
         self.api.add_resource(DeviceMessageManager.DeviceMessageDelete, '/device/message/delete')

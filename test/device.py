@@ -159,7 +159,7 @@ class TestDeviceInfo(unittest.TestCase):
             "token": self.token1,
             "device_id": self.device.id,
         }
-        response = self.api.post('/device/info', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/user/device/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success'] == True
@@ -170,7 +170,7 @@ class TestDeviceInfo(unittest.TestCase):
             "token": self.token1,
             "device_id": 2000,
         }
-        response = self.api.post('/device/info', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/user/device/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert response_json['success'] == False
@@ -179,7 +179,7 @@ class TestDeviceInfo(unittest.TestCase):
         json_data = {
             "token": self.token1,
         }
-        response = self.api.post('/device/info', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/user/device/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert response_json['success'] == False
@@ -189,7 +189,7 @@ class TestDeviceInfo(unittest.TestCase):
             "token": self.tokenAdmin,
             "device_id": self.device.id,
         }
-        response = self.api.post('/device/info', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/user/device/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
         assert response_json['success'] == False

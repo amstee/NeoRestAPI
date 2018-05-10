@@ -59,6 +59,14 @@ class DeviceInfo(Resource):
             return FAILED(e)
         return resp
 
+class InforForDevice(Resource):
+    @checkContent
+    @securedDeviceRoute
+    def post(self, content, device):
+        try:
+            return jsonify({"success": True, "content": device.getContent()})
+        except Exception as e:
+            return FAILED(e)
 
 class DeviceDelete(Resource):
     @checkContent

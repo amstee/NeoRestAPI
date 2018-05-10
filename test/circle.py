@@ -212,7 +212,6 @@ class TestCircleInfo(unittest.TestCase):
         }
         response = self.api.post('/circle/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
-        print(response_json)
         assert response.status_code == 200
         assert response_json['success'] == True
         assert self.circle.name == response_json["content"]["name"]

@@ -1,3 +1,4 @@
+from flask import request
 from flask_restful import Resource
 from config.database import db_session
 from models.Circle import Circle
@@ -79,16 +80,14 @@ class CircleInfo(Resource):
             return FAILED(e)
         return resp
 
-
-#class CircleDeviceInfo(Resource):
-#    @contentChecker
-#    @securedDeviceRoute
-#    def post(self, content, device):
-#        try:
-#            return jsonify({"success": True, "content": device.circle.getContent()})
-#        except Exception as e:
-#            return FAILED(e)
-
+class CircleDeviceInfo(Resource):
+    @checkContent
+    @securedDeviceRoute
+    def post(self, content, device):
+        try:
+            return jsonify({"success": True, "content": device.circle.getContent()})
+        except Exception as e:
+            return FAILED(e)
 
 class CircleList(Resource):
     @checkContent
