@@ -23,6 +23,7 @@ class neoapi(object):
     def __init__(self):
         self.app = Flask(__name__)
         self.api = Api(self.app)
+        CORS(self.app)
 
         # ACCOUNT ROUTES
         self.api.add_resource(AccountManager.AccountCreate, '/account/create')
