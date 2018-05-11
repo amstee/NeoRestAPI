@@ -168,5 +168,5 @@ class Webhook(Resource):
             return "ok", 200
         except Exception as e:
             print(e, file=sys.stderr)
-            return "Failed", 500
+            return "Failed", 200
         
