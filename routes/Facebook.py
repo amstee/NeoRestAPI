@@ -62,8 +62,7 @@ def SendMessageChoice(recipient_id, message_text):
         },
         "message":{
             "text": "Make your choice",
-            "quick_replies":[
-                MessageChoice(recipient_id, message_text)
+            "quick_replies": MessageChoice(recipient_id, message_text)
             #{
             #    "content_type":"text",
             #    "title":"YES",
@@ -74,7 +73,6 @@ def SendMessageChoice(recipient_id, message_text):
             #    "title":"NO",
             #    "payload":"<POSTBACK_PAYLOAD>"
             #}
-            ]
         }
     })
     r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
