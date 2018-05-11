@@ -54,12 +54,12 @@ def SendMessageChoice(recipient_id, message_text):
             "text": "Make your choice",
             "quick_replies":[
             {
-                "content_type":"postback",
+                "content_type":"text",
                 "title":"YES",
                 "payload":"<POSTBACK_PAYLOAD>"
             },
             {
-                "content_type":"postback",
+                "content_type":"text",
                 "title":"NO",
                 "payload":"<POSTBACK_PAYLOAD>"
             }
