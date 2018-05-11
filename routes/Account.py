@@ -187,7 +187,6 @@ class CreateApiToken(Resource):
     def post(self, content, user):
         try:
             token = user.encodeApiToken()
-            user.updateContent(apiToken=token)
             resp = jsonify({
                 "success" : True,
                 "apiToken": token
