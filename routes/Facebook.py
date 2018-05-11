@@ -44,7 +44,7 @@ def MessageChoice(sender_id, message_text):
     quick_replies = []
     user = db_session.query(User).filter(User.facebookPSID == sender_id).first()
     for UserToConv in user.conversationLinks:
-        conv = db_session.query(UserToConversation).filter(UserToConversation.id == UserToConv.id)
+        conv = db_session.query(UserToConversation).filter(UserToConversation.id == UserToConv.id).first()
         quick_replies.append({"content_type":"text","title":conv.name,"payload":"<POSTBACK_PAYLOAD>"})
     return quick_replies
 
