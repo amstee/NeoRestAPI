@@ -142,13 +142,14 @@ class Webhook(Resource):
                             splitMessage = message_text.split(' ')
                             print(splitMessage, file=sys.stderr)
                             # messenger
-                            if len(splitMessage) >= 2 and splitMessage[0] == "/token":
-                                message = LinkUserToFacebook(splitMessage[1], sender_id)
-                                SendMessage(sender_id, message)
-                            elif IsUserLinked(sender_id) == True:
-                                SendMessageChoice(sender_id, "Message not fully implemented")
-                            else:
-                                SendMessage(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
+                            if 'quick_reply' not in messaging_event["message"]:
+                                if len(splitMessage) >= 2 and splitMessage[0] == "/token":
+                                    message = LinkUserToFacebook(splitMessage[1], sender_id)
+                                    SendMessage(sender_id, message)
+                                elif IsUserLinked(sender_id) == True:
+                                    SendMessageChoice(sender_id, "Message not fully implemented")
+                                else:
+                                    SendMessage(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
                             # messenger
                             print("----messenger content----", file=sys.stderr)
                             print("sender id : " + str(sender_id), file=sys.stderr)
