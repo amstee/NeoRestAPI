@@ -39,6 +39,14 @@ def SendMessage(recipient_id, message_text):
         return False
     return True
 
+def MessageChoice(sender_id, message_text):
+    quick_replies = []
+    user = db_session.query(User).filter(User.facebookPSID == sender_id).first()
+    for conv in user.conversationLinks:
+        quick_replies.append({"content_type":"text","title":conv.name,"payload":"<POSTBACK_PAYLOAD>"})
+    return quick_replies
+
+
 def SendMessageChoice(recipient_id, message_text):
     params = {
         "access_token": PAGE_ACCESS_TOKEN
@@ -53,16 +61,17 @@ def SendMessageChoice(recipient_id, message_text):
         "message":{
             "text": "Make your choice",
             "quick_replies":[
-            {
-                "content_type":"text",
-                "title":"YES",
-                "payload":"<POSTBACK_PAYLOAD>"
-            },
-            {
-                "content_type":"text",
-                "title":"NO",
-                "payload":"<POSTBACK_PAYLOAD>"
-            }
+                MessageChoice(recipient_id, message_text)
+            #{
+            #    "content_type":"text",
+            #    "title":"YES",
+            #    "payload":"<POSTBACK_PAYLOAD>"
+            #},
+            #{
+            #    "content_type":"text",
+            #    "title":"NO",
+            #    "payload":"<POSTBACK_PAYLOAD>"
+            #}
             ]
         }
     })
