@@ -39,6 +39,44 @@ def SendMessage(recipient_id, message_text):
         return False
     return True
 
+def SendMessageChoice(recipient_id, message_text):
+    params = {
+        "access_token": PAGE_ACCESS_TOKEN
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message":{
+            "attachment":{
+            "type":"template",
+            "payload":{
+                "template_type":"button",
+                "text":"Avez-vous un nom ?",
+                "buttons":[
+                {
+                    "type":"postback",
+                    "title":"YES",
+                    "payload":"DEVELOPER_DEFINED_PAYLOAD"
+                },
+                {
+                    "type":"postback",
+                    "title":"NO",
+                    "payload":"DEVELOPER_DEFINED_PAYLOAD"
+                }
+                ]
+            }
+            }
+        }
+    })
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        return False
+    return True
+
 def MessengerUserModelSend(userTarget, text_message):
     if userTarget.facebookPSID != -1:
         SendMessage(userTarget.facebookPSID, text_message)
@@ -114,7 +152,7 @@ class Webhook(Resource):
                                 message = LinkUserToFacebook(splitMessage[1], sender_id)
                                 SendMessage(sender_id, message)
                             elif IsUserLinked(sender_id) == True:
-                                SendMessage(sender_id, "Message not fully implemented")
+                                SendMessageChoice(sender_id, "Message not fully implemented")
                             else:
                                 SendMessage(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
                             # messenger
