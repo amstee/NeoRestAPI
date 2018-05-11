@@ -51,25 +51,19 @@ def SendMessageChoice(recipient_id, message_text):
             "id": recipient_id
         },
         "message":{
-            "attachment":{
-            "type":"template",
-            "payload":{
-                "template_type":"button",
-                "text":"Avez-vous un nom ?",
-                "buttons":[
-                {
-                    "type":"postback",
-                    "title":"YES",
-                    "payload":"DEVELOPER_DEFINED_PAYLOAD"
-                },
-                {
-                    "type":"postback",
-                    "title":"NO",
-                    "payload":"DEVELOPER_DEFINED_PAYLOAD"
-                }
-                ]
+            "text": "Make your choice",
+            "quick_replies":[
+            {
+                "content_type":"text",
+                "title":"YES",
+                "payload":"<POSTBACK_PAYLOAD>"
+            },
+            {
+                "content_type":"text",
+                "title":"NO",
+                "payload":"<POSTBACK_PAYLOAD>"
             }
-            }
+            ]
         }
     })
     r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
