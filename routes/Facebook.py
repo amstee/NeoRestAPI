@@ -5,6 +5,7 @@ from models.User import User
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
 from models.Conversation import Conversation
+from models.UserToConversation import UserToConversation
 from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
@@ -42,7 +43,8 @@ def SendMessage(recipient_id, message_text):
 def MessageChoice(sender_id, message_text):
     quick_replies = []
     user = db_session.query(User).filter(User.facebookPSID == sender_id).first()
-    for conv in user.conversationLinks:
+    for UserToConv in user.conversationLinks:
+        conv = db_session.query(UserToConversation).filter(UserToConversation.id == UserToConv.id)
         quick_replies.append({"content_type":"text","title":conv.name,"payload":"<POSTBACK_PAYLOAD>"})
     return quick_replies
 
