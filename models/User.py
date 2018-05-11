@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, BigInteger
 from sqlalchemy.orm import relationship
 from config.database import Base
 from config.database import db_session
@@ -21,7 +21,7 @@ class User(Base):
     created = Column(DateTime)
     updated = Column(DateTime)
     jsonToken = Column(String(4096))
-    facebookPSID = Column(Integer)
+    facebookPSID = Column(BigInteger)
     type = Column(String(10))
 
     # RELATIONS
