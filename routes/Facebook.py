@@ -107,9 +107,10 @@ class Webhook(Resource):
                             sender_id = messaging_event["sender"]["id"]        
                             recipient_id = messaging_event["recipient"]["id"]  
                             message_text = messaging_event["message"]["text"]
-                            splitMessage = message_text.split()
+                            splitMessage = message_text.split(' ')
+                            print(splitMessage, file=sys.stderr)
                             # messenger
-                            if len(splitMessage) > 2 and splitMessage[0] == "/token":
+                            if len(splitMessage) >= 2 and splitMessage[0] == "/token":
                                 message = LinkUserToFacebook(splitMessage[1], sender_id)
                                 SendMessage(sender_id, message)
                             elif IsUserLinked(sender_id) == True:
