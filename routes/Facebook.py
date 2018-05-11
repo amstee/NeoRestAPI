@@ -61,6 +61,11 @@ def SendMessageChoice(recipient_id, message_text):
                     "type":"postback",
                     "title":"YES",
                     "payload":"DEVELOPER_DEFINED_PAYLOAD"
+                },
+                                {
+                    "type":"postback",
+                    "title":"NO",
+                    "payload":"DEVELOPER_DEFINED_PAYLOAD"
                 }
                 ]
             }
