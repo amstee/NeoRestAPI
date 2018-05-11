@@ -6,6 +6,7 @@ from models.Circle import Circle
 from models.User import User as UserModel
 from utils.contentChecker import contentChecker
 from utils.decorators import securedRoute, checkContent
+from models.UserToCircle import UserToCircle
 from utils.apiUtils import *
 from config.paypal import *
 
@@ -60,11 +61,16 @@ class FakePayment(Resource):
             if circle is not None:
                 if not circle.hasMember(user):
                     return FAILED("Cet utilisateur ne fait pas parti du cercle spécifié")
+                link = db_session.query(UserToCircle).filter(UserToCircle.circle_id == circle.id,
+                                                            UserToCircle.user_id == user.id).first();
+                if link is None:
+                    return FAILED("Cet utilisateur ne fait pas parti du cercle spécifié")
+                link.privilege = "ADMIN"
                 device = Device(name=content["device_name"] if "device_name" in content else "Papie/Mamie")
                 circle.device = device
                 device.circle = circle
                 db_session.commit()
-                return jsonify({"success": True, "content": device.getSimpleContent()})
+                return jsonify({"success": True, "content": device.getContent()})
             return FAILED("Cercle spécifié introuvable")
         except Exception as e:
             return FAILED(e)
