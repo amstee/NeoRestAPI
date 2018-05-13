@@ -66,7 +66,7 @@ class FakePayment(Resource):
                 if link is None:
                     return FAILED("Cet utilisateur ne fait pas parti du cercle spécifié")
                 link.privilege = "ADMIN"
-                device = Device(name=content["device_name"] if "device_name" in content else "Papie/Mamie")
+                device = Device(name=content["device_name"] if "device_name" in content else "Papi/Mamie")
                 circle.device = device
                 device.circle = circle
                 db_session.commit()
