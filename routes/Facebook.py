@@ -186,7 +186,7 @@ class Webhook(Resource):
                                 else:
                                     SendMessage(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
                             if 'quick_reply' in messaging_event["message"]:
-                                handleConversationPayload(messaging_event["message"]["payload"])
+                                handleConversationPayload(messaging_event["message"]["quick_reply"]["payload"])
                                 print("----handling conversation----", file=sys.stderr)
                             # messenger
                             print("----messenger content----", file=sys.stderr)
