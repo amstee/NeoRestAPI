@@ -183,7 +183,7 @@ class Webhook(Resource):
                                     message = LinkUserToFacebook(splitMessage[1], sender_id)
                                     SendMessage(sender_id, message)
                                 elif IsUserLinked(sender_id) == True:
-                                    SendMessageChoice(sender_id, "Message not fully implemented")
+                                    SendMessageChoice(sender_id, message_text)
                                 else:
                                     SendMessage(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
                             if 'quick_reply' in messaging_event["message"]:
