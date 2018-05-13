@@ -48,6 +48,7 @@ def handleConversationPayload(messagePayload):
             message.conversation = link.conversation
             db_session.commit()
         except Exception as e:
+            print("Une erreur est survenue : " + str(e), file=sys.stderr)
             return ("Une erreur est survenue : " + str(e))
     except jwt.ExpiredSignatureError:
         return ('Message expiré, renvoyez le message')
