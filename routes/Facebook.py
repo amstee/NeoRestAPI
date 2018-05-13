@@ -20,6 +20,21 @@ SECRET_KEY = "defaultusersecretkey"
 SECRET_TOKEN = "abcdef12345"
 PAGE_ACCESS_TOKEN = "EAACr1x9RQUwBANslMAGv4aU4gCqGpNvZCGMZBnQ8YhaAAkssgfGj95z0bAnPUPZBAiiYkgl34TcmEGSdUzaQsx1JcnqyFsKn3EArkEQ7TUZCTQMeZChTxRsZBzmXbCMtHk3SRrtJIwB2YYTKABVwRAQArEGK2HhDOSyB7MkkbMnOsrn8DEtdGF"
 
+def encodePostBackPayload(facebookPSID, message_text, link):
+    try:
+        payload = {
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30, seconds=1),
+            'iat': datetime.datetime.utcnow(),
+            'facebookPSID': facebookPSID,
+            'link_id': link.id,
+            'message_text': message_text
+        }
+        token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+        return token.decode()
+    except Exception as e:
+        print(e)
+        return ("")
+
 def SendMessage(recipient_id, message_text):
     params = {
         "access_token": PAGE_ACCESS_TOKEN
@@ -45,7 +60,8 @@ def MessageChoice(sender_id, message_text):
     user = db_session.query(User).filter(User.facebookPSID == sender_id).first()
     for UserToConv in user.conversationLinks:
         conv = db_session.query(Conversation).filter(Conversation.id == UserToConv.conversation_id).first()
-        quick_replies.append({"content_type":"text","title":conv.name,"payload":"<POSTBACK_PAYLOAD>"})
+        payload = encodePostBackPayload(sender_id, message_text, conv)
+        quick_replies.append({"content_type":"text","title":conv.name,"payload": payload})
     return quick_replies
 
 
@@ -61,18 +77,8 @@ def SendMessageChoice(recipient_id, message_text):
             "id": recipient_id
         },
         "message":{
-            "text": "Make your choice",
+            "text": "Choisissez une conversation",
             "quick_replies": MessageChoice(recipient_id, message_text)
-            #{
-            #    "content_type":"text",
-            #    "title":"YES",
-            #    "payload":"<POSTBACK_PAYLOAD>"
-            #},
-            #{
-            #    "content_type":"text",
-            #    "title":"NO",
-            #    "payload":"<POSTBACK_PAYLOAD>"
-            #}
         }
     })
     r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
