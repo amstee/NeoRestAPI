@@ -67,9 +67,28 @@ def SendMessage(recipient_id, message_text):
         "recipient": {
             "id": recipient_id
         },
-        "message": {
-            "text": message_text
+        "message":{
+            "attachment":{
+            "type":"template",
+            "payload":{
+                "template_type":"receipt",
+                "recipient_name":"Stephane Crozatier",
+                "order_number":"12345678902",
+                "currency":"USD",
+                "payment_method":"Visa 2345",        
+                "order_url":"http://petersapparel.parseapp.com/order?order_id=123456",
+                "timestamp":"1428444852",         
+                "address":{
+                "street_1":"1 Hacker Way",
+                "street_2":"",
+                "city":"Menlo Park",
+                "postal_code":"94025",
+                "state":"CA",
+                "country":"US"
         }
+        #"message": {
+        #    "text": message_text
+        #}
     })
     r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
     if r.status_code != 200:
