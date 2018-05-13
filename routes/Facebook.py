@@ -36,6 +36,22 @@ def encodePostBackPayload(facebookPSID, message_text, link):
         print(e)
         return ("")
 
+def handleConversationPayload(messagePayload):
+    try:
+        payload = jwt.decode(messagePayload, SECRET_KEY)
+        try:
+            link = db_session.query(UserToConversation).filter(UserToConversation.id == payload["link_id"] and UserToConversation.user_id == payload["user_id"]).first()
+            message = Message(content=payload["message_text"])
+            message.link = link
+            message.conversation = link.conversation
+            db_session.commit()
+        except Exception as e:
+            return ("Une erreur est survenue : " + str(e))
+    except jwt.ExpiredSignatureError:
+        return ('Message expiré, renvoyez le message')
+    except jwt.InvalidTokenError:
+        return ('Message expiré, renvoyez le message')
+
 def SendMessage(recipient_id, message_text):
     params = {
         "access_token": PAGE_ACCESS_TOKEN
@@ -166,6 +182,8 @@ class Webhook(Resource):
                                     SendMessageChoice(sender_id, "Message not fully implemented")
                                 else:
                                     SendMessage(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
+                            if 'quick_reply' in messaging_event["message"] and 'payload' in messaging_event["message"]:
+                                handleConversationPayload(messaging_event["message"]["payload"])
                             # messenger
                             print("----messenger content----", file=sys.stderr)
                             print("sender id : " + str(sender_id), file=sys.stderr)
