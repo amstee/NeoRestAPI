@@ -30,7 +30,8 @@ class MessageCreate(Resource):
                     message.medias.append(new_file)
             db_session.commit()
             conversation = db_session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
-            MessengerConversationModelSend(link.user_id, conversation, message.text_content)
+            info_sender = "[" + link.conversation.name + "] " + admin.first_name + " : " 
+            MessengerConversationModelSend(link.user_id, conversation, info_sender + message.text_content)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)

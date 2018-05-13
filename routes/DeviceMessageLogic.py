@@ -24,6 +24,7 @@ class FirstDeviceMessageSend(Resource):
                 return FAILED("L'utilisateur n'est pas dans votre cercle")
             conversation = Conversation(device_access=True)
             conversation.circle = device.circle
+            conversation.name = "NewConversation"
             link = UserToConversation(privilege="ADMIN")
             link.user = user
             link.conversation = conversation
@@ -36,7 +37,8 @@ class FirstDeviceMessageSend(Resource):
                         new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
-            MessengerUserModelSend(userTarget=user, text_message=message.text_content)
+            info_and_message = "[" + conversation.name + "] " + user.first_name + " : " + str(message.text_content)
+            MessengerUserModelSend(userTarget=user, text_message=info_and_message)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)

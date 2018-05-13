@@ -38,7 +38,8 @@ class FirstMessageToDeviceSend(Resource):
                         new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
-            MessengerCircleModelSend(0, circle, message.text_content)
+            info_sender = "[" + conversation.name + "] " + user.first_name + " : " 
+            MessengerCircleModelSend(0, circle, info_sender + message.text_content)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
@@ -72,6 +73,7 @@ class FirstMessageSend(Resource):
                         new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
+            info_sender = "[" + conversation.name + "] " + user.first_name + " : " 
             MessengerCircleModelSend(0, circle, message.text_content)
             return SUCCESS()
         except Exception as e:
