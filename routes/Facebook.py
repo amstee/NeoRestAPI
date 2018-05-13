@@ -78,7 +78,7 @@ def MessageChoice(sender_id, message_text):
     for UserToConv in user.conversationLinks:
         conv = db_session.query(Conversation).filter(Conversation.id == UserToConv.conversation_id).first()
         payload = encodePostBackPayload(sender_id, message_text, conv)
-        quick_replies.append({"content_type":"text","title":conv.name,"payload": payload})
+        quick_replies.append({"content_type":"text","title":conv.name,"payload": "abcdef12345"})
     return quick_replies
 
 
