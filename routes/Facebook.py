@@ -185,7 +185,7 @@ class Webhook(Resource):
                                     SendMessageChoice(sender_id, "Message not fully implemented")
                                 else:
                                     SendMessage(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
-                            if 'quick_reply' in messaging_event["message"] and 'payload' in messaging_event["message"]:
+                            if 'quick_reply' in messaging_event["message"]:
                                 handleConversationPayload(messaging_event["message"]["payload"])
                                 print("----handling conversation----", file=sys.stderr)
                             # messenger
