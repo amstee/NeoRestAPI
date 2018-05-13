@@ -6,6 +6,7 @@ from models.Circle import Circle
 from models.UserToCircle import UserToCircle
 from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
+from models.Message import Message
 from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
