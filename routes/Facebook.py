@@ -34,7 +34,7 @@ def encodePostBackPayload(facebookPSID, message_text, link):
         return token.decode()
     except Exception as e:
         print(e)
-        return ("")
+        return (str(e))
 
 def handleConversationPayload(messagePayload):
     try:
@@ -78,7 +78,7 @@ def MessageChoice(sender_id, message_text):
     for UserToConv in user.conversationLinks:
         conv = db_session.query(Conversation).filter(Conversation.id == UserToConv.conversation_id).first()
         payload = encodePostBackPayload(sender_id, message_text, conv)
-        quick_replies.append({"content_type":"text","title":conv.name,"payload": "abcdef12345"})
+        quick_replies.append({"content_type":"text","title":conv.name,"payload": payload)
     return quick_replies
 
 
