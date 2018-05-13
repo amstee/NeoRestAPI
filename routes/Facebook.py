@@ -26,6 +26,7 @@ def encodePostBackPayload(facebookPSID, message_text, link):
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30, seconds=1),
             'iat': datetime.datetime.utcnow(),
             'facebookPSID': facebookPSID,
+            'user_id': link.user_id,
             'link_id': link.id,
             'message_text': message_text
         }
