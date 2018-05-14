@@ -29,7 +29,7 @@ class FirstMessageToDeviceSend(Resource):
             link = UserToConversation(privilege="ADMIN")
             link.user = user
             link.conversation = conversation
-            message = Message(content=content["text_message"] if "text_message" in content else None)
+            message = Message(content=content["text_message"] if "text_message" in content else "")
             message.conversation = conversation
             message.link = link
             if "files" in content:
@@ -64,7 +64,7 @@ class FirstMessageSend(Resource):
             conversation.circle = circle
             link1 = UserToConversation(privilege="ADMIN", user=user, conversation=conversation)
             link2 = UserToConversation(privilege="STANDARD", user=dest, conversation=conversation)
-            message = Message(content=content["text_message"] if "text_message" in content else None)
+            message = Message(content=content["text_message"] if "text_message" in content else "")
             message.conversation = conversation
             message.link = link1
             if "files" in content:
@@ -90,7 +90,7 @@ class MessageSend(Resource):
                                                                UserToConversation.user_id==user.id).first()
             if link is None:
                 return FAILED("Conversation introuvable", 403)
-            message = Message(content=content["text_message"] if "text_message" in content else None)
+            message = Message(content=content["text_message"] if "text_message" in content else "")
             message.conversation = link.conversation
             message.link = link
             if "files" in content:
