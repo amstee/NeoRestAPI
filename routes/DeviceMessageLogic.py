@@ -37,7 +37,7 @@ class FirstDeviceMessageSend(Resource):
                         new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
-            info_and_message = "[" + conversation.name + "] " + device.username + " : " + str(message.text_content)
+            info_and_message = "[" + conversation.name + "] " + device.name + " : " + str(message.text_content)
             MessengerUserModelSend(userTarget=user, text_message=info_and_message)
             return SUCCESS()
         except Exception as e:
@@ -64,7 +64,7 @@ class DeviceMessageSend(Resource):
                         new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
-            info_sender = "[" + conv.name + "] " + device.username + " : "
+            info_sender = "[" + conv.name + "] " + device.name + " : "
             MessengerConversationModelSend(0, conv, info_sender + message.text_content)
             return SUCCESS()
         except Exception as e:
