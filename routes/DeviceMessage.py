@@ -32,7 +32,7 @@ class DeviceMessageCreate(Resource):
                     new_file = Media().setContent(request.files[file], content["directory_name"], message)
                     message.medias.append(new_file)
             db_session.commit()
-            info_sender = "[" + conversation.name + "] " + admin.first_name + " : " 
+            info_sender = "[" + conversation.name + "] " + device.name + " : " 
             MessengerConversationModelSend(0, conversation, info_sender + message.text_content)
             return SUCCESS()
         except Exception as e:
