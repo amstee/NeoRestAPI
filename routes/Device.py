@@ -88,13 +88,13 @@ class DeviceDelete(Resource):
 
 class DeviceActivate(Resource):
     @checkContent
-    @securedRoute
-    def post(self, content, user):
+    @securedAdminRoute
+    def post(self, content, admin):
         try:
             contentChecker("device_id", "activation_key")
             device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
-            if not (device.circle.hasMember(user)):
-                return FAILED("Vous n'appartenez pas au cercle de ce device", 403)
+            # if not (device.circle.hasMember(user)):
+            #     return FAILED("Vous n'appartenez pas au cercle de ce device", 403)
             if device is not None:
                 res = device.activate(content["activation_key"])
                 if res:

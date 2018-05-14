@@ -283,11 +283,11 @@ class TestDeviceActivate(unittest.TestCase):
     def test_valid_activation(self):
         password = self.device.password
         json_data = {
-            "token": self.token1,
+            "token": self.tokenAdmin,
             "device_id": self.device.id,
             "activation_key": self.device.key
         }
-        response = self.api.post('/device/activate', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/device/activate', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success'] == True
@@ -295,33 +295,33 @@ class TestDeviceActivate(unittest.TestCase):
 
     def test_invalid_parameter(self):
         json_data = {
-            "token": self.token1,
+            "token": self.tokenAdmin,
             "device_id": self.device.id,
             "activation_key": "non"
         }
-        response = self.api.post('/device/activate', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/device/activate', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert response_json['success'] == False
 
     def test_invalid_user(self):
         json_data = {
-            "token": self.tokenAdmin,
+            "token": self.token1,
             "device_id": self.device.id,
             "activation_key": "non"
         }
-        response = self.api.post('/device/activate', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/device/activate', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
         assert response_json['success'] == False
 
     def test_invalid_device(self):
         json_data = {
-            "token": self.token1,
+            "token": self.tokenAdmin,
             "device_id": 200000,
             "activation_key": "non"
         }
-        response = self.api.post('/device/activate', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/device/activate', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert response_json['success'] == False

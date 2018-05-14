@@ -15,7 +15,7 @@ class Conversation(Base):
 
     circle = relationship("Circle", back_populates="conversations")
     links = relationship("UserToConversation", back_populates="conversation")
-    messages = relationship("Message", back_populates="conversation", order_by="Message.sent",
+    messages = relationship("Message", back_populates="conversation", order_by="Message.id",
                             cascade="save-update, delete")
 
     def __repr__(self):

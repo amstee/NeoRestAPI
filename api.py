@@ -92,7 +92,7 @@ class neoapi(object):
         self.api.add_resource(DeviceManager.DeviceUpdate, '/device/update')
         self.api.add_resource(DeviceManager.DeviceInfo, '/user/device/info')
         self.api.add_resource(DeviceManager.DeviceDelete, '/admin/device/delete')
-        self.api.add_resource(DeviceManager.DeviceActivate, '/device/activate')
+        self.api.add_resource(DeviceManager.DeviceActivate, '/admin/device/activate')
         self.api.add_resource(DeviceManager.DeviceLogin, '/device/authenticate')
         self.api.add_resource(DeviceManager.DeviceCredentials, '/admin/device/credentials')
         self.api.add_resource(DeviceManager.DeviceLogout, '/device/logout')
