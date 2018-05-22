@@ -28,7 +28,7 @@ class FirstDeviceMessageSend(Resource):
             link = UserToConversation(privilege="ADMIN")
             link.user = user
             link.conversation = conversation
-            message = Message(content=content["text_message"] if "text_message" in content else None, isUser=False)
+            message = Message(content=content["text_message"] if "text_message" in content else "", isUser=False)
             message.conversation = conversation
             message.device = device
             if "files" in content:
@@ -55,7 +55,7 @@ class DeviceMessageSend(Resource):
                 return FAILED("Conversation introuvable")
             if conv.device_access is False or conv.circle.id != device.circle.id:
                 return FAILED("Vous ne pouvez pas acceder a cette conversation", 403)
-            message = Message(content=content["text_message"] if "text_message" in content else None, isUser=False)
+            message = Message(content=content["text_message"] if "text_message" in content else "", isUser=False)
             message.conversation = conv
             message.device = device
             if "files" in content:

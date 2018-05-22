@@ -8,7 +8,7 @@ from utils.apiUtils import *
 
 
 class AccountCreate(Resource):
-    def get(sefl):
+    def get(self):
         try:
             content = request.args.get('email')
             user = db_session.query(UserModel).filter(UserModel.email == content)
