@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, BigInteger, Boolean
 from sqlalchemy.orm import relationship
 from config.database import Base
 from config.database import db_session
@@ -21,8 +21,9 @@ class User(Base):
     created = Column(DateTime)
     updated = Column(DateTime)
     jsonToken = Column(String(4096))
-    facebookPSID = Column(Integer)
+    facebookPSID = Column(BigInteger)
     type = Column(String(10))
+    is_online = Column(Boolean)
 
     # RELATIONS
     circleLink = relationship("UserToCircle", back_populates="user", order_by="UserToCircle.id",
@@ -32,7 +33,7 @@ class User(Base):
     circleInvite = relationship("CircleInvite", back_populates="user", order_by="CircleInvite.id", cascade="save-update, delete")
 
     def __init__(self, email=None, password=None, first_name=None, last_name=None,
-                 birthday=None, created=datetime.datetime.now(),
+                 birthday=None, is_online=False, created=datetime.datetime.now(),
                  updated=datetime.datetime.now()):
         user = db_session.query(User).filter_by(email=email).first()
         if user is not None:
@@ -58,6 +59,7 @@ class User(Base):
                 self.updated = DateParser.parse(updated)
             else:
                 self.updated = updated
+        self.is_online = is_online
         self.type = "DEFAULT"
         self.facebookPSID = -1
         db_session.add(self)
@@ -143,7 +145,7 @@ class User(Base):
             db_session.commit()
 
     def updateContent(self, email=None, first_name=None, last_name=None, birthday=None,
-                      searchText=None, facebookPSID=None, created=None, updated=datetime.datetime.now()):
+                      searchText=None, facebookPSID=None, is_online=None, created=None, updated=datetime.datetime.now()):
         if email is not None and email is not "":
             self.email = email
         if first_name is not None and first_name is not "":
@@ -151,7 +153,7 @@ class User(Base):
         if last_name is not None and last_name is not "":
             self.last_name = last_name
         if birthday is not None and birthday is not "" and type(birthday) is str:
-            self.birthday = DateParser.parse(birthdsay)
+            self.birthday = DateParser.parse(birthday)
         if searchText is not None and searchText is not "":
             self.searchText = searchText
         if type(updated) is str:
@@ -163,6 +165,8 @@ class User(Base):
         elif created is not None:
             self.created = created
         self.facebookPSID = facebookPSID
+        if is_online is not None:
+            self.is_online = is_online
         db_session.commit()
 
     def promoteAdmin(self):
@@ -186,6 +190,7 @@ class User(Base):
             "birthday": self.birthday,
             "created": self.created,
             "updated": self.updated,
+            "isOnline": self.isOnline,
             "type": self.type,
         }
 
@@ -198,6 +203,7 @@ class User(Base):
             "birthday": self.birthday,
             "created": self.created,
             "updated": self.updated,
+            "isOnline": self.isOnline,
             "type": self.type,
             "circles": [link.getContent() for link in self.circleLink],
             "invites": [invite.getContent() for invite in self.circleInvite],

@@ -66,7 +66,7 @@ class ConversationDeviceInfo(Resource):
             conv = db_session.query(Conversation).filter(Conversation.id==content["conversation_id"]).first()
             if conv is None:
                 return FAILED("Conversation introuvable")
-            if conv.device_access and conv.circle.device.device_id == device.id:
+            if conv.device_access and conv.circle.device.id == device.id:
                 return jsonify({"success": True, "content": conv.getContent()})
             return FAILED("Le device n'a pas acces a cette conversation")
         except Exception as e:

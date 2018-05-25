@@ -29,3 +29,4 @@ SQLAlchemy==1.2.2
 urllib3==1.22
 webargs==2.1.0
 Werkzeug==0.14.1
+flask-socketio==3.0.0

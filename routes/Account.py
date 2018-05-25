@@ -8,11 +8,11 @@ from utils.apiUtils import *
 
 
 class AccountCreate(Resource):
-    def get(sefl):
+    def get(self):
         try:
             content = request.args.get('email')
             user = db_session.query(UserModel).filter(UserModel.email == content)
-            resp = jsonify({"success":True, "content": user.getSimpleContent()})
+            resp = jsonify({"success": True, "content": user.getSimpleContent()})
             resp.status_code = 200
             return resp
         except Exception as e:
@@ -99,7 +99,7 @@ class AccountLogout(Resource):
                     resp = jsonify({"success": True})
                 else:
                     resp = jsonify({"success": False, "message": message})
-                    resp.status_code =  403
+                    resp.status_code = 403
             else:
                 resp = jsonify({"success": False, "message": data})
                 resp.status_code = 403
@@ -115,6 +115,7 @@ class AccountInfo(Resource):
         resp = jsonify({"success": True, "content": user.getContent()})
         resp.status_code = 200
         return resp
+
 
 class DeviceAccountInfo(Resource):
     @checkContent
@@ -144,7 +145,7 @@ class AccountModify(Resource):
             user.updateContent(email=content["email"],
                                first_name=content["first_name"], last_name=content["last_name"],
                             birthday=content["birthday"], searchText=content["searchText"])
-            resp = jsonify({"success" : True})
+            resp = jsonify({"success": True})
             resp.status_code = 200
             return resp
         except Exception as e:
@@ -181,13 +182,13 @@ class PromoteAdmin(Resource):
         except Exception as e:
             return FAILED(e)
 
+
 class CreateApiToken(Resource):
     @checkContent
     @securedRoute
     def post(self, content, user):
         try:
             token = user.encodeApiToken()
-            user.updateContent(apiToken=token)
             resp = jsonify({
                 "success" : True,
                 "apiToken": token

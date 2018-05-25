@@ -24,10 +24,11 @@ class FirstDeviceMessageSend(Resource):
                 return FAILED("L'utilisateur n'est pas dans votre cercle")
             conversation = Conversation(device_access=True)
             conversation.circle = device.circle
+            conversation.name = "NewConversation"
             link = UserToConversation(privilege="ADMIN")
             link.user = user
             link.conversation = conversation
-            message = Message(content=content["text_message"] if "text_message" in content else None, isUser=False)
+            message = Message(content=content["text_message"] if "text_message" in content else "", isUser=False)
             message.conversation = conversation
             message.device = device
             if "files" in content:
@@ -36,7 +37,8 @@ class FirstDeviceMessageSend(Resource):
                         new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
-            MessengerUserModelSend(userTarget=user, text_message=message.text_content)
+            info_and_message = "[" + conversation.name + "] " + device.name + " : " + str(message.text_content)
+            MessengerUserModelSend(userTarget=user, text_message=info_and_message)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
@@ -53,7 +55,7 @@ class DeviceMessageSend(Resource):
                 return FAILED("Conversation introuvable")
             if conv.device_access is False or conv.circle.id != device.circle.id:
                 return FAILED("Vous ne pouvez pas acceder a cette conversation", 403)
-            message = Message(content=content["text_message"] if "text_message" in content else None, isUser=False)
+            message = Message(content=content["text_message"] if "text_message" in content else "", isUser=False)
             message.conversation = conv
             message.device = device
             if "files" in content:
@@ -62,7 +64,8 @@ class DeviceMessageSend(Resource):
                         new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
-            MessengerConversationModelSend(0, conv, message.text_content)
+            info_sender = "[" + conv.name + "] " + device.name + " : "
+            MessengerConversationModelSend(0, conv, info_sender + message.text_content)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)

@@ -16,14 +16,8 @@ def initDefaultContent():
         user2 = User(email="user2.beta@test.com", password="test", first_name="user2",
                     last_name="beta", birthday="2019-09-05")
         circle = Circle("Cercle Beta 1")
-        if user.circleLink is None:
-            link = UserToCircle(user=user, circle=circle, privilege="ADMIN")
-        else:
-            link = user.circleLink
-        if user2.circleLink is None:
-            link2 = UserToCircle(user=user2, circle=circle)
-        else:
-            link2 = user2.circleLink
+        link = UserToCircle(user=user, circle=circle, privilege="ADMIN")
+        link2 = UserToCircle(user=user2, circle=circle)
         device = db_session.query(Device).filter(Device.username=="device1").first()
         if device is None:
             device = Device(name="Device beta 1")

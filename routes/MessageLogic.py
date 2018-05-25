@@ -29,7 +29,7 @@ class FirstMessageToDeviceSend(Resource):
             link = UserToConversation(privilege="ADMIN")
             link.user = user
             link.conversation = conversation
-            message = Message(content=content["text_message"] if "text_message" in content else None)
+            message = Message(content=content["text_message"] if "text_message" in content else "")
             message.conversation = conversation
             message.link = link
             if "files" in content:
@@ -38,7 +38,8 @@ class FirstMessageToDeviceSend(Resource):
                         new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
-            MessengerCircleModelSend(0, circle, message.text_content)
+            info_sender = "[" + conversation.name + "] " + user.first_name + " : " 
+            MessengerCircleModelSend(0, circle, info_sender + message.text_content)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
@@ -63,7 +64,7 @@ class FirstMessageSend(Resource):
             conversation.circle = circle
             link1 = UserToConversation(privilege="ADMIN", user=user, conversation=conversation)
             link2 = UserToConversation(privilege="STANDARD", user=dest, conversation=conversation)
-            message = Message(content=content["text_message"] if "text_message" in content else None)
+            message = Message(content=content["text_message"] if "text_message" in content else "")
             message.conversation = conversation
             message.link = link1
             if "files" in content:
@@ -72,7 +73,8 @@ class FirstMessageSend(Resource):
                         new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
                         message.medias.append(new_file)
             db_session.commit()
-            MessengerCircleModelSend(0, circle, message.text_content)
+            info_sender = "[" + conversation.name + "] " + user.first_name + " : " 
+            MessengerCircleModelSend(0, circle, info_sender + message.text_content)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
@@ -88,7 +90,7 @@ class MessageSend(Resource):
                                                                UserToConversation.user_id==user.id).first()
             if link is None:
                 return FAILED("Conversation introuvable", 403)
-            message = Message(content=content["text_message"] if "text_message" in content else None)
+            message = Message(content=content["text_message"] if "text_message" in content else "")
             message.conversation = link.conversation
             message.link = link
             if "files" in content:
@@ -98,7 +100,8 @@ class MessageSend(Resource):
                         message.medias.append(new_file)
             db_session.commit()
             conversation = db_session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
-            MessengerConversationModelSend(link.user_id, conversation, message.text_content)
+            info_sender = "[" + link.conversation.name + "] " + user.first_name + " : "
+            MessengerConversationModelSend(link.user_id, conversation, info_sender + message.text_content)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
