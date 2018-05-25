@@ -3,4 +3,4 @@ from flask import send_file
 
 class SocketTest(Resource):
     def get(self):
-        return send_file("test/socket.html")
+        return send_file("../test/socket.html")
