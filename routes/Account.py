@@ -5,6 +5,7 @@ from models.User import User as UserModel
 from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
+from config.sockets import sockets
 
 
 class AccountCreate(Resource):
@@ -145,6 +146,9 @@ class AccountModify(Resource):
             user.updateContent(email=content["email"],
                                first_name=content["first_name"], last_name=content["last_name"],
                             birthday=content["birthday"], searchText=content["searchText"])
+            socket = sockets.find_user(user)
+            if socket is not None:
+                socket.emit('Account', 'modify')
             resp = jsonify({"success": True})
             resp.status_code = 200
             return resp

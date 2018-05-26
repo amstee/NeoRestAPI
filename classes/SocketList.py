@@ -1,4 +1,5 @@
 from classes.SocketUser import SocketUser
+from flask import session
 
 
 class SocketList:
@@ -21,6 +22,27 @@ class SocketList:
             self.socket_dic.pop(sid)
             return True
         return False
+
+    def find_user(self, user):
+        try:
+            if 'socket' in session and session['socket'] is not None:
+                socket = session['socket']
+                if socket.sid in self.socket_dic:
+                    return socket
+                else:
+                    session.pop('socket')
+                    if 'sid' in session:
+                        session.pop('sid')
+                    return None
+            for key, value in self.socket_dic.items():
+                if value.user.id == user.id:
+                    session['socket'] = value
+                    session['sid'] = key
+                    return value
+            return None
+        except Exception as e:
+            print(e)
+            return None
 
     def __len__(self):
         return len(self.socket_dic)

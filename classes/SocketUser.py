@@ -35,7 +35,7 @@ class SocketUser:
             return False, str(e)
 
     def emit(self, event, data):
-        emit(event, data, room=self.sid)
+        emit(event, data, room=self.sid, namespace='/')
 
     def disconnect(self):
         if self.authenticated:
