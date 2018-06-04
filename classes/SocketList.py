@@ -40,9 +40,17 @@ class SocketList:
                     session['sid'] = key
                     return value
             return None
-        except Exception as e:
-            print(e)
+        except Exception:
             return None
+
+    def notify_user(self, user, p1, p2, namespace='/'):
+        if not user.is_online:
+            return False
+        socket = self.find_user(user)
+        if socket is not None:
+            socket.emit(p1, p2, namespace)
+            return True
+        return False
 
     def __len__(self):
         return len(self.socket_dic)

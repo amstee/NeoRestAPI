@@ -2,9 +2,10 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from config.database import Base
 from config.database import db_session
-from models.UserToCircle import UserToCircle
 from dateutil import parser as DateParser
+from config.sockets import sockets
 import datetime
+
 
 class Circle(Base):
     __tablename__ = "circles"
@@ -64,6 +65,10 @@ class Circle(Base):
         if len(self.userLink) == 0:
             db_session.delete(self)
             db_session.commit()
+
+    def notify_users(self, p1='Circle', p2='modify'):
+        for link in self.userLink:
+            sockets.notify_user(link.user, p1, p2)
 
     def updateContent(self, name=None, created=None, updated=datetime.datetime.now()):
         if name is not None and name != "":

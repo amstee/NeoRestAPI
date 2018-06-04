@@ -55,6 +55,7 @@ class CircleUpdate(Resource):
                     return FAILED("Cet utilisateur n'a pas access a ce cercle", 403)
                 circle.updateContent(name=content["name"] if "name" in content else None,
                                      created=content["created"] if "created" in content else None)
+                circle.notify_users()
                 return SUCCESS()
             resp = FAILED("Le cercle est introuvable")
             resp.status_code = 401
@@ -80,6 +81,7 @@ class CircleInfo(Resource):
             return FAILED(e)
         return resp
 
+
 class CircleDeviceInfo(Resource):
     @checkContent
     @securedDeviceRoute
@@ -88,6 +90,7 @@ class CircleDeviceInfo(Resource):
             return jsonify({"success": True, "content": device.circle.getContent()})
         except Exception as e:
             return FAILED(e)
+
 
 class CircleList(Resource):
     @checkContent

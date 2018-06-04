@@ -1,10 +1,11 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from config.database import Base
 from config.database import db_session
-from models.UserToCircle import UserToCircle
 from dateutil import parser as DateParser
+from config.sockets import sockets
 import datetime
+
 
 class CircleInvite(Base):
     __tablename__ = "circle_invites"
@@ -45,6 +46,9 @@ class CircleInvite(Base):
             else:
                 self.updated = updated
         db_session.commit()
+
+    def notify_user(self, p1='CircleInvite', p2='default'):
+        sockets.notify_user(self.user, p1, p2)
 
     def getContent(self, user=True):
         if user:

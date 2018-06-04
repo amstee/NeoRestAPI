@@ -71,7 +71,7 @@ class ModifyPassword(Resource):
             prev = content["previous_password"]
             new = content["new_password"]
             user = db_session.query(UserModel).filter_by(email=email).first()
-            if user != None:
+            if user is not None:
                 if user.checkPassword(prev):
                     user.updatePassword(new)
                     return SUCCESS()
@@ -146,9 +146,7 @@ class AccountModify(Resource):
             user.updateContent(email=content["email"],
                                first_name=content["first_name"], last_name=content["last_name"],
                             birthday=content["birthday"], searchText=content["searchText"])
-            socket = sockets.find_user(user)
-            if socket is not None:
-                socket.emit('Account', 'modify')
+            sockets.notify_user(user, 'Account', 'modify')
             resp = jsonify({"success": True})
             resp.status_code = 200
             return resp
@@ -162,10 +160,10 @@ class MailAvailability(Resource):
         try:
             contentChecker("email")
             user = db_session.query(UserModel).filter(UserModel.email == content['email']).first()
-            if user != None:
-                resp = jsonify({"success" : False})
+            if user is not None:
+                resp = jsonify({"success": False})
             else:
-                resp = jsonify({"success" : True})
+                resp = jsonify({"success": True})
             resp.status_code = 200
             return resp
         except Exception as e:
@@ -175,12 +173,13 @@ class MailAvailability(Resource):
 class PromoteAdmin(Resource):
     @checkContent
     @securedAdminRoute
-    def post(self, content):
+    def post(self, content, admin):
         try:
             contentChecker("user_id")
             user = db_session.query(UserModel).filter(UserModel.id == content["user_id"]).first()
             if user is not None:
                 user.promoteAdmin()
+                sockets.notify_user(user, 'Account', 'promote')
                 return SUCCESS()
             return FAILED("Utilisateur introuvable")
         except Exception as e:

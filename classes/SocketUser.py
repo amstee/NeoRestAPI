@@ -34,8 +34,8 @@ class SocketUser:
         except Exception as e:
             return False, str(e)
 
-    def emit(self, event, data):
-        emit(event, data, room=self.sid, namespace='/')
+    def emit(self, event, data, namespace='/'):
+        emit(event, data, room=self.sid, namespace=namespace)
 
     def disconnect(self):
         if self.authenticated:

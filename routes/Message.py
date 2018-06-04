@@ -11,6 +11,7 @@ from utils.apiUtils import *
 from utils.security import userHasAccessToMessage, userIsOwnerOfMessage
 from .Facebook import *
 
+
 class MessageCreate(Resource):
     @checkContent
     @securedAdminRoute

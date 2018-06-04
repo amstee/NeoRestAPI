@@ -125,6 +125,7 @@ class ConversationUpdate(Resource):
                 link.conversation.updateContent(name=content["conversation_name"] if "conversation_name" in content else None,
                                                 created=content["created"] if "created" in content else None,
                                                 device_access=content["device_access"] if "device_access" in content else None)
+                link.conversation.notify_users()
                 return jsonify({"success": True, "content": link.conversation.getSimpleContent()})
             else:
                 return FAILED("Cet utilisateur n'a pas les droits suffisants pour modifier cette conversation", 403)

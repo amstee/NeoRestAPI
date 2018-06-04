@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from config.database import Base, db_session
 from dateutil import parser as DateParser
+from config.sockets import sockets
 import datetime
 
 class Conversation(Base):
@@ -68,6 +69,10 @@ class Conversation(Base):
         if device_access is not None:
             self.device_access = device_access
         db_session.commit()
+
+    def notify_users(self, p1='Conversation', p2='modify'):
+        for link in self.links:
+            sockets.notify_user(link.user, p1, p2)
 
     def setOtherAdmin(self):
         for link in self.links:

@@ -17,6 +17,7 @@ class DeviceAdd(Resource):
             new_device = Device(name=content["name"], username=content["username"] if "username" in content else None)
             new_device.circle = circle
             db_session.commit()
+            circle.notify_users('device created')
             resp = SUCCESS()
         except Exception as e:
             resp = FAILED(e)
@@ -31,12 +32,13 @@ class DeviceUpdate(Resource):
     def post(self, content, user):
         try:
             contentChecker("device_id")
-            device = db_session.query(Device).filter(Device.id==content["device_id"]).first()
+            device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is None:
                 return FAILED("Device introuvable")
             if not device.circle.hasAdmin(user):
                 return FAILED("Privileges insuffisants", 403)
             device.updateContent(name=content['name'] if "name" in content else None)
+            device.circle.notify_users(p2='device update')
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
