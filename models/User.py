@@ -190,7 +190,7 @@ class User(Base):
             "birthday": self.birthday,
             "created": self.created,
             "updated": self.updated,
-            "isOnline": self.isOnline,
+            "isOnline": self.is_online,
             "type": self.type,
         }
 
@@ -203,7 +203,7 @@ class User(Base):
             "birthday": self.birthday,
             "created": self.created,
             "updated": self.updated,
-            "isOnline": self.isOnline,
+            "isOnline": self.is_online,
             "type": self.type,
             "circles": [link.getContent() for link in self.circleLink],
             "invites": [invite.getContent() for invite in self.circleInvite],
