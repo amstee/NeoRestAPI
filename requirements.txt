@@ -30,3 +30,5 @@ urllib3==1.22
 webargs==2.1.0
 Werkzeug==0.14.1
 flask-socketio==3.0.0
+eventlet==0.23.0
+flask_session==0.3.1
