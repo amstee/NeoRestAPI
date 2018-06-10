@@ -13,3 +13,5 @@ venv.bak/instance/
 *.sqlt
 .idea/
 .vscode/
+flask_session/
+
