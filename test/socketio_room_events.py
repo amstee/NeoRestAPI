@@ -40,14 +40,14 @@ class SocketioAuthenticate(unittest.TestCase):
         res = self.client.get_received()
         assert len(res) == 1
         assert res[0]['name'] == 'error'
-        data = {
-            'files': [],
-            'link_id': 1,
-            'text': "test",
-            'directory_name': ""
-        }
-        self.client.emit('message', data, json=True)
-        res = self.client.get_received()
-        print(res)
-        assert len(res) == 1
-        assert res[0]['name'] == 'error'
+        #data = {
+        #    'files': [],
+        #    'link_id': 1,
+        #    'text': "test",
+        #    'directory_name': ""
+        #}
+        #self.client.emit('message', data, json=True)
+        #res = self.client.get_received()
+        #print(res)
+        #assert len(res) == 1
+        #assert res[0]['name'] == 'error'
