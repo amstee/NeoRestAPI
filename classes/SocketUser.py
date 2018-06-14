@@ -1,4 +1,4 @@
-from flask_socketio import emit
+from flask_socketio import emit, join_room
 from models.User import User, SECRET_KEY
 from config.database import db_session
 import jwt
@@ -34,8 +34,8 @@ class SocketUser:
         except Exception as e:
             return False, str(e)
 
-    def emit(self, event, data, namespace='/'):
-        emit(event, data, room=self.sid, namespace=namespace)
+    def emit(self, event, data, room=sid):
+        emit(event, data, room=room, namespace='/')
 
     def disconnect(self):
         if self.authenticated:
