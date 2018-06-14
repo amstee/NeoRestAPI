@@ -15,10 +15,12 @@ class SocketioAuthenticate(unittest.TestCase):
         self.client = SocketIOTestClient(self.neo.app, self.neo.socketio)
         self.client.disconnect()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "te@test.com").first()
+        self.user2 = db_session.query(UserModel).filter(UserModel.email == "user1.beta@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="te@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
         self.token1 = AuthenticateUser(self.api, self.user1, "test")
+        self.token2 = AuthenticateUser(self.api, self.user2, "test")
 
     def tearDown(self):
         self.client.disconnect()
@@ -40,14 +42,21 @@ class SocketioAuthenticate(unittest.TestCase):
         res = self.client.get_received()
         assert len(res) == 1
         assert res[0]['name'] == 'error'
-        #data = {
-        #    'files': [],
-        #    'link_id': 1,
-        #    'text': "test",
-        #    'directory_name': ""
-        #}
-        #self.client.emit('message', data, json=True)
-        #res = self.client.get_received()
-        #print(res)
-        #assert len(res) == 1
-        #assert res[0]['name'] == 'error'
+
+    def test_valid_join_conversation(self):
+        data = {
+            'token': self.token2
+        }
+        assert len(self.neo.sockets) == 0
+        self.client.connect()
+        self.client.emit('authenticate', data, json=True)
+        res = self.client.get_received()
+        assert len(res) == 1
+        assert res[0]['name'] == 'success'
+        data = {
+            'conversation_id': 1
+        }
+        self.client.emit('join_conversation_event', data, json=True)
+        res = self.client.get_received()
+        assert len(res) == 1
+        assert res[0]['name'] == 'success'
