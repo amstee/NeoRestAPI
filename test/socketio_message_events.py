@@ -14,18 +14,13 @@ class SocketioAuthenticate(unittest.TestCase):
         self.api = self.neo.activate_testing()
         self.client = SocketIOTestClient(self.neo.app, self.neo.socketio)
         self.client.disconnect()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "te@test.com").first()
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "user1.beta@test.com").first()
-        if self.user1 is None:
-            self.user1 = UserModel(email="te@test.com", password="test", first_name="firstname",
-                                   last_name="lastname", birthday="1995-12-12")
+        self.user1 = db_session.query(UserModel).filter(UserModel.email == "user1.beta@test.com").first()
         self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
 
     def tearDown(self):
         self.client.disconnect()
 
-    def test_invalid_join_conversation(self):
+    def test_valid_message(self):
         data = {
             'token': self.token1
         }
@@ -41,11 +36,21 @@ class SocketioAuthenticate(unittest.TestCase):
         self.client.emit('join_conversation_event', data, json=True)
         res = self.client.get_received()
         assert len(res) == 1
-        assert res[0]['name'] == 'error'
-
-    def test_valid_join_conversation(self):
+        assert res[0]['name'] == 'success'
         data = {
-            'token': self.token2
+            'files': [],
+            'link_id': 1,
+            'text': "test",
+            'directory_name': ""
+        }
+        self.client.emit('message', data, json=True)
+        res = self.client.get_received()
+        assert len(res) == 1
+        assert res[0]['name'] == 'success'
+
+    def test_invalid_message_link_id(self):
+        data = {
+            'token': self.token1
         }
         assert len(self.neo.sockets) == 0
         self.client.connect()
@@ -60,3 +65,13 @@ class SocketioAuthenticate(unittest.TestCase):
         res = self.client.get_received()
         assert len(res) == 1
         assert res[0]['name'] == 'success'
+        data = {
+            'files': [],
+            'link_id': 200,
+            'text': "test",
+            'directory_name': ""
+        }
+        self.client.emit('message', data, json=True)
+        res = self.client.get_received()
+        assert len(res) == 1
+        assert res[0]['name'] == 'error'
