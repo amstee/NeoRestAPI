@@ -25,13 +25,14 @@ class Device(Base):
     name = Column(String(120))
     created = Column(DateTime)
     updated = Column(DateTime)
+    is_online = Column(Boolean)
 
     # RELATIONS
     circle = relationship("Circle", back_populates="device")
     messages = relationship("Message", back_populates="device")
 
     def __init__(self, created=datetime.datetime.now(), updated=datetime.datetime.now(),
-                 username=None, name=None, activated=False):
+                 username=None, name=None, activated=False, is_online=None):
         if type(created) is str:
             self.created = DateParser.parse(created)
         else:
@@ -46,6 +47,10 @@ class Device(Base):
             self.name = "My Device %d"%(self.id)
         if activated is not None:
             self.activated = activated
+        if is_online is not None:
+            self.is_online = is_online
+        else:
+            self.is_online = False
         # USERNAME / PASSWORD AND KEY GENERATION
         # NEED TO INSTALL pycrypto and cypher the password for the storage before activation
         if username is not None:
@@ -68,19 +73,22 @@ class Device(Base):
     def __repr__(self):
         return "<Device(id='%s' name='%s' created='%s' updated='%s')>" % (self.id, self.name, str(self.created), str(self.updated))
 
-    def updateContent(self, created=None, updated=datetime.datetime.now(), name=None, activated=None):
+    def updateContent(self, created=None, updated=datetime.datetime.now(),
+                      name=None, activated=None, is_online=None):
         if type(created) is str:
             self.created = DateParser.parse(created)
         elif created is not None:
             self.created = created
         if type(updated) is str:
             self.updated = DateParser.parse(updated)
-        elif updated != None:
+        elif updated is not None:
             self.updated = updated
         if name is not None and name != "":
             self.name = name
         if activated is not None:
             self.activated = activated
+        if is_online is not None:
+            self.is_online = is_online
         db_session.commit()
 
     def disconnect(self):
@@ -94,18 +102,18 @@ class Device(Base):
             device = db_session.query(Device).filter(Device.id==payload['sub']).first()
             if device is not None:
                 if device.jsonToken == "" or device.jsonToken is None:
-                    return (False, "Device non authentifié")
-                if device.activated == False:
-                    return (False, "Device non activé")
-                return (True, device)
+                    return False, "Device non authentifié"
+                if not device.activated:
+                    return False, "Device non activé"
+                return True, device
             else:
-                return (False, "Device Neo introuvable")
+                return False, "Device Neo introuvable"
         except jwt.ExpiredSignatureError:
-            return (False, "La session a expiré, authentifiez vous a nouveau")
+            return False, "La session a expiré, authentifiez vous a nouveau"
         except jwt.InvalidTokenError:
-            return (False, 'Token invalide, authentifiez vous a nouveau')
+            return False, 'Token invalide, authentifiez vous a nouveau'
         except Exception as e:
-            return (False, 'Une erreur est survenue : ' + str(e))
+            return False, 'Une erreur est survenue : ' + str(e)
 
     def encodeAuthToken(self):
         try:

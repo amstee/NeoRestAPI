@@ -4,6 +4,7 @@ from config.database import Base, db_session
 from dateutil import parser as DateParser
 import datetime
 
+
 class Message(Base):
     __tablename__ = "messages"
     id = Column(Integer, primary_key=True)

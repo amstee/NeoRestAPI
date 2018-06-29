@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from config.database import Base
 from config.database import db_session
 from dateutil import parser as DateParser
+from flask_socketio import emit
 from config.sockets import sockets
 import datetime
 
@@ -67,8 +68,7 @@ class Circle(Base):
             db_session.commit()
 
     def notify_users(self, p1='Circle', p2='modify'):
-        for link in self.userLink:
-            sockets.notify_user(link.user, p1, p2)
+        emit(p1, p2, room='circle_' + str(self.id), namespace='/')
 
     def updateContent(self, name=None, created=None, updated=datetime.datetime.now()):
         if name is not None and name != "":

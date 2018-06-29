@@ -5,7 +5,6 @@ from models.User import User as UserModel
 from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
-from config.sockets import sockets
 
 
 class AccountCreate(Resource):
@@ -40,11 +39,12 @@ class AccountLogin(Resource):
         try:
             contentChecker("email", "password")
             user = db_session.query(UserModel).filter_by(email=content["email"]).first()
-            if user != None:
+            if user is not None:
                 res, data = user.Authenticate(content["password"])
                 if res is True:
                     resp = jsonify({"success": True, "token": data})
                     resp.status_code = 200
+                    user.notifyCircles('user login', user.email)
                 else:
                     resp = jsonify({"success": False, "message": data})
                     resp.status_code = 401
@@ -94,10 +94,11 @@ class AccountLogout(Resource):
         try:
             contentChecker("token")
             res, data = UserModel.decodeAuthToken(content["token"])
-            if (res is True):
+            if res:
                 disco_res, message = data.disconnect()
                 if disco_res is True:
                     resp = jsonify({"success": True})
+                    data.notifyCircles('user logout', data.email)
                 else:
                     resp = jsonify({"success": False, "message": message})
                     resp.status_code = 403
@@ -146,7 +147,6 @@ class AccountModify(Resource):
             user.updateContent(email=content["email"],
                                first_name=content["first_name"], last_name=content["last_name"],
                             birthday=content["birthday"], searchText=content["searchText"])
-            sockets.notify_user(user, 'Account', 'modify')
             resp = jsonify({"success": True})
             resp.status_code = 200
             return resp
@@ -179,7 +179,6 @@ class PromoteAdmin(Resource):
             user = db_session.query(UserModel).filter(UserModel.id == content["user_id"]).first()
             if user is not None:
                 user.promoteAdmin()
-                sockets.notify_user(user, 'Account', 'promote')
                 return SUCCESS()
             return FAILED("Utilisateur introuvable")
         except Exception as e:

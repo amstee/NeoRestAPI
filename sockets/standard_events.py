@@ -13,7 +13,7 @@ def authenticate(json):
     sid = request.sid
     socket = sockets.find_socket(sid)
     if socket is None:
-        emit('error', 'Socket user introuvable', room=sid)
+        emit('error', 'Socket user introuvable', room=sid, namespace='/')
     if 'token' not in json:
         socket.emit('error', 'Json web token introuvable')
     b, data = socket.authenticate(json['token'])

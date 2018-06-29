@@ -61,7 +61,8 @@ class DeviceInfo(Resource):
             return FAILED(e)
         return resp
 
-class InforForDevice(Resource):
+
+class InfoForDevice(Resource):
     @checkContent
     @securedDeviceRoute
     def post(self, content, device):
@@ -69,6 +70,7 @@ class InforForDevice(Resource):
             return jsonify({"success": True, "content": device.getContent()})
         except Exception as e:
             return FAILED(e)
+
 
 class DeviceDelete(Resource):
     @checkContent
@@ -120,6 +122,7 @@ class DeviceLogin(Resource):
                 if res is True:
                     resp = jsonify({"success": True, "device_token": data})
                     resp.status_code = 200
+                    device.circle.notify_users('device login', p2=str(device.id))
                 else:
                     return FAILED(data)
             else:
@@ -160,6 +163,7 @@ class DeviceLogout(Resource):
             res, data = Device.decodeAuthToken(content["device_token"])
             if res is True:
                 data.disconnect()
+                data.circle.notify_users('device logout', str(data.id))
                 return SUCCESS()
             else:
                 resp = jsonify({"success": True, "message": data})

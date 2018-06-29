@@ -35,6 +35,7 @@ class CircleDelete(Resource):
             if circle is not None:
                 db_session.delete(circle)
                 db_session.commit()
+                circle.notify_users(p2='delete')
                 return SUCCESS()
             resp = FAILED("Le cercle est introuvable")
             resp.status_code = 401

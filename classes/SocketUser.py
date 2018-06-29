@@ -1,7 +1,6 @@
-from flask_socketio import emit, join_room
-from models.User import User, SECRET_KEY
-from config.database import db_session
-import jwt
+from flask_socketio import emit
+from models.User import User
+from models.Device import Device
 
 
 class SocketUser:
@@ -9,7 +8,8 @@ class SocketUser:
     connected = True
     authenticated = False
     token = None
-    user = None
+    client = None
+    is_device = False
 
     def __init__(self, sid):
         self.sid = sid
@@ -20,31 +20,37 @@ class SocketUser:
 
     def authenticate(self, jwt_token):
         try:
-            token = jwt.decode(jwt_token, SECRET_KEY)
-            user = db_session.query(User).filter(User.id == token['sub']).first()
-            if user is None:
+            b, client = User.decodeAuthToken(jwt_token)
+            if not b:
+                b, client = Device.decodeAuthToken(jwt_token)
+                if b:
+                    self.is_device = True
+            if not b or client is None:
                 return False, 'User not found'
-            if user.jsonToken != jwt_token:
+            if client.jsonToken != jwt_token:
                 return False, 'Invalid token'
             self.token = jwt_token
-            self.user = user
-            self.user.updateContent(is_online=True)
+            self.client = client
+            self.client.updateContent(is_online=True)
             self.authenticated = True
-            return True, self.user
+            return True, 'User authenticated'
         except Exception as e:
             return False, str(e)
 
-    def emit(self, event, data, room=sid):
-        emit(event, data, room=room, namespace='/')
+    def emit(self, event, data, namespace='/', room=None):
+        if room is None:
+            room = self.sid
+        emit(event, data, room=room, namespace=namespace)
 
     def disconnect(self):
         if self.authenticated:
-            self.user.updateContent(is_online=False)
+            self.client.updateContent(is_online=False)
 
     def getContent(self):
         return {
             'sid': self.sid,
             'authenticated': self.authenticated,
-            'user': self.user.getSimpleContent(),
-            'connected': self.connected
+            'client': self.client.getSimpleContent(),
+            'connected': self.connected,
+            'is_device': self.is_device
         }

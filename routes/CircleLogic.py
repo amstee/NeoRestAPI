@@ -6,6 +6,7 @@ from models.CircleInvite import CircleInvite as CircleInviteModel
 from utils.decorators import securedRoute, checkContent
 from models.UserToCircle import UserToCircle
 from utils.contentChecker import contentChecker
+from config.sockets import sockets
 from utils.apiUtils import *
 
 
@@ -28,7 +29,7 @@ class CircleInvite(Resource):
                     circle_invite = CircleInviteModel()
                     circle_invite.user = dest
                     circle_invite.circle = circle
-                    circle_invite.notify_user(p2='creation')
+                    circle_invite.notify_user(p2=str(circle.id))
                     db_session.commit()
                     return SUCCESS()
                 return FAILED("Utilisateur spécifié introuvable")
@@ -52,7 +53,7 @@ class CircleJoin(Resource):
                 link.circle = invite.circle
                 db_session.delete(invite)
                 db_session.commit()
-                link.circle.notify_users(p2='user new')
+                link.circle.notify_users(p1='user join', p2=user.email)
                 return SUCCESS()
             return FAILED("Invitation introuvable")
         except Exception as e:
@@ -86,11 +87,11 @@ class CircleQuit(Resource):
                                                          UserToCircle.user_id==user.id).first()
             if link is not None:
                 id = link.circle.id
+                link.circle.notify_users('user quit', link.user.email)
                 db_session.delete(link)
                 db_session.commit()
                 circle = db_session.query(Circle).filter(Circle.id == id).first()
                 circle.checkValidity()
-                circle.notify_users(p2='user quit')
                 return SUCCESS()
             return FAILED("L'utilisateur n'appartient pas a ce cercle", 403)
         except Exception as e:
@@ -111,7 +112,8 @@ class CircleKick(Resource):
                     if link is not None:
                         db_session.delete(link)
                         db_session.commit()
-                        circle.notify_users(p2='user kick')
+                        circle.notify_users('user kick', kick.email)
+                        sockets.notify_user(kick, 'circle kick', circle.id)
                         return SUCCESS()
                     return FAILED("Lien entre utilisateur et cercle introuvable")
                 return FAILED("Cercle spécifié introuvable")

@@ -15,10 +15,9 @@ def message(content):
     sid = request.sid
     socket = sockets.find_socket(sid)
     if socket is None:
-        emit('error', 'Socket user introuvable', room=sid)
+        emit('error', 'Socket user introuvable', room=sid, namespace='/')
     else:
         try:
-            #contentChecker("files", "link_id", "text", "directory_name")
             file_list = content["files"]
             link = db_session.query(UserToConversation).filter(UserToConversation.id==content["link_id"]).first()
             if link is None:
@@ -42,7 +41,7 @@ def message(content):
                     'message': message.text_content,
                     'time': datetime.datetime.now()
                 }
-                socket.emit('message', data_socket, room=conversation.id)
+                emit('message', data_socket, room=('conversation_' + str(conversation.id)))
                 socket.emit("success", "Message sent")
         except Exception as e:
-            socket.emit("error", str(e))
+            socket.emit("error", str(e), namespace='/')

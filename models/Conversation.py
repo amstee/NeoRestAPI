@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from config.database import Base, db_session
 from dateutil import parser as DateParser
+from flask_socketio import emit
 from config.sockets import sockets
 import datetime
 
@@ -71,8 +72,7 @@ class Conversation(Base):
         db_session.commit()
 
     def notify_users(self, p1='Conversation', p2='modify'):
-        for link in self.links:
-            sockets.notify_user(link.user, p1, p2)
+        emit(p1, p2, room='conversation_' + str(self.id), namespace='/')
 
     def setOtherAdmin(self):
         for link in self.links:

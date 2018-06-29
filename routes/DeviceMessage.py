@@ -11,6 +11,7 @@ from utils.contentChecker import contentChecker
 from utils.apiUtils import *
 from .Facebook import *
 
+
 class DeviceMessageCreate(Resource):
     @checkContent
     @securedAdminRoute

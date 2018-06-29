@@ -6,7 +6,7 @@
     <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredPackages">
         <value>
-          <list size="34">
+          <list size="35">
             <item index="0" class="java.lang.String" itemvalue="pycrypto" />
             <item index="1" class="java.lang.String" itemvalue="flask-socketio-3.0.0" />
             <item index="2" class="java.lang.String" itemvalue="webargs" />
@@ -41,6 +41,7 @@
             <item index="31" class="java.lang.String" itemvalue="pytz" />
             <item index="32" class="java.lang.String" itemvalue="Flask-RESTful" />
             <item index="33" class="java.lang.String" itemvalue="idna" />
+            <item index="34" class="java.lang.String" itemvalue="eventlet" />
           </list>
         </value>
       </option>

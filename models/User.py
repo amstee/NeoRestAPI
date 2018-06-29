@@ -94,6 +94,10 @@ class User(Base):
         except jwt.InvalidTokenError:
             return (False, 'Token invalide, authentifiez vous a nouveau')
 
+    def notifyCircles(self, p1, p2):
+        for link in self.circleLink:
+            link.circle.notify_users(p1, p2)
+
     def encodeAuthToken(self):
         try:
             payload = {
@@ -122,25 +126,24 @@ class User(Base):
             return token.decode()
         except Exception as e:
             print(e)
-            return (None)
+            return None
 
     def checkPassword(self, password=None):
-        if password != None and password != "":
+        if password is not None and password != "":
             if self.password != hashlib.sha512(password.encode("utf-8")).hexdigest():
                 return False
             return True
         return False
 
-
     def Authenticate(self, password=None):
-        if password != None and password != "":
+        if password is not None and password != "":
             if self.password != hashlib.sha512(password.encode('utf-8')).hexdigest():
-                return (False, "Mot de passe invalide")
-            return (True, self.encodeAuthToken())
-        return (False, "Aucun mot de passe fourni")
+                return False, "Mot de passe invalide"
+            return True, self.encodeAuthToken()
+        return False, "Aucun mot de passe fourni"
 
     def updatePassword(self, password=None):
-        if password != None and password != "":
+        if password is not None and password != "":
             self.password = hashlib.sha512(password.encode('utf-8')).hexdigest()
             db_session.commit()
 
