@@ -47,8 +47,11 @@ class CircleInvite(Base):
                 self.updated = updated
         db_session.commit()
 
-    def notify_user(self, p1='CircleInvite', p2='default'):
-        sockets.notify_user(self.user, p1, p2)
+    def notify_user(self, p1='circle_invite', p2=None):
+        if p2 is None:
+            p2 = {}
+        p2['circle_invite_id'] = self.id
+        sockets.notify_user(self.user, False, p1, p2)
 
     def getContent(self, user=True):
         if user:

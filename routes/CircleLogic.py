@@ -29,7 +29,7 @@ class CircleInvite(Resource):
                     circle_invite = CircleInviteModel()
                     circle_invite.user = dest
                     circle_invite.circle = circle
-                    circle_invite.notify_user(p2=str(circle.id))
+                    circle_invite.notify_user(p2={'event': 'invite', 'circle_id': circle.id})
                     db_session.commit()
                     return SUCCESS()
                 return FAILED("Utilisateur spécifié introuvable")
@@ -53,7 +53,7 @@ class CircleJoin(Resource):
                 link.circle = invite.circle
                 db_session.delete(invite)
                 db_session.commit()
-                link.circle.notify_users(p1='user join', p2=user.email)
+                link.circle.notify_users(p1='circle', p2={'event': 'join', 'user': link.user.email})
                 return SUCCESS()
             return FAILED("Invitation introuvable")
         except Exception as e:
@@ -87,7 +87,7 @@ class CircleQuit(Resource):
                                                          UserToCircle.user_id==user.id).first()
             if link is not None:
                 id = link.circle.id
-                link.circle.notify_users('user quit', link.user.email)
+                link.circle.notify_users('circle', {'event': 'quit', 'user': link.user.email})
                 db_session.delete(link)
                 db_session.commit()
                 circle = db_session.query(Circle).filter(Circle.id == id).first()
@@ -112,8 +112,7 @@ class CircleKick(Resource):
                     if link is not None:
                         db_session.delete(link)
                         db_session.commit()
-                        circle.notify_users('user kick', kick.email)
-                        sockets.notify_user(kick, 'circle kick', circle.id)
+                        circle.notify_users('circle', {'event': 'kick', 'email': kick.email, 'from': user.email})
                         return SUCCESS()
                     return FAILED("Lien entre utilisateur et cercle introuvable")
                 return FAILED("Cercle spécifié introuvable")

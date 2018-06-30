@@ -31,7 +31,7 @@ class ConversationInvite(Resource):
                 new_link = UserToConversation(privilege="STANDARD")
                 new_link.user = dest
                 new_link.conversation = link.conversation
-                sockets.notify_user(client=dest, p1='Conversation', p2='invite')
+                sockets.notify_user(client=dest, is_device=False, p1='conversation', p2={'event': 'invite', 'conversation_id': link.conversation_id})
                 db_session.commit()
             else:
                 return FAILED("Vous n'avez pas les droits suffisants", 403)
@@ -60,7 +60,7 @@ class ConversationUserPromote(Resource):
             if link.privilege == "ADMIN":
                 temp.updateContent(privilege="ADMIN")
                 link.updateContent(privilege="STANDARD")
-                sockets.notify_user(client=dest, p1='Conversation', p2='promoted')
+                sockets.notify_user(client=dest, is_device=False, p1='conversation', p2={'event': 'promoted', 'conversation_id': link.conversation_id})
                 return SUCCESS()
             else:
                 return FAILED("Vous n'avez pas les droits suffisants", 403)
@@ -89,7 +89,7 @@ class ConversationKick(Resource):
                 db_session.delete(temp)
                 db_session.commit()
                 link.conversation.checkValidity()
-                link.conversation.notify_users(p1='user kick', p2=dest.email)
+                link.conversation.notify_users(p2={'event': 'kick', 'user': dest.email, 'from': user.email})
             else:
                 return FAILED("Vous n'avez pas les droits suffisants", 403)
             return SUCCESS()
@@ -109,7 +109,7 @@ class ConversationQuit(Resource):
                 return FAILED("Lien vers la conversation introuvable")
             conversation = link.conversation
             if link.user_id == user.id:
-                conversation.notify_users(p1='user quit', p2=link.user.email)
+                conversation.notify_users(p2={'event': 'quit', 'user': user.email})
                 db_session.delete(link)
                 db_session.commit()
             if conversation.checkValidity():
@@ -131,7 +131,7 @@ class ConversationAddDevice(Resource):
                 return FAILED("Lien vers la conversation introuvable")
             if link.privilege == "ADMIN":
                 link.conversation.updateContent(device_access=True)
-                link.conversation.notify_users(p1='device add', p2='')
+                link.conversation.notify_users(p2={'event': 'device', 'type': 'add'})
             else:
                 return FAILED("Vous n'avec pas les droits pour effectuer cette action", 403)
             return SUCCESS()
@@ -151,7 +151,7 @@ class ConversationRemoveDevice(Resource):
                 return FAILED("Lien vers la conversation introuvable")
             if link.privilege == "ADMIN":
                 link.conversation.updateContent(device_access=False)
-                link.conversation.notify_users(p1='device remove', p2='')
+                link.conversation.notify_users(p2={'event': 'device', 'type': 'remove'})
             else:
                 return FAILED("Vous n'avec pas les droits pour effectuer cette action", 403)
             return SUCCESS()

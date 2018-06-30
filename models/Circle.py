@@ -67,7 +67,10 @@ class Circle(Base):
             db_session.delete(self)
             db_session.commit()
 
-    def notify_users(self, p1='Circle', p2='modify'):
+    def notify_users(self, p1='circle', p2=None):
+        if p2 is None:
+            p2 = {}
+        p2['circle_id'] = self.id
         emit(p1, p2, room='circle_' + str(self.id), namespace='/')
 
     def updateContent(self, name=None, created=None, updated=datetime.datetime.now()):

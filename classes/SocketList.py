@@ -23,7 +23,7 @@ class SocketList:
             return True
         return False
 
-    def find_user(self, client):
+    def find_user(self, client, is_device=False):
         try:
             if 'socket' in session and session['socket'] is not None:
                 socket = session['socket']
@@ -36,7 +36,7 @@ class SocketList:
                     return None
             for key, value in self.socket_dic.items():
                 if value.client is not None:
-                    if value.client.id == client.id:
+                    if value.client.id == client.id and value.is_device == is_device:
                         session['socket'] = value
                         session['sid'] = key
                         return value
@@ -44,10 +44,10 @@ class SocketList:
         except Exception:
             return None
 
-    def notify_user(self, client, p1, p2, namespace='/'):
+    def notify_user(self, client, is_device, p1, p2, namespace='/'):
         if not client.is_online:
             return False
-        socket = self.find_user(client)
+        socket = self.find_user(client, is_device)
         if socket is not None:
             socket.emit(p1, p2, namespace=namespace)
             return True

@@ -71,7 +71,10 @@ class Conversation(Base):
             self.device_access = device_access
         db_session.commit()
 
-    def notify_users(self, p1='Conversation', p2='modify'):
+    def notify_users(self, p1='conversation', p2=None):
+        if p2 is None:
+            p2 = {}
+        p2['conversation_id'] = self.id
         emit(p1, p2, room='conversation_' + str(self.id), namespace='/')
 
     def setOtherAdmin(self):

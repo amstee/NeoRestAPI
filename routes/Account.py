@@ -44,7 +44,7 @@ class AccountLogin(Resource):
                 if res is True:
                     resp = jsonify({"success": True, "token": data})
                     resp.status_code = 200
-                    user.notifyCircles('user login', user.email)
+                    user.notifyCircles({'event': 'connect', 'user': user.email})
                 else:
                     resp = jsonify({"success": False, "message": data})
                     resp.status_code = 401
@@ -98,7 +98,7 @@ class AccountLogout(Resource):
                 disco_res, message = data.disconnect()
                 if disco_res is True:
                     resp = jsonify({"success": True})
-                    data.notifyCircles('user logout', data.email)
+                    data.notifyCircles({'event': 'disconnect', 'user': data.email})
                 else:
                     resp = jsonify({"success": False, "message": message})
                     resp.status_code = 403

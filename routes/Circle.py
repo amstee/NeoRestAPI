@@ -35,7 +35,7 @@ class CircleDelete(Resource):
             if circle is not None:
                 db_session.delete(circle)
                 db_session.commit()
-                circle.notify_users(p2='delete')
+                circle.notify_users(p1='circle', p2={'event': 'delete'})
                 return SUCCESS()
             resp = FAILED("Le cercle est introuvable")
             resp.status_code = 401
@@ -56,7 +56,7 @@ class CircleUpdate(Resource):
                     return FAILED("Cet utilisateur n'a pas access a ce cercle", 403)
                 circle.updateContent(name=content["name"] if "name" in content else None,
                                      created=content["created"] if "created" in content else None)
-                circle.notify_users()
+                circle.notify_users(p1='circle', p2={'event': 'update'})
                 return SUCCESS()
             resp = FAILED("Le cercle est introuvable")
             resp.status_code = 401

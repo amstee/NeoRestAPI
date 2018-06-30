@@ -94,9 +94,9 @@ class User(Base):
         except jwt.InvalidTokenError:
             return (False, 'Token invalide, authentifiez vous a nouveau')
 
-    def notifyCircles(self, p1, p2):
+    def notifyCircles(self, p2):
         for link in self.circleLink:
-            link.circle.notify_users(p1, p2)
+            link.circle.notify_users(p2=p2)
 
     def encodeAuthToken(self):
         try:

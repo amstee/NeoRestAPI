@@ -38,7 +38,7 @@ class DeviceUpdate(Resource):
             if not device.circle.hasAdmin(user):
                 return FAILED("Privileges insuffisants", 403)
             device.updateContent(name=content['name'] if "name" in content else None)
-            device.circle.notify_users(p2='device update')
+            device.circle.notify_users(p2={'event': 'device', 'type': 'update', 'device_id': device.id})
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
@@ -122,7 +122,7 @@ class DeviceLogin(Resource):
                 if res is True:
                     resp = jsonify({"success": True, "device_token": data})
                     resp.status_code = 200
-                    device.circle.notify_users('device login', p2=str(device.id))
+                    device.circle.notify_users(p2={'event': 'device', 'type': 'connect', 'device_id': device.id})
                 else:
                     return FAILED(data)
             else:
@@ -163,7 +163,7 @@ class DeviceLogout(Resource):
             res, data = Device.decodeAuthToken(content["device_token"])
             if res is True:
                 data.disconnect()
-                data.circle.notify_users('device logout', str(data.id))
+                data.circle.notify_users(p2={'event': 'device', 'type': 'disconnect', 'device_id': data.id})
                 return SUCCESS()
             else:
                 resp = jsonify({"success": True, "message": data})
