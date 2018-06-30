@@ -112,7 +112,7 @@ class CircleKick(Resource):
                     if link is not None:
                         db_session.delete(link)
                         db_session.commit()
-                        circle.notify_users('circle', {'event': 'kick', 'email': kick.email, 'from': user.email})
+                        circle.notify_users('circle', {'event': 'kick', 'user': kick.email, 'from': user.email})
                         return SUCCESS()
                     return FAILED("Lien entre utilisateur et cercle introuvable")
                 return FAILED("Cercle spécifié introuvable")
