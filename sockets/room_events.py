@@ -12,15 +12,15 @@ from flask_socketio import join_room, leave_room, emit
 def join_conversation_event(json):
     sid = request.sid
     socket = sockets.find_socket(sid)
-    if socket is None:
-        emit('error', 'Socket user introuvable', room=sid)
+    if socket is None or socket.authenticated is False:
+        emit('error', 'Socket user introuvable', room=sid, namespace='/')
     else:
         try:
             room = json['conversation_id']
             conversation = None
             conversation_link = None
             if socket.is_device:
-                conversation = db_session.query(Conversation).filter(Conversation.id == socket.client.id).first()
+                conversation = db_session.query(Conversation).filter(Conversation.id == room).first()
             else:
                 conversation_link = db_session.query(UserToConversation).filter(UserToConversation.user_id == socket.client.id, UserToConversation.conversation_id == room).first()
             if (conversation is not None and conversation.circle_id == socket.client.circle.id) or conversation_link is not None:
@@ -34,10 +34,10 @@ def join_conversation_event(json):
 
 @socketio.on('join_circle_event')
 def join_circle_event(json):
+    sid = request.sid
     try:
-        sid = request.sid
         socket = sockets.find_socket(sid)
-        if socket is None:
+        if socket is None or socket.authenticated is False:
             emit('error', 'Socket user introuvable, vous devez vous authentifier', room=sid, namespace='/')
         else:
             room = json['circle_id']
@@ -50,28 +50,28 @@ def join_circle_event(json):
             else:
                 socket.emit("error", "Vous ne faites pas partie de ce cercle")
     except Exception as e:
-        emit('error', str(e), namespace='/')
+        emit('error', str(e), room=sid, namespace='/')
 
 
 @socketio.on('leave_circle_event')
 def leave_circle_event(json):
+    sid = request.sid
     try:
-        sid = request.sid
         socket = sockets.find_socket(sid)
-        if socket is None:
+        if socket is None or socket.authenticated is False:
             emit('error', 'Socket user introuvable', room=sid, namespace='/')
         else:
             room = json['circle_id']
             leave_room('circle_' + str(room))
     except Exception as e:
-        emit('error', str(e), namespace='/')
+        emit('error', str(e), room=sid, namespace='/')
 
 
 @socketio.on('leave_conversation_event')
 def leave_conversation_event(json):
     sid = request.sid
     socket = sockets.find_socket(sid)
-    if socket is None:
+    if socket is None or socket.authenticated is False:
         emit('error', 'Socket user introuvable', room=sid, namespace='/')
     else:
         try:

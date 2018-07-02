@@ -3,6 +3,7 @@ from models.UserToConversation import UserToConversation
 from models.Conversation import Conversation
 from models.Device import Device
 
+
 def userHasAccessToMessage(message, user):
     if message.link is not None and message.link.user_id == user.id:
         return True
@@ -12,6 +13,7 @@ def userHasAccessToMessage(message, user):
         return False
     return True
 
+
 def userIsOwnerOfMessage(message, user):
     if message.link is None or message.isUser is False:
         return False
@@ -19,8 +21,15 @@ def userIsOwnerOfMessage(message, user):
         return True
     return False
 
+
 def deviceHasAccessToMessage(message, device):
     if message.conversation.circle.device.id== device.id:
         if message.conversation.device_access is True:
             return True
+    return False
+
+
+def deviceIsOwnerOfMessage(message, device):
+    if deviceHasAccessToMessage(message, device) and message.isUser is False:
+        return True
     return False

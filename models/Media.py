@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, event, Boolean
 from sqlalchemy.orm import relationship
 from config.database import Base
 from config.database import db_session
+from config.files import *
 from werkzeug.utils import secure_filename
 import os
 
@@ -13,6 +14,7 @@ class Media(Base):
     filename = Column(String(120))
     extension = Column(String(10))
     directory = Column(String(1024))
+    identifier = Column(String(10))
 
     message = relationship("Message", back_populates="medias")
 
@@ -23,42 +25,47 @@ class Media(Base):
 
     def upload(self, file):
         file_name = secure_filename(file.filename)
-        file.save(os.path.join(self.directory, file_name))
+        file.save(os.path.join(UPLOAD_FOLDER + self.directory + os.path.sep, file_name))
 
     def clearFile(self):
         try:
-            os.remove(os.path.join(self.directory, self.filename + self.extension))
+            os.remove(os.path.join(UPLOAD_FOLDER + self.directory + os.path.sep, self.filename + self.extension))
             return True
         except Exception as e:
             return False
 
-    def __init__(self, filename=None, extension=None, directory="/Users/Neo/Media/"):
+    def __init__(self, filename=None, extension=None, identifier=None, directory='default'):
         if filename is not None and filename != "":
             self.filename = filename
         if extension is not None and extension != "":
             self.extension = extension
+        if identifier is not None and identifier != "":
+            self.identifier = identifier
         self.directory = directory
         db_session.add(self)
 
-    def setContent(self, file=None, directory="default", message=None):
-        if file is not None:
-            name, ext = os.path.splitext(secure_filename(file.filename))
-            directory = "/Users/Neo/Media/" + directory + "/"
-            self.filename = name
-            self.extension = ext
-            self.directory = directory
-            if message is not None:
-                self.message = message
-            self.upload(file)
-        return self
+    def set_content(self, file, folder):
+        file_name = secure_filename(file.filemame)
+        f, e = os.path.splitext(file_name)
+        self.filename = f
+        self.extension = e
+        self.directory = folder
 
-    def updateContent(self, filename=None, extension=None, directory=None):
+    def getDirectory(self):
+        return UPLOAD_FOLDER + self.directory + os.path.sep
+
+    def getFullName(self):
+        return self.filename + self.extension
+
+    def updateContent(self, filename=None, extension=None, directory=None, identifier=None):
         if filename is not None and filename != "":
             self.filename = filename
         if extension is not None and extension != "":
             self.extension = extension
         if directory is not None and directory != "":
             self.directory = directory
+        if identifier is not None and identifier != "":
+            self.identifier = identifier
         db_session.commit()
 
     def getContent(self):
@@ -75,8 +82,10 @@ class Media(Base):
             "id": self.id,
             "message_id": self.message_id,
             "filename": self.filename,
-            "extension": self.extension
+            "extension": self.extension,
+            "identifier": self.identifier
         }
+
 
 @event.listens_for(Media, 'before_delete')
 def receive_before_delete(target):

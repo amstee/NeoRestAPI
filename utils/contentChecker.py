@@ -9,3 +9,9 @@ def contentChecker(*args):
             raise Exception("Parametre %s introuvable dans le contenu de la requete"%string)
         # if type(content[string]) != type:
         #     raise Exception("Le type du parametre %s est invalide %s expected"%(string, str(type)))
+
+def check_json(content, *args):
+    for string in args:
+        if string not in content:
+            return False, string
+    return True, None

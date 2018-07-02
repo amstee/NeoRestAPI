@@ -7,6 +7,13 @@ from api import neoapi
 from config.database import db_session
 from models.User import User as UserModel
 
+# resp = client.post(
+#             '/upload',
+#             data = {
+#                 'file': (StringIO('my file contents'), 'hello world.txt'),
+#             }
+#         )
+
 class TestMediaCreate(unittest.TestCase):
     def setUp(self):
         neo = neoapi()
