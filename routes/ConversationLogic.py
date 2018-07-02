@@ -31,7 +31,8 @@ class ConversationInvite(Resource):
                 new_link = UserToConversation(privilege="STANDARD")
                 new_link.user = dest
                 new_link.conversation = link.conversation
-                sockets.notify_user(client=dest, is_device=False, p1='conversation', p2={'event': 'invite', 'conversation_id': link.conversation_id})
+                sockets.notify_user(client=dest, is_device=False, p1='conversation',
+                                    p2={'event': 'invite', 'conversation_id': link.conversation_id})
                 db_session.commit()
             else:
                 return FAILED("Vous n'avez pas les droits suffisants", 403)

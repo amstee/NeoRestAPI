@@ -2,13 +2,12 @@ from models.UserToConversation import UserToConversation
 from config.database import db_session
 from config import socketio, sockets
 from flask import request
-from flask_socketio import join_room, leave_room, emit, send
+from flask_socketio import emit
 from utils.contentChecker import check_json
 from models.Conversation import Conversation
 from models.Media import Media
 from models.Message import Message
-from routes.Facebook import *
-import datetime
+from routes.Facebook import MessengerCircleModelSend, MessengerConversationModelSend
 
 
 @socketio.on('writing')

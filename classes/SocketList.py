@@ -25,6 +25,8 @@ class SocketList:
 
     def find_user(self, client, is_device=False):
         try:
+            if client is None:
+                return False
             if 'socket' in session and session['socket'] is not None:
                 socket = session['socket']
                 if socket.sid in self.socket_dic:
@@ -45,7 +47,7 @@ class SocketList:
             return None
 
     def notify_user(self, client, is_device, p1, p2, namespace='/'):
-        if not client.is_online:
+        if client is None or not client.is_online:
             return False
         socket = self.find_user(client, is_device)
         if socket is not None:

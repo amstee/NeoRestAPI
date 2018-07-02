@@ -10,7 +10,9 @@ from models.User import User as UserModel
 from utils.decorators import securedRoute, checkContent
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
-from .Facebook import *
+from config.sockets import sockets
+from flask_socketio import emit
+from .Facebook import MessengerCircleModelSend, MessengerConversationModelSend
 
 
 class FirstMessageToDeviceSend(Resource):
@@ -32,17 +34,26 @@ class FirstMessageToDeviceSend(Resource):
             message = Message(content=content["text_message"] if "text_message" in content else "")
             message.conversation = conversation
             message.link = link
+            media_list = []
             if "files" in content:
                 for file in content["files"]:
-                    if file in request.files:
-                        new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
-                        message.medias.append(new_file)
+                    media = Media()
+                    media.identifier = file
+                    media.message = message
+                    db_session.commit()
+                    media_list.append(media.getSimpleContent())
             db_session.commit()
-            info_sender = "[" + conversation.name + "] " + user.first_name + " : " 
+            sockets.notify_user(circle.device, True, 'conversation',
+                                {"conversation_id": conversation.id,
+                                 "event": 'invite'})
+            info_sender = "[" + conversation.name + "] " + user.first_name + " : "
             MessengerCircleModelSend(0, circle, info_sender + message.text_content)
-            return SUCCESS()
+            resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
+            resp.status_code = 200
+            return resp
         except Exception as e:
             return FAILED(e)
+
 
 class FirstMessageSend(Resource):
     @checkContent
@@ -66,16 +77,23 @@ class FirstMessageSend(Resource):
             link2 = UserToConversation(privilege="STANDARD", user=dest, conversation=conversation)
             message = Message(content=content["text_message"] if "text_message" in content else "")
             message.conversation = conversation
-            message.link = link1
+            media_list = []
             if "files" in content:
                 for file in content["files"]:
-                    if file in request.files:
-                        new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
-                        message.medias.append(new_file)
+                    media = Media()
+                    media.identifier = file
+                    media.message = message
+                    db_session.commit()
+                    media_list.append(media.getSimpleContent())
             db_session.commit()
-            info_sender = "[" + conversation.name + "] " + user.first_name + " : " 
+            sockets.notify_user(dest, False, 'conversation',
+                                {"conversation_id": conversation.id,
+                                 "event": 'invite'})
+            info_sender = "[" + conversation.name + "] " + user.first_name + " : "
             MessengerCircleModelSend(0, circle, info_sender + message.text_content)
-            return SUCCESS()
+            resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
+            resp.status_code = 200
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -93,15 +111,32 @@ class MessageSend(Resource):
             message = Message(content=content["text_message"] if "text_message" in content else "")
             message.conversation = link.conversation
             message.link = link
+            media_list = []
             if "files" in content:
                 for file in content["files"]:
-                    if file in request.files:
-                        new_file = Media().setContent(request.files[file], str(message.conversation_id), message)
-                        message.medias.append(new_file)
+                    media = Media()
+                    media.identifier = file
+                    media.message = message
+                    db_session.commit()
+                    media_list.append(media.getSimpleContent())
+            if not media_list:
+                emit('message', {
+                    'conversation_id': message.conversation_id,
+                    'message': message.getSimpleContent(),
+                    'time': message.sent,
+                    'sender': user.getSimpleContent(),
+                    'media_list': media_list,
+                    'status': 'done'},
+                     room='conversation_' + str(message.conversation_id), namespace='/')
+            else:
+                emit('message', {'conversation_id': message.conversation_id, 'message': message.getSimpleContent(),
+                                 'status': 'pending'}, room='conversation_' + str(message.conversation_id), namespace='/')
             db_session.commit()
             conversation = db_session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
             info_sender = "[" + link.conversation.name + "] " + user.first_name + " : "
             MessengerConversationModelSend(link.user_id, conversation, info_sender + message.text_content)
-            return SUCCESS()
+            resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
+            resp.status_code = 200
+            return resp
         except Exception as e:
             return FAILED(e)
