@@ -64,8 +64,8 @@ class MediaDelete(Resource):
             media = db_session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
-            media.clearFile()
             db_session.delete(media)
+            db_session.commit()
             return SUCCESS()
         except Exception as e:
             return FAILED(e)

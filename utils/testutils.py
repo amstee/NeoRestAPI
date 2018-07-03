@@ -1,5 +1,6 @@
 import json
 
+
 def AuthenticateUser(api, user, password):
     if type(user) is str:
         varia = user
@@ -12,6 +13,7 @@ def AuthenticateUser(api, user, password):
     response = api.post('/account/login', data=json.dumps(json_data), content_type='application/json')
     response_json = json.loads(response.data)
     return response_json['token']
+
 
 def AuthenticateDevice(api, device, password):
     if type(device) is str:

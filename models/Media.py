@@ -74,7 +74,8 @@ class Media(Base):
             "message": self.message.getSimpleContent(),
             "filename": self.filename,
             "extension": self.extension,
-            "directory": self.directory
+            "directory": self.directory,
+            "identifier": self.identifier
         }
 
     def getSimpleContent(self):
@@ -88,5 +89,5 @@ class Media(Base):
 
 
 @event.listens_for(Media, 'before_delete')
-def receive_before_delete(target):
+def receive_before_delete(mapper, connection, target):
     target.clearFile()
