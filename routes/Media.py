@@ -1,6 +1,7 @@
 from flask import request
 from flask_restful import Resource
 from config.database import db_session
+from models.MessageToMedia import MessageToMedia
 from models.Message import Message
 from models.Media import Media
 from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute
@@ -81,7 +82,7 @@ class MediaList(Resource):
             if message is None:
                 return FAILED("Message introuvable")
             if userHasAccessToMessage(message, user):
-                return jsonify({"success": True, "content": [media.getSimpleContent() for media in message.medias]})
+                return jsonify({"success": True, "content": [media.getContent() for media in message.media_links]})
             return FAILED("Vous n'avez pas access a ce message")
         except Exception as e:
             return FAILED(e)
@@ -97,7 +98,7 @@ class DeviceMediaList(Resource):
             if message is None:
                 return FAILED("Message introuvable")
             if deviceHasAccessToMessage(message, device):
-                return jsonify({"success": True, "content": [media.getSimpleContent() for media in message.medias]})
+                return jsonify({"success": True, "content": [link.media.getSimpleContent() for link in message.media_links]})
             return FAILED("Vous n'avez pas access a ce message")
         except Exception as e:
             return FAILED(e)

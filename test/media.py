@@ -15,13 +15,6 @@ from models.Message import Message
 from models.Media import Media
 from models.Device import Device
 
-# resp = client.post(
-#             '/upload',
-#             data = {
-#                 'file': (StringIO('my file contents'), 'hello world.txt'),
-#             }
-#         )
-
 
 class TestMediaInfo(unittest.TestCase):
     def setUp(self):
@@ -58,7 +51,7 @@ class TestMediaInfo(unittest.TestCase):
         response = self.api.post('/media/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success'] is True
 
     def test_invalid_info(self):
         json_data = {

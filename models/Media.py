@@ -10,13 +10,13 @@ import os
 class Media(Base):
     __tablename__ = "medias"
     id = Column(Integer, primary_key=True)
-    message_id = Column(Integer, ForeignKey('messages.id'), nullable=True)
     filename = Column(String(120))
     extension = Column(String(10))
     directory = Column(String(1024))
     identifier = Column(String(10))
 
-    message = relationship("Message", back_populates="medias")
+    message_link = relationship("MessageToMedia", back_populates="media", uselist=False,
+                                cascade="save-update, delete")
 
     def __repr__(self):
         return "<Media(id='%d' filename='%s' extension='%s' directory='%s')>"%(
@@ -25,6 +25,8 @@ class Media(Base):
 
     def upload(self, file):
         file_name = secure_filename(file.filename)
+        if not os.path.exists(UPLOAD_FOLDER + self.directory + os.path.sep):
+            os.makedirs(UPLOAD_FOLDER + self.directory + os.path.sep)
         file.save(os.path.join(UPLOAD_FOLDER + self.directory + os.path.sep, file_name))
 
     def clearFile(self):
@@ -45,7 +47,7 @@ class Media(Base):
         db_session.add(self)
 
     def set_content(self, file, folder):
-        file_name = secure_filename(file.filemame)
+        file_name = secure_filename(file.filename)
         f, e = os.path.splitext(file_name)
         self.filename = f
         self.extension = e
@@ -69,19 +71,29 @@ class Media(Base):
         db_session.commit()
 
     def getContent(self):
-        return {
-            "id": self.id,
-            "message": self.message.getSimpleContent(),
-            "filename": self.filename,
-            "extension": self.extension,
-            "directory": self.directory,
-            "identifier": self.identifier
-        }
+        if self.message_link is not None:
+            return {
+                "id": self.id,
+                "message": self.message_link.getContent(),
+                "filename": self.filename,
+                "extension": self.extension,
+                "directory": self.directory,
+                "identifier": self.identifier
+            }
+        else:
+            return {
+                "id": self.id,
+                "message": "None",
+                "filename": self.filename,
+                "extension": self.extension,
+                "directory": self.directory,
+                "identifier": self.identifier
+            }
+
 
     def getSimpleContent(self):
         return {
             "id": self.id,
-            "message_id": self.message_id,
             "filename": self.filename,
             "extension": self.extension,
             "identifier": self.identifier

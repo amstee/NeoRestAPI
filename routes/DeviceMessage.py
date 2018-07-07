@@ -1,6 +1,7 @@
 from flask import request
 from flask_restful import Resource
 from config.database import db_session
+from models.MessageToMedia import MessageToMedia
 from models.Media import Media
 from models.Device import Device
 from models.Message import Message
@@ -33,7 +34,7 @@ class DeviceMessageCreate(Resource):
                 for file in content["files"]:
                     media = Media()
                     media.identifier = file
-                    media.message = message
+                    MessageToMedia(message=message, media=media)
                     db_session.commit()
                     media_list.append(media.getSimpleContent())
             db_session.commit()

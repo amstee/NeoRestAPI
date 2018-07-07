@@ -7,6 +7,7 @@ from models.Media import Media
 from models.Message import Message
 from models.Circle import Circle
 from models.User import User as UserModel
+from models.MessageToMedia import MessageToMedia
 from utils.decorators import securedRoute, checkContent
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
@@ -39,7 +40,7 @@ class FirstMessageToDeviceSend(Resource):
                 for file in content["files"]:
                     media = Media()
                     media.identifier = file
-                    media.message = message
+                    MessageToMedia(message=message, media=media)
                     db_session.commit()
                     media_list.append(media.getSimpleContent())
             db_session.commit()
@@ -82,7 +83,7 @@ class FirstMessageSend(Resource):
                 for file in content["files"]:
                     media = Media()
                     media.identifier = file
-                    media.message = message
+                    MessageToMedia(message=message, media=media)
                     db_session.commit()
                     media_list.append(media.getSimpleContent())
             db_session.commit()
@@ -116,7 +117,7 @@ class MessageSend(Resource):
                 for file in content["files"]:
                     media = Media()
                     media.identifier = file
-                    media.message = message
+                    MessageToMedia(message=message, media=media)
                     db_session.commit()
                     media_list.append(media.getSimpleContent())
             if not media_list:

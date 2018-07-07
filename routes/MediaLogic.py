@@ -7,68 +7,63 @@ from models.Message import Message
 from utils.decorators import securedRoute, checkContent, securedDeviceRoute
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
-from utils.security import userHasAccessToMessage, deviceHasAccessToMessage, userIsOwnerOfMessage, deviceIsOwnerOfMessage
+from utils.security import userHasAccessToMedia, deviceHasAccessToMedia, userIsOwnerOfMedia, deviceIsOwnerOfMessage
+from utils.security import getUserFromHeader, getDeviceFromHeader, deviceIsOwnerOfMedia
 from flask_socketio import emit
 
 
 class UploadMedia(Resource):
-    @checkContent
-    @securedRoute
-    def post(self, content, user):
+    def post(self, media_id):
         try:
-            contentChecker("message_id", "media_list")
-            medias = content["media_list"]
-            message = db_session.query(Message).filter(Message.id == content["message_id"]).first()
-            if userIsOwnerOfMessage(message, user):
-                for info in medias:
-                    media = db_session.query(Media).filter(Media.id == info.id).first()
-                    if media is None:
-                        return FAILED("Media introuvable")
-                    if info.filename in request.files:
-                        media.set_content(request.files[info.filename], "conversation_" + str(message.conversation.id))
-                        media.upload(request.files[info.filename])
-                        db_session.commit()
-                emit('message', {
-                    'conversation_id': message.conversation.id,
-                    'message': message.getSimpleContent(),
-                    'time': message.sent,
-                    'sender': user.getSimpleContent(),
-                    'media_list': medias,
-                    'status': 'done'},
-                     room='conversation_' + message.conversation.id, namespace='/')
-                return SUCCESS()
+            user = getUserFromHeader(request)
+            media = db_session.query(Media).filter(Media.id == media_id).first()
+            if media is None:
+                return FAILED("Media introuvable")
+            if userIsOwnerOfMedia(media, user):
+                if 'file' in request.files:
+                    message = media.message_link.message
+                    media.set_content(request.files['file'], "conversation_" + str(message.conversation.id))
+                    media.upload(request.files['file'])
+                    db_session.commit()
+                    emit('message', {
+                        'conversation_id': message.conversation.id,
+                        'message': message.getSimpleContent(),
+                        'time': message.sent,
+                        'sender': user.getSimpleContent(),
+                        'media': media.getSimpleContent(),
+                        'status': 'done'},
+                         room='conversation_' + str(message.conversation.id), namespace='/')
+                    return SUCCESS()
+                return FAILED("Fichier introuvable dans la requete")
             return FAILED('Vous ne pouvez pas upload de media pour ce message')
         except Exception as e:
             return FAILED(e)
 
 
 class DeviceUploadMedia(Resource):
-    @checkContent
-    @securedDeviceRoute
-    def post(self, content, device):
+    def post(self, media_id):
         try:
-            contentChecker("message_id", "media_list")
-            medias = content["media_list"]
-            message = db_session.query(Message).filter(Message.id == content["message_id"]).first()
-            if deviceIsOwnerOfMessage(message, device):
-                for info in medias:
-                    media = db_session.query(Media).filter(Media.id == info.id).first()
-                    if media is None:
-                        return FAILED("Media introuvable")
-                    if info.filename in request.files:
-                        media.set_content(request.files[info.filename], "conversation_" + str(message.conversation.id))
-                        media.upload(request.files[info.filename])
-                        db_session.commit()
-                emit('message', {
-                    'conversation_id': message.conversation.id,
-                    'message': message.getSimpleContent(),
-                    'time': message.sent,
-                    'sender': device.getSimpleContent(),
-                    'media_list': medias,
-                    'status': 'done'},
-                     room='conversation_' + message.conversation.id, namespace='/')
-                return SUCCESS()
-            return FAILED("Vous ne pouvez pas upload de media pour ce message")
+            device = getDeviceFromHeader(request)
+            media = db_session.query(Media).filter(Media.id == media_id).first()
+            if media is None:
+                return FAILED("Media introuvable")
+            if deviceIsOwnerOfMedia(media, device):
+                if 'file' in request.files:
+                    message = media.message_link.message
+                    media.set_content(request.files['file'], "conversation_" + str(message.conversation.id))
+                    media.upload(request.files['file'])
+                    db_session.commit()
+                    emit('message', {
+                        'conversation_id': message.conversation.id,
+                        'message': message.getSimpleContent(),
+                        'time': message.sent,
+                        'sender': device.getSimpleContent(),
+                        'media': media.getSimpleContent(),
+                        'status': 'done'},
+                         room='conversation_' + str(message.conversation.id), namespace='/')
+                    return SUCCESS()
+                return FAILED("Fichier introuvable dans la requete")
+            return FAILED('Vous ne pouvez pas upload de media pour ce message')
         except Exception as e:
             return FAILED(e)
 
@@ -82,7 +77,7 @@ class MediaRequest(Resource):
             media = db_session.query(Media).filter(Media.id==content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
-            if userHasAccessToMessage(media.message, user):
+            if userHasAccessToMedia(media, user):
                 return send_from_directory(media.getDirectory(), media.getFullName())
             else:
                 return FAILED("L'utilisateur ne peut pas acceder a ce media")
@@ -99,7 +94,7 @@ class DeviceMediaRequest(Resource):
             media = db_session.query(Media).filter(Media.id==content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
-            if deviceHasAccessToMessage(media.message, device):
+            if deviceHasAccessToMedia(media, device):
                 return send_from_directory(media.getDirectory(), media.getFullName())
             else:
                 return FAILED("L'utilisateur ne peut pas acceder a ce media")

@@ -4,6 +4,7 @@ from config.database import Base, db_session
 from dateutil import parser as DateParser
 import datetime
 
+
 class UserToCircle(Base):
     __tablename__ = "user_to_circle"
     id = Column(Integer, primary_key=True)

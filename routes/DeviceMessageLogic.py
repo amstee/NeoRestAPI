@@ -11,6 +11,7 @@ from utils.contentChecker import contentChecker
 from utils.apiUtils import *
 from flask_socketio import emit
 from config.sockets import sockets
+from models.MessageToMedia import MessageToMedia
 from .Facebook import MessengerConversationModelSend, MessengerUserModelSend
 
 
@@ -39,7 +40,7 @@ class FirstDeviceMessageSend(Resource):
                 for file in content["files"]:
                     media = Media()
                     media.identifier = file
-                    media.message = message
+                    MessageToMedia(message=message, media=media)
                     db_session.commit()
                     media_list.append(media.getSimpleContent())
             db_session.commit()
@@ -74,7 +75,7 @@ class DeviceMessageSend(Resource):
                 for file in content["files"]:
                     media = Media()
                     media.identifier = file
-                    media.message = message
+                    MessageToMedia(message=message, media=media)
                     db_session.commit()
                     media_list.append(media.getSimpleContent())
             if not media_list:

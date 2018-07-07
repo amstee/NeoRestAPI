@@ -3,6 +3,7 @@ from flask_jsonpify import jsonify
 from models.User import User
 from models.Device import Device
 
+
 def securedRoute(func):
     def func_wrapper(*args, **kwargs):
         try:
@@ -14,7 +15,7 @@ def securedRoute(func):
             res, data = User.decodeAuthToken(jsonToken)
             if (res is True):
                 kwargs['user'] = data
-                return (func(*args, **kwargs))
+                return func(*args, **kwargs)
             else:
                 resp = jsonify({"success": False, "message": data})
                 resp.status_code = 401
@@ -24,6 +25,7 @@ def securedRoute(func):
             resp.status_code = 500
             return resp
     return func_wrapper
+
 
 def securedDeviceRoute(func):
     def func_wrapper(*args, **kwargs):

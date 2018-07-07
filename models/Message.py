@@ -18,8 +18,8 @@ class Message(Base):
 
     link = relationship("UserToConversation", back_populates="messages")
     conversation = relationship("Conversation", back_populates="messages")
-    medias = relationship("Media", back_populates="message", order_by="Media.id",
-                              cascade="save-update, delete")
+    media_links = relationship("MessageToMedia", back_populates="message", order_by="MessageToMedia.id",
+                               cascade="save-update, delete")
     device = relationship("Device", back_populates="messages")
 
     def __repr__(self):
@@ -71,7 +71,7 @@ class Message(Base):
                 "sent": self.sent,
                 "read": self.read,
                 "content": self.text_content,
-                "medias": [media.getSimpleContent() for media in self.medias]
+                "medias": [media.getContent() for media in self.media_links]
             }
         else:
             return {
@@ -79,7 +79,7 @@ class Message(Base):
                 "sent": self.sent,
                 "read": self.read,
                 "content": self.text_content,
-                "medias": [media.getSimpleContent() for media in self.medias],
+                "medias": [media.getContent() for media in self.media_links],
                 "device": self.device.getSimpleContent()
             }
 
