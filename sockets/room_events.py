@@ -8,7 +8,7 @@ from flask import request
 from flask_socketio import join_room, leave_room, emit
 
 
-@socketio.on('join_conversation_event')
+@socketio.on('join_conversation')
 def join_conversation_event(json):
     sid = request.sid
     socket = sockets.find_socket(sid)
@@ -32,7 +32,7 @@ def join_conversation_event(json):
             socket.emit("error", str(e))
 
 
-@socketio.on('join_circle_event')
+@socketio.on('join_circle')
 def join_circle_event(json):
     sid = request.sid
     try:
@@ -53,7 +53,7 @@ def join_circle_event(json):
         emit('error', str(e), room=sid, namespace='/')
 
 
-@socketio.on('leave_circle_event')
+@socketio.on('leave_circle')
 def leave_circle_event(json):
     sid = request.sid
     try:
@@ -67,7 +67,7 @@ def leave_circle_event(json):
         emit('error', str(e), room=sid, namespace='/')
 
 
-@socketio.on('leave_conversation_event')
+@socketio.on('leave_conversation')
 def leave_conversation_event(json):
     sid = request.sid
     socket = sockets.find_socket(sid)

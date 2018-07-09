@@ -75,11 +75,11 @@ class SocketioMessageEvents(unittest.TestCase):
         assert res2[0]['name'] == 'success'
         assert len(res3) == 1
         assert res3[0]['name'] == 'success'
-        self.client.emit('join_conversation_event',
+        self.client.emit('join_conversation',
                          {'conversation_id': self.conversation.id}, json=True)
-        self.client2.emit('join_conversation_event',
+        self.client2.emit('join_conversation',
                          {'conversation_id': self.conversation.id}, json=True)
-        self.deviceClient.emit('join_conversation_event',
+        self.deviceClient.emit('join_conversation',
                          {'conversation_id': self.conversation.id}, json=True)
         res1 = self.client.get_received()
         res2 = self.client2.get_received()
@@ -125,11 +125,11 @@ class SocketioMessageEvents(unittest.TestCase):
         assert res2[0]['name'] == 'success'
         assert len(res3) == 1
         assert res3[0]['name'] == 'success'
-        self.client.emit('join_conversation_event',
+        self.client.emit('join_conversation',
                          {'conversation_id': self.conversation.id}, json=True)
-        self.client2.emit('join_conversation_event',
+        self.client2.emit('join_conversation',
                          {'conversation_id': self.conversation.id}, json=True)
-        self.deviceClient.emit('join_conversation_event',
+        self.deviceClient.emit('join_conversation',
                          {'conversation_id': self.conversation.id}, json=True)
         res1 = self.client.get_received()
         res2 = self.client2.get_received()

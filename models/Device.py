@@ -30,6 +30,8 @@ class Device(Base):
     # RELATIONS
     circle = relationship("Circle", back_populates="device")
     messages = relationship("Message", back_populates="device")
+    media_links = relationship("DeviceToMedia", back_populates="device", order_by="DeviceToMedia.id",
+                               cascade="save-update, delete")
 
     def __init__(self, created=datetime.datetime.now(), updated=datetime.datetime.now(),
                  username=None, name=None, activated=False, is_online=None):
@@ -41,10 +43,10 @@ class Device(Base):
             self.updated = DateParser.parse(updated)
         else:
             self.updated = datetime.datetime.now()
-        if name != None and name != "":
+        if name is not None and name != "":
             self.name = name
         else:
-            self.name = "My Device %d"%(self.id)
+            self.name = "My Device %d" % self.id
         if activated is not None:
             self.activated = activated
         if is_online is not None:
@@ -59,7 +61,7 @@ class Device(Base):
             c = True
             while c:
                 username = ''.join(random.choice(string.ascii_uppercase) for _ in range(12))
-                if db_session.query(Device).filter(Device.username==username).first() is None:
+                if db_session.query(Device).filter(Device.username == username).first() is None:
                     c = False
             self.username = username
         password = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
@@ -71,7 +73,8 @@ class Device(Base):
         self.password = base64.b64encode(str.encode(password)).decode('utf-8')
 
     def __repr__(self):
-        return "<Device(id='%s' name='%s' created='%s' updated='%s')>" % (self.id, self.name, str(self.created), str(self.updated))
+        return "<Device(id='%s' name='%s' created='%s' updated='%s')>" % \
+               (self.id, self.name, str(self.created), str(self.updated))
 
     def updateContent(self, created=None, updated=datetime.datetime.now(),
                       name=None, activated=None, is_online=None):
@@ -99,7 +102,7 @@ class Device(Base):
     def decodeAuthToken(auth_token):
         try:
             payload = jwt.decode(auth_token, SECRET_KEY)
-            device = db_session.query(Device).filter(Device.id==payload['sub']).first()
+            device = db_session.query(Device).filter(Device.id == payload['sub']).first()
             if device is not None:
                 if device.jsonToken == "" or device.jsonToken is None:
                     return False, "Device non authentifié"
@@ -131,20 +134,20 @@ class Device(Base):
             return None
 
     def checkPassword(self, password=None):
-        if password != None and password != "":
+        if password is not None and password != "":
             if self.password == hashlib.sha512(password.encode("utf-8")).hexdigest():
                 return True
         return False
 
     def Authenticate(self, password=None):
-        if password != None and password != "":
+        if password is not None and password != "":
             if self.password != hashlib.sha512(password.encode('utf-8')).hexdigest():
-                return (False, "Mot de pass invalide")
-            return (True, self.encodeAuthToken())
-        return (False, "Aucun mot de passe fourni")
+                return False, "Mot de pass invalide"
+            return True, self.encodeAuthToken()
+        return False, "Aucun mot de passe fourni"
 
     def updatePassword(self, password=None):
-        if password != None and password != "":
+        if password is not None and password != "":
             self.password = hashlib.sha512(password.encode('utf-8')).hexdigest()
             db_session.commit()
 
@@ -181,5 +184,6 @@ class Device(Base):
             "activated": self.activated,
             "username": self.username,
             "circle": self.circle.getSimpleContent() if self.circle is not None else {},
-            "messages" : [message.getSimpleContent() for message in self.messages]
+            "messages": [message.getSimpleContent() for message in self.messages],
+            "medias": [link.getContent() for link in self.media_links]
         }

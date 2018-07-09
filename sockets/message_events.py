@@ -84,6 +84,6 @@ def message_send(content):
                          room='conversation_' + str(conv.id), namespace='/')
                 else:
                     emit('message', {'conversation_id': conv.id, 'message': message.getSimpleContent(),
-                                     'status': 'pending'}, room='conversation_'+ str(conv.id), namespace='/')
+                                     'status': 'pending'}, room='conversation_' + str(conv.id), namespace='/')
     except Exception as e:
         socket.emit("error", str(e), namespace='/')

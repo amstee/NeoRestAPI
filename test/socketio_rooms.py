@@ -38,7 +38,7 @@ class SocketioAuthenticate(unittest.TestCase):
         data = {
             'conversation_id': 1
         }
-        self.client.emit('join_conversation_event', data, json=True)
+        self.client.emit('join_conversation', data, json=True)
         res = self.client.get_received()
         assert len(res) == 1
         assert res[0]['name'] == 'error'
@@ -56,7 +56,7 @@ class SocketioAuthenticate(unittest.TestCase):
         data = {
             'conversation_id': 1
         }
-        self.client.emit('join_conversation_event', data, json=True)
+        self.client.emit('join_conversation', data, json=True)
         res = self.client.get_received()
         assert len(res) == 1
         assert res[0]['name'] == 'success'

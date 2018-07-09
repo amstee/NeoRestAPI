@@ -17,9 +17,15 @@ class Media(Base):
 
     message_link = relationship("MessageToMedia", back_populates="media", uselist=False,
                                 cascade="save-update, delete")
+    user_link = relationship("UserToMedia", back_populates="media", uselist=False,
+                             cascade="save-update, delete")
+    device_link = relationship("DeviceToMedia", back_populates="media", uselist=False,
+                               cascade="save-update, delete")
+    circle_link = relationship("CircleToMedia", back_populates="media", uselist=False,
+                               cascade="save-update, delete")
 
     def __repr__(self):
-        return "<Media(id='%d' filename='%s' extension='%s' directory='%s')>"%(
+        return "<Media(id='%d' filename='%s' extension='%s' directory='%s')>" % (
             self.id, self.filename, self.extension, self.directory
         )
 
@@ -70,26 +76,40 @@ class Media(Base):
             self.identifier = identifier
         db_session.commit()
 
-    def getContent(self):
+    def getLinkType(self):
         if self.message_link is not None:
-            return {
-                "id": self.id,
-                "message": self.message_link.getContent(),
-                "filename": self.filename,
-                "extension": self.extension,
-                "directory": self.directory,
-                "identifier": self.identifier
-            }
+            return "message"
+        elif self.user_link is not None:
+            return "user"
+        elif self.circle_link is not None:
+            return "circle"
+        elif self.device_link is not None:
+            return "device"
         else:
-            return {
-                "id": self.id,
-                "message": "None",
-                "filename": self.filename,
-                "extension": self.extension,
-                "directory": self.directory,
-                "identifier": self.identifier
-            }
+            return "error"
 
+    def getLinkContent(self):
+        if self.message_link is not None:
+            return self.message_link.getContent()
+        elif self.user_link is not None:
+            return self.user_link.getContent()
+        elif self.circle_link is not None:
+            return self.circle_link.getContent()
+        elif self.device_link is not None:
+            return self.device_link.getContent()
+        else:
+            return "error"
+
+    def getContent(self):
+        return {
+            "id": self.id,
+            "media_link": self.getLinkType(),
+            "link_content": self.getLinkContent(),
+            "filename": self.filename,
+            "extension": self.extension,
+            "directory": self.directory,
+            "identifier": self.identifier
+        }
 
     def getSimpleContent(self):
         return {

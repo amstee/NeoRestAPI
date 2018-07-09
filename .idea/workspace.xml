@@ -2,22 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32b1a9b9-7457-4a1a-91e3-06d7851c1013" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/models/MessageToMedia.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/CircleToMedia.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/DeviceToMedia.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/UserToMedia.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/jerem.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/jerem.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/Circle.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/Circle.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/Device.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/Device.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/Media.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/Media.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/Message.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/Message.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/UserToCircle.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/UserToCircle.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/DeviceMessage.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/DeviceMessage.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/DeviceMessageLogic.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/DeviceMessageLogic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/User.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/User.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/Media.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/Media.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/MediaLogic.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/MediaLogic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/MessageLogic.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/MessageLogic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/media.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/media.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/media_logic.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/media_logic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/decorators.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/decorators.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/security.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/security.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sockets/message_events.py" beforeDir="false" afterPath="$PROJECT_DIR$/sockets/message_events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sockets/room_events.py" beforeDir="false" afterPath="$PROJECT_DIR$/sockets/room_events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/socketio_message.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/socketio_message.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/socketio_rooms.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/socketio_rooms.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -28,25 +28,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="media_logic.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/media_logic.py">
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/config/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-811">
-              <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
+            <state relative-caret-position="456">
+              <caret line="34" column="40" lean-forward="true" selection-start-line="34" selection-start-column="40" selection-end-line="34" selection-end-column="40" />
               <folding>
-                <element signature="e#0#15#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Media.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/models/Media.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="471">
-              <caret line="29" column="88" selection-start-line="29" selection-start-column="88" selection-end-line="29" selection-end-column="88" />
-              <folding>
-                <element signature="e#0#74#0" expanded="true" />
+                <element signature="e#0#23#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -78,9 +66,14 @@
       <find>filem</find>
       <find>pri</find>
       <find>print</find>
+      <find>mess</find>
+      <find>user</find>
+      <find>message</find>
     </findStrings>
     <replaceStrings>
       <replace>Message</replace>
+      <replace>device</replace>
+      <replace>circle</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -90,24 +83,16 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/api.py" />
-        <option value="$PROJECT_DIR$/sockets/SocketUser.py" />
-        <option value="$PROJECT_DIR$/sockets/__init__.py" />
-        <option value="$PROJECT_DIR$/config/sockets.py" />
-        <option value="$PROJECT_DIR$/test/socketio_standard_events.py" />
         <option value="$PROJECT_DIR$/test/socketio_account_events.py" />
-        <option value="$PROJECT_DIR$/models/Device.py" />
         <option value="$PROJECT_DIR$/test/socketio_private_notifications.py" />
         <option value="$PROJECT_DIR$/classes/SocketUser.py" />
         <option value="$PROJECT_DIR$/routes/Payment.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/sockets/standard_events.py" />
-        <option value="$PROJECT_DIR$/models/Circle.py" />
         <option value="$PROJECT_DIR$/routes/Circle.py" />
         <option value="$PROJECT_DIR$/models/Conversation.py" />
         <option value="$PROJECT_DIR$/models/CircleInvite.py" />
         <option value="$PROJECT_DIR$/routes/Conversation.py" />
-        <option value="$PROJECT_DIR$/models/User.py" />
         <option value="$PROJECT_DIR$/routes/Account.py" />
         <option value="$PROJECT_DIR$/test/conversation_logic.py" />
         <option value="$PROJECT_DIR$/routes/Device.py" />
@@ -116,10 +101,8 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/config/files.py" />
         <option value="$PROJECT_DIR$/utils/contentChecker.py" />
-        <option value="$PROJECT_DIR$/sockets/room_events.py" />
         <option value="$PROJECT_DIR$/test/socketio_message_events.py" />
         <option value="$PROJECT_DIR$/routes/ConversationLogic.py" />
-        <option value="$PROJECT_DIR$/sockets/message_events.py" />
         <option value="$PROJECT_DIR$/test/message_logic.py" />
         <option value="$PROJECT_DIR$/test/message.py" />
         <option value="$PROJECT_DIR$/classes/SocketList.py" />
@@ -131,16 +114,26 @@
         <option value="$PROJECT_DIR$/config/database.py" />
         <option value="$PROJECT_DIR$/test/test_file.txt" />
         <option value="$PROJECT_DIR$/utils/decorators.py" />
-        <option value="$PROJECT_DIR$/config/__init__.py" />
         <option value="$PROJECT_DIR$/routes/MessageLogic.py" />
         <option value="$PROJECT_DIR$/routes/DeviceMessageLogic.py" />
         <option value="$PROJECT_DIR$/routes/DeviceMessage.py" />
-        <option value="$PROJECT_DIR$/routes/Media.py" />
         <option value="$PROJECT_DIR$/test/media.py" />
         <option value="$PROJECT_DIR$/utils/security.py" />
         <option value="$PROJECT_DIR$/routes/MediaLogic.py" />
         <option value="$PROJECT_DIR$/test/media_logic.py" />
+        <option value="$PROJECT_DIR$/test/socketio_rooms.py" />
+        <option value="$PROJECT_DIR$/sockets/room_events.py" />
+        <option value="$PROJECT_DIR$/test/socketio_message.py" />
+        <option value="$PROJECT_DIR$/sockets/message_events.py" />
+        <option value="$PROJECT_DIR$/models/DeviceToMedia.py" />
+        <option value="$PROJECT_DIR$/models/CircleToMedia.py" />
+        <option value="$PROJECT_DIR$/models/UserToMedia.py" />
+        <option value="$PROJECT_DIR$/models/Circle.py" />
+        <option value="$PROJECT_DIR$/models/User.py" />
+        <option value="$PROJECT_DIR$/models/Device.py" />
         <option value="$PROJECT_DIR$/models/Media.py" />
+        <option value="$PROJECT_DIR$/routes/Media.py" />
+        <option value="$PROJECT_DIR$/config/__init__.py" />
       </list>
     </option>
   </component>
@@ -176,11 +169,6 @@
             <path>
               <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
               <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
-              <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
               <item name="config" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -192,21 +180,6 @@
               <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
               <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
               <item name="routes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
-              <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
-              <item name="sockets" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
-              <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
-              <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -303,7 +276,7 @@
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32979852" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32943678" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="12" />
       <window_info anchor="bottom" id="Python Console" order="9" />
@@ -337,41 +310,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/test/device.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1344">
-          <caret line="15" column="20" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/circle_logic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="20" column="50" selection-start-line="20" selection-start-column="50" selection-end-line="20" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/Circle.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-465">
-          <caret line="58" column="52" lean-forward="true" selection-start-line="58" selection-start-column="52" selection-end-line="58" selection-end-column="71" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/CircleLogic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1661">
-          <caret line="114" column="77" selection-start-line="114" selection-start-column="77" selection-end-line="114" selection-end-column="77" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/Conversation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2140">
-          <caret line="114" column="17" lean-forward="true" selection-start-line="114" selection-start-column="17" selection-end-line="114" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/routes/Account.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-480">
@@ -404,41 +342,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="816">
           <caret line="42" selection-start-line="42" selection-end-line="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sockets/standard_events.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="26" column="20" lean-forward="true" selection-start-line="26" selection-start-column="20" selection-end-line="26" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/socketio_auth.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1047">
-          <caret line="48" column="29" selection-start-line="48" selection-start-column="29" selection-end-line="48" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/socketio_rooms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5">
-          <caret line="31" column="41" lean-forward="true" selection-start-line="31" selection-start-column="41" selection-end-line="31" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/socketio_notif.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="461">
-          <caret line="80" column="38" lean-forward="true" selection-start-line="80" selection-start-column="38" selection-end-line="80" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/socketio_message.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="639">
-          <caret line="53" column="32" lean-forward="true" selection-start-line="53" selection-start-column="32" selection-end-line="53" selection-end-column="32" />
         </state>
       </provider>
     </entry>
@@ -475,20 +378,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sockets/room_events.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-331">
-          <caret line="35" column="28" lean-forward="true" selection-start-line="35" selection-start-column="28" selection-end-line="35" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sockets/message_events.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="30" column="32" lean-forward="true" selection-start-line="30" selection-start-column="32" selection-end-line="30" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/message_logic.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="24">
@@ -496,24 +385,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/Device.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="868">
-          <caret line="172" column="28" lean-forward="true" selection-start-line="172" selection-start-column="28" selection-end-line="172" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/circle.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="312">
           <caret line="33" selection-start-line="33" selection-end-line="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/Message.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1839">
-          <caret line="121" column="45" selection-start-line="121" selection-start-column="45" selection-end-line="121" selection-end-column="45" />
         </state>
       </provider>
     </entry>
@@ -532,20 +407,7 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/models/UserToConversation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#68#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/User.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="436">
-          <caret line="78" column="36" lean-forward="true" selection-start-line="78" selection-start-column="36" selection-end-line="78" selection-end-column="36" />
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/models/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
@@ -561,26 +423,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="749">
           <caret line="36" selection-start-line="36" selection-end-line="36" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/Circle.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/test_file.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="21" selection-start-column="21" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/test/test_file.txt" />
     <entry file="file://$PROJECT_DIR$/utils/apiUtils.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -588,29 +434,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="456">
           <caret line="20" column="38" lean-forward="true" selection-start-line="20" selection-start-column="38" selection-end-line="20" selection-end-column="38" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/MessageToMedia.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="12" column="55" lean-forward="true" selection-start-line="12" selection-start-column="55" selection-end-line="12" selection-end-column="55" />
-          <folding>
-            <element signature="e#0#60#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/Message.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
-          <folding>
-            <element signature="e#0#77#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -625,9 +448,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="432">
           <caret line="120" selection-start-line="112" selection-end-line="120" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -635,26 +455,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="484">
           <caret line="119" selection-start-line="119" selection-end-line="120" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/DeviceMessageLogic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="19" column="23" lean-forward="true" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/DeviceMessage.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-576">
-          <caret line="3" column="48" selection-start-line="3" selection-start-column="48" selection-end-line="3" selection-end-column="48" />
         </state>
       </provider>
     </entry>
@@ -665,10 +465,192 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/Media.py">
+    <entry file="file://$PROJECT_DIR$/utils/security.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="447">
+          <caret line="66" lean-forward="true" selection-start-line="66" selection-end-line="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/media_logic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="24">
+          <caret line="19" selection-start-line="19" selection-end-line="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/socketio_notif.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1469">
+          <caret line="80" column="38" lean-forward="true" selection-start-line="80" selection-start-column="38" selection-end-line="80" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/socketio_message.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="965">
+          <caret line="131" column="49" selection-start-line="131" selection-start-column="49" selection-end-line="131" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/socketio_auth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1104">
+          <caret line="48" column="29" selection-start-line="48" selection-start-column="29" selection-end-line="48" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/socketio_rooms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1344">
+          <caret line="58" column="43" lean-forward="true" selection-start-line="58" selection-start-column="43" selection-end-line="58" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sockets/room_events.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="65" column="26" lean-forward="true" selection-start-line="65" selection-start-column="26" selection-end-line="65" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sockets/standard_events.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="576">
+          <caret line="26" column="20" lean-forward="true" selection-start-line="26" selection-start-column="20" selection-end-line="26" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/Message.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2472">
+          <caret line="121" column="45" selection-start-line="121" selection-start-column="45" selection-end-line="121" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/MediaLogic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1479">
+          <caret line="72" column="17" lean-forward="true" selection-start-line="72" selection-start-column="17" selection-end-line="72" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/DeviceMessage.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="341">
+          <caret line="115" column="17" lean-forward="true" selection-start-line="115" selection-start-column="17" selection-end-line="115" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/Device.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="868">
-          <caret line="101" selection-start-line="101" selection-end-line="101" />
+          <caret line="172" column="28" lean-forward="true" selection-start-line="172" selection-start-column="28" selection-end-line="172" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/DeviceMessageLogic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="629">
+          <caret line="85" column="56" lean-forward="true" selection-start-line="85" selection-start-column="56" selection-end-line="85" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sockets/message_events.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="173">
+          <caret line="34" lean-forward="true" selection-start-line="34" selection-end-line="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/MessageToMedia.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="437">
+          <caret line="49" selection-end-line="62" />
+          <folding>
+            <element signature="e#0#60#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/Message.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="384">
+          <caret line="20" selection-start-line="20" selection-end-line="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/User.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1219">
+          <caret line="77" column="30" lean-forward="true" selection-start-line="77" selection-start-column="30" selection-end-line="77" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/DeviceToMedia.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="20" column="18" selection-start-line="20" selection-start-column="18" selection-end-line="20" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#68#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/UserToMedia.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1272">
+          <caret line="53" column="17" selection-start-line="53" selection-start-column="17" selection-end-line="53" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#68#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/Circle.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2712">
+          <caret line="120" selection-start-line="120" selection-end-line="120" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/CircleToMedia.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="12" column="55" lean-forward="true" selection-start-line="12" selection-start-column="55" selection-end-line="12" selection-end-column="55" />
+          <folding>
+            <element signature="e#0#68#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/Device.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-24">
+          <caret line="5" column="13" lean-forward="true" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/Circle.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/Media.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="533">
+          <caret line="38" column="12" lean-forward="true" selection-start-line="38" selection-start-column="12" selection-end-line="38" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/Media.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
           <folding>
             <element signature="e#0#25#0" expanded="true" />
           </folding>
@@ -677,50 +659,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="293">
-          <caret line="93" column="98" selection-start-line="93" selection-start-column="98" selection-end-line="93" selection-end-column="98" />
+        <state relative-caret-position="456">
+          <caret line="34" column="40" lean-forward="true" selection-start-line="34" selection-start-column="40" selection-end-line="34" selection-end-column="40" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/security.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="447">
-          <caret line="66" lean-forward="true" selection-start-line="66" selection-end-line="66" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/MediaLogic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="72" column="17" lean-forward="true" selection-start-line="72" selection-start-column="17" selection-end-line="72" selection-end-column="17" />
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/media_logic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-811">
-          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/Media.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="471">
-          <caret line="29" column="88" selection-start-line="29" selection-start-column="88" selection-end-line="29" selection-end-column="88" />
-          <folding>
-            <element signature="e#0#74#0" expanded="true" />
           </folding>
         </state>
       </provider>
