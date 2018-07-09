@@ -2,22 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32b1a9b9-7457-4a1a-91e3-06d7851c1013" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/models/CircleToMedia.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/DeviceToMedia.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/UserToMedia.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/jerem.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/jerem.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/Circle.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/Circle.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/Device.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/Device.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/Media.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/Media.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/User.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/User.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/Media.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/Media.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sockets/message_events.py" beforeDir="false" afterPath="$PROJECT_DIR$/sockets/message_events.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sockets/room_events.py" beforeDir="false" afterPath="$PROJECT_DIR$/sockets/room_events.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/socketio_message.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/socketio_message.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/socketio_rooms.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/socketio_rooms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/Account.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/Account.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/account.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/account.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/circle.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/circle.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/decorators.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/decorators.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -28,14 +17,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/config/__init__.py">
+      <file leaf-file-name="account.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/test/account.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="797">
+              <caret line="203" column="42" lean-forward="true" selection-start-line="203" selection-start-column="42" selection-end-line="203" selection-end-column="42" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="circle.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/circle.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="456">
-              <caret line="34" column="40" lean-forward="true" selection-start-line="34" selection-start-column="40" selection-end-line="34" selection-end-column="40" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
+              <caret line="36" selection-start-line="36" selection-end-line="38" />
             </state>
           </provider>
         </entry>
@@ -83,8 +78,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/test/socketio_account_events.py" />
-        <option value="$PROJECT_DIR$/test/socketio_private_notifications.py" />
         <option value="$PROJECT_DIR$/classes/SocketUser.py" />
         <option value="$PROJECT_DIR$/routes/Payment.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
@@ -93,7 +86,6 @@
         <option value="$PROJECT_DIR$/models/Conversation.py" />
         <option value="$PROJECT_DIR$/models/CircleInvite.py" />
         <option value="$PROJECT_DIR$/routes/Conversation.py" />
-        <option value="$PROJECT_DIR$/routes/Account.py" />
         <option value="$PROJECT_DIR$/test/conversation_logic.py" />
         <option value="$PROJECT_DIR$/routes/Device.py" />
         <option value="$PROJECT_DIR$/test/socketio_room_events.py" />
@@ -113,7 +105,6 @@
         <option value="$PROJECT_DIR$/models/MessageToMedia.py" />
         <option value="$PROJECT_DIR$/config/database.py" />
         <option value="$PROJECT_DIR$/test/test_file.txt" />
-        <option value="$PROJECT_DIR$/utils/decorators.py" />
         <option value="$PROJECT_DIR$/routes/MessageLogic.py" />
         <option value="$PROJECT_DIR$/routes/DeviceMessageLogic.py" />
         <option value="$PROJECT_DIR$/routes/DeviceMessage.py" />
@@ -134,6 +125,10 @@
         <option value="$PROJECT_DIR$/models/Media.py" />
         <option value="$PROJECT_DIR$/routes/Media.py" />
         <option value="$PROJECT_DIR$/config/__init__.py" />
+        <option value="$PROJECT_DIR$/utils/decorators.py" />
+        <option value="$PROJECT_DIR$/routes/Account.py" />
+        <option value="$PROJECT_DIR$/test/circle.py" />
+        <option value="$PROJECT_DIR$/test/account.py" />
       </list>
     </option>
   </component>
@@ -169,17 +164,12 @@
             <path>
               <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
               <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
-              <item name="config" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
-              <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
-              <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
               <item name="routes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
+              <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -306,24 +296,16 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="4" />
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test/circle.py</url>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="5" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/routes/Account.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-480">
-          <caret line="102" column="74" lean-forward="true" selection-start-line="102" selection-start-column="74" selection-end-line="102" selection-end-column="74" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/account.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret lean-forward="true" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="384">
@@ -385,13 +367,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/circle.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="312">
-          <caret line="33" selection-start-line="33" selection-end-line="37" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/utils/testutils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="384">
@@ -429,13 +404,6 @@
     <entry file="file://$PROJECT_DIR$/test/test_file.txt" />
     <entry file="file://$PROJECT_DIR$/utils/apiUtils.py">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/decorators.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="20" column="38" lean-forward="true" selection-start-line="20" selection-start-column="38" selection-end-line="20" selection-end-column="38" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/config/files.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -659,11 +627,42 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="34" column="40" lean-forward="true" selection-start-line="34" selection-start-column="40" selection-end-line="34" selection-end-column="40" />
+        <state relative-caret-position="216">
+          <caret line="36" column="57" selection-start-line="36" selection-start-column="57" selection-end-line="36" selection-end-column="57" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/Account.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1680">
+          <caret line="82" lean-forward="true" selection-start-line="82" selection-end-line="82" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/decorators.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="624">
+          <caret line="29" column="29" selection-start-line="29" selection-start-column="29" selection-end-line="29" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/circle.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="456">
+          <caret line="36" selection-start-line="36" selection-end-line="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/account.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="797">
+          <caret line="203" column="42" lean-forward="true" selection-start-line="203" selection-start-column="42" selection-end-line="203" selection-end-column="42" />
         </state>
       </provider>
     </entry>

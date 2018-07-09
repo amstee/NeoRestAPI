@@ -10,6 +10,7 @@ from models.Circle import Circle
 from models.UserToCircle import UserToCircle
 from utils.testutils import AuthenticateUser
 
+
 class TestCircleCreate(unittest.TestCase):
     def setUp(self):
         neo = neoapi()
