@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32b1a9b9-7457-4a1a-91e3-06d7851c1013" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sockets/room_events.py" beforeDir="false" afterPath="$PROJECT_DIR$/sockets/room_events.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/socketio_rooms.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/socketio_rooms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/__init__.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -24,11 +22,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="socketio_rooms.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="socketio_rooms.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/socketio_rooms.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="701">
               <caret line="296" column="41" selection-start-line="296" selection-start-column="41" selection-end-line="296" selection-end-column="41" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/config/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="216">
+              <caret line="36" selection-start-line="36" selection-end-line="36" />
+              <folding>
+                <element signature="e#0#23#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -129,13 +139,13 @@
         <option value="$PROJECT_DIR$/models/Device.py" />
         <option value="$PROJECT_DIR$/models/Media.py" />
         <option value="$PROJECT_DIR$/routes/Media.py" />
-        <option value="$PROJECT_DIR$/config/__init__.py" />
         <option value="$PROJECT_DIR$/utils/decorators.py" />
         <option value="$PROJECT_DIR$/routes/Account.py" />
         <option value="$PROJECT_DIR$/test/circle.py" />
         <option value="$PROJECT_DIR$/test/account.py" />
         <option value="$PROJECT_DIR$/sockets/room_events.py" />
         <option value="$PROJECT_DIR$/test/socketio_rooms.py" />
+        <option value="$PROJECT_DIR$/config/__init__.py" />
       </list>
     </option>
   </component>
@@ -171,6 +181,11 @@
               <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
               <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
               <item name="classes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
+              <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
@@ -586,16 +601,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="36" column="57" selection-start-line="36" selection-start-column="57" selection-end-line="36" selection-end-column="57" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/routes/Account.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1680">
@@ -666,6 +671,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="701">
           <caret line="296" column="41" selection-start-line="296" selection-start-column="41" selection-end-line="296" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="36" selection-start-line="36" selection-end-line="36" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
