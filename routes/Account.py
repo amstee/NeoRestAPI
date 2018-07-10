@@ -83,9 +83,20 @@ class ModifyPassword(Resource):
 
 class CheckToken(Resource):
     @checkContent
-    @securedRoute
-    def post(self, content, user):
-        return jsonify({"success": True, "message": "Le token json est valide"})
+    def post(self, content):
+        try:
+            if "token" not in content or content["token"] == "":
+                resp = jsonify({"success": False, "message": "Aucun jwt trouve dans le contenu de la requete"})
+                return resp
+            json_token = content["token"]
+            res, data = UserModel.decodeAuthToken(json_token)
+            if res is True:
+                return jsonify({"success": True, "message": "Le token json est valide"})
+            return jsonify({"success": False, "message": data})
+        except Exception as e:
+            resp = jsonify({"success": False, "message": str(e)})
+            resp.status_code = 500
+            return resp
 
 
 class AccountLogout(Resource):

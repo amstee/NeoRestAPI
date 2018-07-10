@@ -6,6 +6,8 @@ sys.path.insert(0,'..')
 from api import neoapi
 from config.database import db_session
 from models.User import User as UserModel
+from utils.testutils import AuthenticateUser
+
 
 class AccountCreate(unittest.TestCase):
     def setUp(self):
@@ -116,6 +118,7 @@ class AccountCreate(unittest.TestCase):
         assert response.status_code == 409
         assert response_json['success'] == False
 
+
 class AccountLogin(unittest.TestCase):
     def setUp(self):
         neo = neoapi()
@@ -171,19 +174,32 @@ class AccountLogin(unittest.TestCase):
         assert response.status_code == 401
         assert response_json['success'] == False
 
+
 class AccountApiToken(unittest.TestCase):
     def setUp(self):
         neo = neoapi()
         self.api = neo.activate_testing()
-        db_session.query(UserModel).delete()
+        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcircle@test.com").first()
+        if self.user1 is None:
+            self.user1 = UserModel(email="testcircle@test.com", password="test", first_name="firstname",
+                                   last_name="lastname", birthday="1995-12-12")
         db_session.commit()
+        self.token1 = AuthenticateUser(self.api, self.user1, "test")
 
-        new_user = UserModel(
-            email="clone2@gmail.com",
-            password="password",
-            first_name="first_name",
-            last_name="last_name",
-            birthday="1999-02-02"
-            )
-        db_session.add(new_user)
-        db_session.commit()
+    def test_valid_token(self):
+        json_data = {
+            "token": self.token1,
+        }
+        response = self.api.post('/token/verify', data=json.dumps(json_data), content_type='application/json')
+        response_json = json.loads(response.data)
+        assert response.status_code == 200
+        assert response_json['success'] is True
+
+    def test_invalid_token(self):
+        json_data = {
+            "token": "tetetetet",
+        }
+        response = self.api.post('/token/verify', data=json.dumps(json_data), content_type='application/json')
+        response_json = json.loads(response.data)
+        assert response.status_code == 200
+        assert response_json['success'] is False

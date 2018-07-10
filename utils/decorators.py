@@ -13,7 +13,7 @@ def securedRoute(func):
                 return resp
             jsonToken = content["token"]
             res, data = User.decodeAuthToken(jsonToken)
-            if (res is True):
+            if res is True:
                 kwargs['user'] = data
                 return func(*args, **kwargs)
             else:

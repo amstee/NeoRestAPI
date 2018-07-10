@@ -2,6 +2,9 @@ from flask import request
 from flask_restful import Resource
 from config.database import db_session
 from models.MessageToMedia import MessageToMedia
+from models.CircleToMedia import CircleToMedia
+from models.DeviceToMedia import DeviceToMedia
+from models.UserToMedia import UserToMedia
 from models.Message import Message
 from models.Media import Media
 from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute

@@ -30,7 +30,10 @@ class User(Base):
                               cascade="save-update, delete")
     conversationLinks = relationship("UserToConversation", back_populates="user", order_by="UserToConversation.id",
                                      cascade="save-update, delete")
-    circleInvite = relationship("CircleInvite", back_populates="user", order_by="CircleInvite.id", cascade="save-update, delete")
+    circleInvite = relationship("CircleInvite", back_populates="user", order_by="CircleInvite.id",
+                                cascade="save-update, delete")
+    media_links = relationship("UserToMedia", back_populates="user", order_by="UserToMedia.id",
+                               cascade="save-update, delete")
 
     def __init__(self, email=None, password=None, first_name=None, last_name=None,
                  birthday=None, is_online=False, created=datetime.datetime.now(),
@@ -71,9 +74,9 @@ class User(Base):
         try:
             self.jsonToken = ""
             db_session.commit()
-            return (True, None)
+            return True, None
         except Exception as e:
-            return (False, str(e))
+            return False, str(e)
 
     @staticmethod
     def decodeAuthToken(auth_token):
@@ -82,17 +85,17 @@ class User(Base):
             try:
                 user = db_session.query(User).filter(User.id == payload['sub']).first()
                 if user is not None:
-                    if user.jsonToken == "" or user.jsonToken == None:
-                        return (False, 'Utilisateur non authentifié')
-                    return (True, user)
+                    if user.jsonToken == "" or user.jsonToken is None:
+                        return False, 'Utilisateur non authentifié'
+                    return True, user
                 else:
-                    return (False, 'Utilisateur introuvable')
+                    return False, 'Utilisateur introuvable'
             except Exception as e:
-                return (False, "Une erreur est survenue : " + str(e))
+                return False, "Une erreur est survenue : " + str(e)
         except jwt.ExpiredSignatureError:
-            return (False, 'La session a expiré, authentifiez vous a nouveau')
+            return False, 'La session a expiré, authentifiez vous a nouveau'
         except jwt.InvalidTokenError:
-            return (False, 'Token invalide, authentifiez vous a nouveau')
+            return False, 'Token invalide, authentifiez vous a nouveau'
 
     def notifyCircles(self, p2):
         for link in self.circleLink:
@@ -148,7 +151,7 @@ class User(Base):
             db_session.commit()
 
     def updateContent(self, email=None, first_name=None, last_name=None, birthday=None,
-                      searchText=None, facebookPSID=None, is_online=None, created=None, updated=datetime.datetime.now()):
+                      facebookPSID=None, is_online=None, created=None, updated=datetime.datetime.now()):
         if email is not None and email is not "":
             self.email = email
         if first_name is not None and first_name is not "":
@@ -157,8 +160,6 @@ class User(Base):
             self.last_name = last_name
         if birthday is not None and birthday is not "" and type(birthday) is str:
             self.birthday = DateParser.parse(birthday)
-        if searchText is not None and searchText is not "":
-            self.searchText = searchText
         if type(updated) is str:
             self.updated = DateParser.parse(updated)
         else:
@@ -178,7 +179,7 @@ class User(Base):
 
     @staticmethod
     def CreateNeoAdmin():
-        admin = db_session.query(User).filter(User.email=="contact.projetneo@gmail.com").first()
+        admin = db_session.query(User).filter(User.email == "contact.projetneo@gmail.com").first()
         if admin is None:
             user = User(email="contact.projetneo@gmail.com", password="PapieNeo2019",
                         first_name="Neo", last_name="Admin", birthday=datetime.datetime.now())
@@ -210,5 +211,6 @@ class User(Base):
             "type": self.type,
             "circles": [link.getContent() for link in self.circleLink],
             "invites": [invite.getContent() for invite in self.circleInvite],
-            "conversations": [link.getSimpleContent() for link in self.conversationLinks]
+            "conversations": [link.getSimpleContent() for link in self.conversationLinks],
+            "medias": [link.getContent() for link in self.media_links]
         }
