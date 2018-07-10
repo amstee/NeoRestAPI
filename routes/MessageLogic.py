@@ -92,7 +92,7 @@ class FirstMessageSend(Resource):
                                  "event": 'invite'})
             info_sender = "[" + conversation.name + "] " + user.first_name + " : "
             MessengerCircleModelSend(0, circle, info_sender + message.text_content)
-            resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
+            resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id, 'conversation_id': message.conversation_id})
             resp.status_code = 200
             return resp
         except Exception as e:
