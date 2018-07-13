@@ -44,28 +44,63 @@ class WebhookHangout(Resource):
                 else:
                     return
                 #resp = jsonify({'text': text})
-                resp = jsonify({"buttons": [
-                                {
-                                    "textButton": {
-                                    "text": "Click Me",
-                                    "onClick": {
-                                        "action": {
-                                        "actionMethodName": "snooze",
-                                        "parameters": [
+                resp = jsonify({
+                                "cards": [
+                                    {
+                                    "header": {
+                                        "title": "Pizza Bot Customer Support",
+                                        "subtitle": "pizzabot@example.com",
+                                        "imageUrl": "https://goo.gl/aeDtrS"
+                                    },
+                                    "sections": [
+                                        {
+                                        "widgets": [
                                             {
-                                            "key": "time",
-                                            "value": "1 day"
+                                                "keyValue": {
+                                                "topLabel": "Order No.",
+                                                "content": "12345"
+                                                }
                                             },
                                             {
-                                            "key": "id",
-                                            "value": "123456"
+                                                "keyValue": {
+                                                "topLabel": "Status",
+                                                "content": "In Delivery"
+                                                }
+                                            }
+                                        ]
+                                        },
+                                        {
+                                        "header": "Location",
+                                        "widgets": [
+                                            {
+                                            "image": {
+                                                "imageUrl": "https://maps.googleapis.com/..."
+                                            }
+                                            }
+                                        ]
+                                        },
+                                        {
+                                        "widgets": [
+                                            {
+                                                "buttons": [
+                                                    {
+                                                    "textButton": {
+                                                        "text": "OPEN ORDER",
+                                                        "onClick": {
+                                                        "openLink": {
+                                                            "url": "https://example.com/orders/..."
+                                                        }
+                                                        }
+                                                    }
+                                                    }
+                                                ]
                                             }
                                         ]
                                         }
+                                    ]
                                     }
-                                    }
-                                }
-                                ]})
+                                ]
+                                })
                 resp.status_code = 200
                 return resp
             return
