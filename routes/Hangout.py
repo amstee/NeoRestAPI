@@ -42,6 +42,7 @@ def handleConversationPayload(messagePayload):
     try:
         payload = jwt.decode(messagePayload, SECRET_KEY)
         try:
+            print(messagePayload)
             link = db_session.query(UserToConversation).filter(UserToConversation.id == payload["link_id"] and UserToConversation.user_id == payload["user_id"]).first()
             message = Message(content=payload["message_text"])
             message.link = link
