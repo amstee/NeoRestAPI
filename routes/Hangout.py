@@ -43,7 +43,9 @@ class WebhookHangout(Resource):
                     text = 'You said: `%s`' % content['message']['text']
                 else:
                     return
-                return 200, {'text': text}
+                resp = jsonify({'text': text})
+                resp.status_code = 200
+                return resp
             return
         except Exception as e:
             print(e, file=sys.stderr)
