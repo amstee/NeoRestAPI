@@ -22,6 +22,39 @@ import json
 SECRET_KEY = "defaultusersecretkey"
 TOKEN="yZZieXB8D64T1qMxI9fJVCgC1vVMUB70PB9p3lIYSN4="
 
+def encodePostBackPayload(hangoutEmail, message_text, link):
+    try:
+        payload = {
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30, seconds=1),
+            'iat': datetime.datetime.utcnow(),
+            'hangoutEmail': hangoutEmail,
+            'user_id': link.user_id,
+            'link_id': link.id,
+            'message_text': message_text
+        }
+        token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+        return token.decode()
+    except Exception as e:
+        print(e)
+        return (str(e))
+
+def handleConversationPayload(messagePayload):
+    try:
+        payload = jwt.decode(messagePayload, SECRET_KEY)
+        try:
+            link = db_session.query(UserToConversation).filter(UserToConversation.id == payload["link_id"] and UserToConversation.user_id == payload["user_id"]).first()
+            message = Message(content=payload["message_text"])
+            message.link = link
+            message.conversation = link.conversation
+            db_session.commit()
+        except Exception as e:
+            print("Une erreur est survenue : " + str(e), file=sys.stderr)
+            return ("Une erreur est survenue : " + str(e))
+    except jwt.ExpiredSignatureError:
+        return ('Message expiré, renvoyez le message')
+    except jwt.InvalidTokenError:
+        return ('Message expiré, renvoyez le message')
+
 def IsUserLinked(hangoutEmail):
     user = db_session.query(User).filter(User.hangoutEmail == hangoutEmail).first()
     if user is not None:
@@ -55,6 +88,78 @@ def isTokenValid(content):
         print(e, file=sys.stderr)
         return False
 
+def MessageChoice(sender_id, message_text):
+    quick_replies = []
+    user = db_session.query(User).filter(User.facebookPSID == sender_id).first()
+    for UserToConv in user.conversationLinks:
+        conv = db_session.query(Conversation).filter(Conversation.id == UserToConv.conversation_id).first()
+        payload = encodePostBackPayload(sender_id, message_text, UserToConv)
+        quick_replies.append({"content_type":"text","title":conv.name,"payload": payload})
+    return quick_replies
+
+def SendMessageChoice(recipient_id, message_text):
+    resp = jsonify({
+                "cards": [
+                    {
+                    "header": {
+                        "title": "Pizza Bot Customer Support",
+                        "subtitle": "pizzabot@example.com",
+                        "imageUrl": "https://goo.gl/aeDtrS"
+                    },
+                    "sections": [
+                        {
+                        "widgets": [
+                            {
+                                "buttons": [
+                                {
+                                    "textButton": {
+                                    "text": "Click Me",
+                                    "onClick": {
+                                        "action": {
+                                        "actionMethodName": "snooze",
+                                        "parameters": [
+                                            {
+                                            "key": "time",
+                                            "value": "1 day"
+                                            },
+                                            {
+                                            "key": "id",
+                                            "value": "123456"
+                                            }
+                                        ]
+                                        }
+                                    }
+                                    },
+                                    "textButton": {
+                                    "text": "Click Me",
+                                    "onClick": {
+                                        "action": {
+                                        "actionMethodName": "snooze",
+                                        "parameters": [
+                                            {
+                                            "key": "time",
+                                            "value": "1 day"
+                                            },
+                                            {
+                                            "key": "id",
+                                            "value": "123456"
+                                            }
+                                        ]
+                                        }
+                                    }
+                                    }
+                                }
+                                ]
+                            }
+                        ]
+                        }
+                    ]
+                    }
+                ]
+                })
+    return resp
+
+
 class WebhookHangout(Resource):
     @checkContent
     def post(self, content):
@@ -74,8 +179,8 @@ class WebhookHangout(Resource):
                     message = LinkUserToHangout(splitMessage[1], sender_id)
                     resp = jsonify({"text":message})
                 elif IsUserLinked(sender_id) == True:
-                    resp = jsonify({"text":"Non implémenté"})
-                    #SendMessageChoice(sender_id, message_text)
+                    #resp = jsonify({"text":"Non implémenté"})
+                    resp = SendMessageChoice(sender_id, message_text)
                 else:
                     resp = jsonify({"text":"Votre compte messenger n'est lié a aucun compte NEO"})
                 resp.status_code = 200
