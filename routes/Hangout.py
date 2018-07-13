@@ -134,6 +134,17 @@ def SendMessageChoice(recipient_id, message_text):
                 })
     return resp
 
+def sendToSpace(space_id, message):
+    headers = {
+        "Content-Type": "application/json"
+    }
+    data = json.dumps({
+        "text": message
+    })
+    r = requests.post("https://chat.googleapis.com/v1/" + space_id + "/messages", headers=headers, data=data)
+    if r.status_code != 200:
+        return False
+    return True
 
 class WebhookHangout(Resource):
     @checkContent
@@ -155,6 +166,8 @@ class WebhookHangout(Resource):
                     else:
                         resp = jsonify({"text":"Votre compte messenger n'est lié a aucun compte NEO"})
                 elif content['type'] == "CARD_CLICKED":
+                    print(str(content['action']['parameter']))
+                    sendToSpace(content['space']['name'], "My test message")
                     resp = jsonify({"text": str(content['action']['parameter'])})
                 resp.status_code = 200
                 return resp
