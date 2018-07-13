@@ -166,9 +166,11 @@ class WebhookHangout(Resource):
                     else:
                         resp = jsonify({"text":"Votre compte messenger n'est lié a aucun compte NEO"})
                 elif content['type'] == "CARD_CLICKED":
-                    print(str(content['action']['parameter']))
+                    print(str(content['action']['parameters']))
+                    for elem in content['action']['parameters']:
+                        print(elem['value'])
                     sendToSpace(content['space']['name'], "My test message")
-                    resp = jsonify({"text": str(content['action']['parameter'])})
+                    resp = jsonify({"text": str(content['action']['parameters'])})
                 resp.status_code = 200
                 return resp
             return
