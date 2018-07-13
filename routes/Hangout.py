@@ -47,6 +47,7 @@ def handleConversationPayload(messagePayload):
             message.link = link
             message.conversation = link.conversation
             db_session.commit()
+            return ("Votre message a été envoyé avec succès")
         except Exception as e:
             print("Une erreur est survenue : " + str(e), file=sys.stderr)
             return ("Une erreur est survenue : " + str(e))
@@ -168,9 +169,9 @@ class WebhookHangout(Resource):
                 elif content['type'] == "CARD_CLICKED":
                     print(str(content['action']['parameters']))
                     for elem in content['action']['parameters']:
-                        print(elem['value'])
-                    sendToSpace(content['space']['name'], "My test message")
-                    resp = jsonify({"text": str(content['action']['parameters'])})
+                        handleConversationPayload(elem['value'])
+                    #sendToSpace(content['space']['name'], "My test message")
+                    resp = jsonify({"text": "méssage envoyé"})
                 resp.status_code = 200
                 return resp
             return
