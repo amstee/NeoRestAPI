@@ -86,6 +86,12 @@ class User(Base):
                     return True
         return False
 
+    def isInConversation(self, conversation_id):
+        for link in self.conversationLinks:
+            if link.conversation_id == conversation_id:
+                return True
+        return False
+
     def isInCircle(self, circle_id):
         for link in self.circleLink:
             if link.circle_id == circle_id:

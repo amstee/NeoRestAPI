@@ -56,7 +56,7 @@ class Media(Base):
 
     def CanBeAccessedByUser(self, user):
         if self.message_link is not None:
-            pass
+            return user.isInConversation(self.message_link.message.conversation_id)
         elif self.user_link is not None:
             if self.user_link.user_id == user.id:
                 return True
@@ -108,13 +108,13 @@ class Media(Base):
         self.filename = f
         self.extension = e
         if self.message_link is not None:
-            self.directory = "conversation_" + self.message_link.message.conversation_id
+            self.directory = "conversation_" + str(self.message_link.message.conversation_id)
         elif self.user_link is not None:
-            self.directory = "user_" + self.user_link.user_id
+            self.directory = "user_" + str(self.user_link.user_id)
         elif self.circle_link is not None:
-            self.directory = "circle_" + self.circle_link.circle_id
+            self.directory = "circle_" + str(self.circle_link.circle_id)
         elif self.device_link is not None:
-            self.directory = "device_" + self.device_link.device_id
+            self.directory = "device_" + str(self.device_link.device_id)
         else:
             raise Exception("Ce media est corrompu, vous ne pouvez pas upload de fichier")
 

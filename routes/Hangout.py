@@ -48,7 +48,7 @@ def handleConversationPayload(messagePayload):
             message.link = link
             message.conversation = link.conversation
             db_session.commit()
-            return ("Votre message a été envoyé avec succès")
+            return "Votre message a été envoyé avec succès"
         except Exception as e:
             print("Une erreur est survenue : " + str(e), file=sys.stderr)
             return ("Une erreur est survenue : " + str(e))
@@ -70,7 +70,7 @@ def LinkUserToHangout(apiToken, email):
                 user = db_session.query(User).filter(User.id == payload['sub']).first()
                 if user is not None:
                     user.updateContent(hangoutEmail=email)
-                    return ("Bienvenue sur NEO, " + payload['first_name'] + " " + payload['last_name'] + " !")
+                    return "Bienvenue sur NEO, " + payload['first_name'] + " " + payload['last_name'] + " !"
                 else:
                     return 'Token invalide !'
             except Exception as e:
