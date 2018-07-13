@@ -103,7 +103,7 @@ def MessageChoice(sender_id, message_text):
                                         "parameters": [
                                             {
                                             "key": "message_text",
-                                            "value": message_text
+                                            "value": payload
                                             }
                                         ]
                                         }
@@ -117,9 +117,8 @@ def SendMessageChoice(recipient_id, message_text):
                 "cards": [
                     {
                     "header": {
-                        "title": "Pizza Bot Customer Support",
-                        "subtitle": "pizzabot@example.com",
-                        "imageUrl": "https://goo.gl/aeDtrS"
+                        "title": "Choisissez une conversation",
+                        "subtitle": message_text,
                     },
                     "sections": [
                         {
@@ -145,20 +144,18 @@ class WebhookHangout(Resource):
                 if content['type'] == 'ADDED_TO_SPACE' and content['space']['type'] == 'ROOM':
                     text = 'Thanks for adding me to "%s"!' % content['space']['displayName']
                 elif content['type'] == 'MESSAGE':
-                    text = 'You said: `%s`' % content['message']['text']
-                else:
-                    return
-                sender_id = content["message"]["sender"]["email"]
-                message_text = content["message"]["text"]
-                splitMessage = message_text.split(' ')
-                if len(splitMessage) >= 2 and splitMessage[0] == "/token":
-                    message = LinkUserToHangout(splitMessage[1], sender_id)
-                    resp = jsonify({"text":message})
-                elif IsUserLinked(sender_id) == True:
-                    #resp = jsonify({"text":"Non implémenté"})
-                    resp = SendMessageChoice(sender_id, message_text)
-                else:
-                    resp = jsonify({"text":"Votre compte messenger n'est lié a aucun compte NEO"})
+                    sender_id = content["message"]["sender"]["email"]
+                    message_text = content["message"]["text"]
+                    splitMessage = message_text.split(' ')
+                    if len(splitMessage) >= 2 and splitMessage[0] == "/token":
+                        message = LinkUserToHangout(splitMessage[1], sender_id)
+                        resp = jsonify({"text":message})
+                    elif IsUserLinked(sender_id) == True:
+                        resp = SendMessageChoice(sender_id, message_text)
+                    else:
+                        resp = jsonify({"text":"Votre compte messenger n'est lié a aucun compte NEO"})
+                elif content['type'] == "CARD_CLICKED":
+                    resp = {"text": str(content['action']['parameter'])}
                 resp.status_code = 200
                 return resp
             return
