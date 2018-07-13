@@ -129,7 +129,11 @@ def SendMessageChoice(recipient_id, message_text):
                                         ]
                                         }
                                     }
-                                    },
+                                    }
+                                }
+                                ],
+                                "buttons": [
+                                {
                                     "textButton": {
                                     "text": "Click Me 2",
                                     "onClick": {
