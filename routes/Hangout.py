@@ -90,11 +90,26 @@ def isTokenValid(content):
 
 def MessageChoice(sender_id, message_text):
     quick_replies = []
-    user = db_session.query(User).filter(User.facebookPSID == sender_id).first()
+    user = db_session.query(User).filter(User.hangoutEmail== sender_id).first()
     for UserToConv in user.conversationLinks:
         conv = db_session.query(Conversation).filter(Conversation.id == UserToConv.conversation_id).first()
         payload = encodePostBackPayload(sender_id, message_text, UserToConv)
-        quick_replies.append({"content_type":"text","title":conv.name,"payload": payload})
+        quick_replies.append({
+                                    "textButton": {
+                                    "text": conv.name,
+                                    "onClick": {
+                                        "action": {
+                                        "actionMethodName": conv.names,
+                                        "parameters": [
+                                            {
+                                            "key": "message_text",
+                                            "value": message_text
+                                            }
+                                        ]
+                                        }
+                                    }
+                                    }
+                                })
     return quick_replies
 
 def SendMessageChoice(recipient_id, message_text):
@@ -110,38 +125,7 @@ def SendMessageChoice(recipient_id, message_text):
                         {
                         "widgets": [
                             {
-                                "buttons": [
-                                {
-                                    "textButton": {
-                                    "text": "Click Me",
-                                    "onClick": {
-                                        "action": {
-                                        "actionMethodName": "snooze",
-                                        "parameters": [
-                                            {
-                                            "key": "time",
-                                            "value": "1 day"
-                                            },
-                                            {
-                                            "key": "id",
-                                            "value": "123456"
-                                            }
-                                        ]
-                                        }
-                                    }
-                                    }
-                                },
-                                {
-                                    "textButton": {
-                                        "text": "NEW VOTE",
-                                        "onClick": {
-                                        "action": {
-                                            "actionMethodName": "newvote"
-                                        }
-                                        }
-                                    }
-                                }
-                                ]
+                                "buttons": [MessageChoice(recipient_id, message_text)]
                             }
                         ]
                         }
