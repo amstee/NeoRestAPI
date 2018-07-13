@@ -34,8 +34,8 @@ def isTokenValid(content):
 class WebhookHangout(Resource):
     @checkContent
     def post(self, content):
+        print("---Hangout---", file=sys.stderr)
         try:
-            print("---Hangout---", file=sys.stderr)
             if isTokenValid(content) == True:
                 if content['type'] == 'ADDED_TO_SPACE' and content['space']['type'] == 'ROOM':
                     text = 'Thanks for adding me to "%s"!' % content['space']['displayName']
@@ -43,7 +43,7 @@ class WebhookHangout(Resource):
                     text = 'You said: `%s`' % content['message']['text']
                 else:
                     return
-                return json.jsonify({'text': text})
+                return 200, {'text': text}
             return
         except Exception as e:
             print(e, file=sys.stderr)
