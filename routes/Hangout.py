@@ -131,10 +131,10 @@ def SendMessageChoice(recipient_id, message_text):
                                     }
                                     },
                                     "textButton": {
-                                    "text": "Click Me",
+                                    "text": "Click Me 2",
                                     "onClick": {
                                         "action": {
-                                        "actionMethodName": "snooze",
+                                        "actionMethodName": "snooze2",
                                         "parameters": [
                                             {
                                             "key": "time",
