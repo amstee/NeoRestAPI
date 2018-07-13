@@ -23,6 +23,7 @@ TOKEN="yZZieXB8D64T1qMxI9fJVCgC1vVMUB70PB9p3lIYSN4="
 
 def isTokenValid(content):
     try:
+        print("---Check hangout token---", file=sys.stderr)
         if content['token'] == TOKEN:
             return True
         return False
@@ -34,6 +35,7 @@ class WebhookHangout(Resource):
     @checkContent
     def post(self, content):
         try:
+            print("---Hangout---", file=sys.stderr)
             if isTokenValid(content) == True:
                 if content['type'] == 'ADDED_TO_SPACE' and content['space']['type'] == 'ROOM':
                     text = 'Thanks for adding me to "%s"!' % content['space']['displayName']
