@@ -169,7 +169,7 @@ class WebhookHangout(Resource):
                 elif content['type'] == "CARD_CLICKED":
                     print(str(content['action']['parameters']))
                     for elem in content['action']['parameters']:
-                        resp = jsonify(handleConversationPayload(elem['value']) + content['space']['name'])
+                        resp = jsonify(handleConversationPayload(elem['value']))
                 resp.status_code = 200
                 return resp
             return
