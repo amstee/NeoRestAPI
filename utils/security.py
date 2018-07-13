@@ -34,35 +34,11 @@ def userHasAccessToMessage(message, user):
     return True
 
 
-def deviceIsOwnerOfMedia(media, device):
-    if media.message_link is not None:
-        return deviceIsOwnerOfMessage(media.message_link.message, device)
-    return False
-
-
-def userIsOwnerOfMedia(media, user):
-    if media.message_link is not None:
-        return userIsOwnerOfMessage(media.message_link.message, user)
-    return False
-
-
 def userIsOwnerOfMessage(message, user):
     if message.link is None or message.isUser is False:
         return False
     if message.link.user_id==user.id:
         return True
-    return False
-
-
-def userHasAccessToMedia(media, user):
-    if media.message_link is not None:
-        return userHasAccessToMessage(media.message_link.message, user)
-    return False
-
-
-def deviceHasAccessToMedia(media, device):
-    if media.message_link is not None:
-        return deviceHasAccessToMessage(media.message_link.message, device)
     return False
 
 
