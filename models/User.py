@@ -78,6 +78,19 @@ class User(Base):
         except Exception as e:
             return False, str(e)
 
+    def hasMatchingCircle(self, user):
+        for link in self.circleLink:
+            for link2 in user.circleLink:
+                if link.circle_id == link2.circle_id:
+                    return True
+        return False
+
+    def isInCircle(self, circle_id):
+        for link in self.circleLink:
+            if link.circle_id == circle_id:
+                return True
+        return False
+
     @staticmethod
     def decodeAuthToken(auth_token):
         try:

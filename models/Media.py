@@ -42,6 +42,56 @@ class Media(Base):
         except Exception as e:
             return False
 
+    def CanBeAccessedByDevice(self, device):
+        if self.message_link is not None:
+            if self.message_link.message.conversation.device_access is True:
+                return self.message_link.message.conversation.circle_id == device.circle_id
+        elif self.user_link is not None:
+            return self.user_link.user.isInCircle(device.circle_id)
+        elif self.device_link is not None:
+            return self.device_link.device_id == device.id
+        elif self.circle_link is not None:
+            return self.circle_link.circle.device.id == device.id
+        return False
+
+    def CanBeAccessedByUser(self, user):
+        if self.message_link is not None:
+            pass
+        elif self.user_link is not None:
+            if self.user_link.user_id == user.id:
+                return True
+            return user.hasMatchingCircle(self.user_link.user)
+        elif self.device_link is not None:
+            return user.isInCircle(self.device_link.device.circle_id)
+        elif self.circle_link is not None:
+            return self.circle_link.circle.hasAdmin(user)
+        return False
+
+    def CanBeUploadedByDevice(self, device):
+        if self.message_link is not None:
+            if self.message_link.message.isUser is False:
+                if self.message_link.message.conversation.device_access is True:
+                    return self.message_link.message.conversation.circle_id == device.circle_id
+        elif self.user_link is not None:
+            return False
+        elif self.device_link is not None:
+            return self.device_link.device_id == device.id
+        elif self.circle_link is not None:
+            return self.circle_link.circle.device.id == device.id
+        return False
+
+    def CanBeUploadedByUser(self, user):
+        if self.message_link is not None:
+            if self.message_link.message.isUser is True:
+                return self.message_link.message.link.user_id == user.id
+        elif self.user_link is not None:
+            return self.user_link.user_id == user.id
+        elif self.device_link is not None:
+            return False
+        elif self.circle_link is not None:
+            return self.circle_link.circle.hasAdmin(user)
+        return False
+
     def __init__(self, filename=None, extension=None, identifier=None, directory='default'):
         if filename is not None and filename != "":
             self.filename = filename
@@ -52,12 +102,21 @@ class Media(Base):
         self.directory = directory
         db_session.add(self)
 
-    def set_content(self, file, folder):
+    def setContent(self, file):
         file_name = secure_filename(file.filename)
         f, e = os.path.splitext(file_name)
         self.filename = f
         self.extension = e
-        self.directory = folder
+        if self.message_link is not None:
+            self.directory = "conversation_" + self.message_link.message.conversation_id
+        elif self.user_link is not None:
+            self.directory = "user_" + self.user_link.user_id
+        elif self.circle_link is not None:
+            self.directory = "circle_" + self.circle_link.circle_id
+        elif self.device_link is not None:
+            self.directory = "device_" + self.device_link.device_id
+        else:
+            raise Exception("Ce media est corrompu, vous ne pouvez pas upload de fichier")
 
     def getDirectory(self):
         return UPLOAD_FOLDER + self.directory + os.path.sep
@@ -78,7 +137,7 @@ class Media(Base):
 
     def getLinkType(self):
         if self.message_link is not None:
-            return "message"
+            return "conversation"
         elif self.user_link is not None:
             return "user"
         elif self.circle_link is not None:
