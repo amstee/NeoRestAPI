@@ -43,7 +43,29 @@ class WebhookHangout(Resource):
                     text = 'You said: `%s`' % content['message']['text']
                 else:
                     return
-                resp = jsonify({'text': text})
+                #resp = jsonify({'text': text})
+                resp = jsonify({"buttons": [
+                                {
+                                    "textButton": {
+                                    "text": "Click Me",
+                                    "onClick": {
+                                        "action": {
+                                        "actionMethodName": "snooze",
+                                        "parameters": [
+                                            {
+                                            "key": "time",
+                                            "value": "1 day"
+                                            },
+                                            {
+                                            "key": "id",
+                                            "value": "123456"
+                                            }
+                                        ]
+                                        }
+                                    }
+                                    }
+                                }
+                                ]})
                 resp.status_code = 200
                 return resp
             return
