@@ -155,7 +155,7 @@ class WebhookHangout(Resource):
                     else:
                         resp = jsonify({"text":"Votre compte messenger n'est lié a aucun compte NEO"})
                 elif content['type'] == "CARD_CLICKED":
-                    resp = {"text": str(content['action']['parameter'])}
+                    resp = jsonify({"text": str(content['action']['parameter'])})
                 resp.status_code = 200
                 return resp
             return
