@@ -130,27 +130,15 @@ def SendMessageChoice(recipient_id, message_text):
                                         }
                                     }
                                     }
-                                }
-                                ],
-                                "buttons": [
+                                },
                                 {
                                     "textButton": {
-                                    "text": "Click Me 2",
-                                    "onClick": {
+                                        "text": "NEW VOTE",
+                                        "onClick": {
                                         "action": {
-                                        "actionMethodName": "snooze2",
-                                        "parameters": [
-                                            {
-                                            "key": "time",
-                                            "value": "1 day"
-                                            },
-                                            {
-                                            "key": "id",
-                                            "value": "123456"
-                                            }
-                                        ]
+                                            "actionMethodName": "newvote"
                                         }
-                                    }
+                                        }
                                     }
                                 }
                                 ]
