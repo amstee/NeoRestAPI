@@ -30,7 +30,7 @@ def isTokenValid(content):
         print(e, file=sys.stderr)
         return False
 
-class Webhook(Resource):
+class WebhookHangout(Resource):
     @checkContent
     def post(self, content):
         try:
