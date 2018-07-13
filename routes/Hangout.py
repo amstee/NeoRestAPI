@@ -125,9 +125,7 @@ def SendMessageChoice(recipient_id, message_text):
                         {
                         "widgets": [
                             {
-                                "buttons": [
-                                    MessageChoice(recipient_id, message_text)
-                                    ]
+                                "buttons": MessageChoice(recipient_id, message_text)
                             }
                         ]
                         }
