@@ -56,43 +56,27 @@ class WebhookHangout(Resource):
                                         {
                                         "widgets": [
                                             {
-                                                "keyValue": {
-                                                "topLabel": "Order No.",
-                                                "content": "12345"
-                                                }
-                                            },
-                                            {
-                                                "keyValue": {
-                                                "topLabel": "Status",
-                                                "content": "In Delivery"
-                                                }
-                                            }
-                                        ]
-                                        },
-                                        {
-                                        "header": "Location",
-                                        "widgets": [
-                                            {
-                                            "image": {
-                                                "imageUrl": "https://maps.googleapis.com/..."
-                                            }
-                                            }
-                                        ]
-                                        },
-                                        {
-                                        "widgets": [
-                                            {
                                                 "buttons": [
-                                                    {
+                                                {
                                                     "textButton": {
-                                                        "text": "OPEN ORDER",
-                                                        "onClick": {
-                                                        "openLink": {
-                                                            "url": "https://example.com/orders/..."
-                                                        }
+                                                    "text": "Click Me",
+                                                    "onClick": {
+                                                        "action": {
+                                                        "actionMethodName": "snooze",
+                                                        "parameters": [
+                                                            {
+                                                            "key": "time",
+                                                            "value": "1 day"
+                                                            },
+                                                            {
+                                                            "key": "id",
+                                                            "value": "123456"
+                                                            }
+                                                        ]
                                                         }
                                                     }
                                                     }
+                                                }
                                                 ]
                                             }
                                         ]
