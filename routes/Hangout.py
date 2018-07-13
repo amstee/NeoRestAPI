@@ -99,7 +99,7 @@ def MessageChoice(sender_id, message_text):
                                     "text": conv.name,
                                     "onClick": {
                                         "action": {
-                                        "actionMethodName": conv.names,
+                                        "actionMethodName": conv.name,
                                         "parameters": [
                                             {
                                             "key": "message_text",
@@ -125,7 +125,9 @@ def SendMessageChoice(recipient_id, message_text):
                         {
                         "widgets": [
                             {
-                                "buttons": [MessageChoice(recipient_id, message_text)]
+                                "buttons": [
+                                    MessageChoice(recipient_id, message_text)
+                                    ]
                             }
                         ]
                         }
