@@ -19,12 +19,13 @@ import jwt
 import datetime
 import json
 
+SECRET_KEY = "defaultusersecretkey"
 TOKEN="yZZieXB8D64T1qMxI9fJVCgC1vVMUB70PB9p3lIYSN4="
 
 def IsUserLinked(hangoutEmail):
-    #user = db_session.query(User).filter(User.facebookPSID == facebookPSID).first()
-    #if user is not None:
-    #    return True
+    user = db_session.query(User).filter(User.hangoutEmail == hangoutEmail).first()
+    if user is not None:
+        return True
     return False
 
 def LinkUserToHangout(apiToken, email):
@@ -33,7 +34,7 @@ def LinkUserToHangout(apiToken, email):
             try:
                 user = db_session.query(User).filter(User.id == payload['sub']).first()
                 if user is not None:
-                    #user.updateContent(facebookPSID=psid)
+                    user.updateContent(hangoutEmail=email)
                     return ("Bienvenue sur NEO, " + payload['first_name'] + " " + payload['last_name'] + " !")
                 else:
                     return 'Token invalide !'

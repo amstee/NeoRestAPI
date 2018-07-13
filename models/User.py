@@ -22,6 +22,7 @@ class User(Base):
     updated = Column(DateTime)
     jsonToken = Column(String(4096))
     facebookPSID = Column(BigInteger)
+    hangoutEmail = Column(String(2048))
     type = Column(String(10))
     is_online = Column(Boolean)
 
@@ -164,7 +165,7 @@ class User(Base):
             db_session.commit()
 
     def updateContent(self, email=None, first_name=None, last_name=None, birthday=None,
-                      facebookPSID=None, is_online=None, created=None, updated=datetime.datetime.now()):
+                      facebookPSID=None, hangoutEmail=None, is_online=None, created=None, updated=datetime.datetime.now()):
         if email is not None and email is not "":
             self.email = email
         if first_name is not None and first_name is not "":
@@ -182,6 +183,7 @@ class User(Base):
         elif created is not None:
             self.created = created
         self.facebookPSID = facebookPSID
+        self.hangoutEmail = hangoutEmail
         if is_online is not None:
             self.is_online = is_online
         db_session.commit()
