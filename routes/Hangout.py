@@ -169,9 +169,7 @@ class WebhookHangout(Resource):
                 elif content['type'] == "CARD_CLICKED":
                     print(str(content['action']['parameters']))
                     for elem in content['action']['parameters']:
-                        handleConversationPayload(elem['value'])
-                    #sendToSpace(content['space']['name'], "My test message")
-                    resp = jsonify({"text": "méssage envoyé"})
+                        resp = jsonify(handleConversationPayload(elem['value']) + content['space']['name'])
                 resp.status_code = 200
                 return resp
             return
