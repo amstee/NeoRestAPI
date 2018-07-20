@@ -152,6 +152,7 @@ class WebhookHangout(Resource):
     @checkContent
     def post(self, content):
         print("---Hangout---", file=sys.stderr)
+        print(content, file=sys.stderr)
         try:
             if isTokenValid(content) == True:
                 if content['type'] == 'ADDED_TO_SPACE' and content['space']['type'] == 'ROOM':
