@@ -166,7 +166,7 @@ class WebhookHangout(Resource):
                     elif IsUserLinked(sender_id) == True:
                         resp = SendMessageChoice(sender_id, message_text)
                     else:
-                        resp = jsonify({"text":"Votre compte messenger n'est lié a aucun compte NEO"})
+                        resp = jsonify({"text":"Votre compte hangout n'est lié a aucun compte NEO"})
                 elif content['type'] == "CARD_CLICKED":
                     print(str(content['action']['parameters']))
                     for elem in content['action']['parameters']:
