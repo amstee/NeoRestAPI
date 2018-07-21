@@ -54,6 +54,7 @@ class TestMediaRequest(unittest.TestCase):
         }
         response = self.api.post('/message/send', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
+        print(response_json)
         assert response.status_code == 200
         assert response_json['success'] is True
         assert len(response_json['media_list']) == 1

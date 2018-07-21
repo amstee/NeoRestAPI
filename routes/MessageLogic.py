@@ -123,14 +123,14 @@ class MessageSend(Resource):
             if not media_list:
                 emit('message', {
                     'conversation_id': message.conversation_id,
-                    'message': message.getSimpleContent(),
-                    'time': message.sent,
-                    'sender': user.getSimpleContent(),
+                    'message': message.getSimpleJSONCompliantContent(),
+                    'time': message.sent.isoformat(),
+                    'sender': user.getSimpleJSONCompliantContent(),
                     'media_list': media_list,
                     'status': 'done'},
                      room='conversation_' + str(message.conversation_id), namespace='/')
             else:
-                emit('message', {'conversation_id': message.conversation_id, 'message': message.getSimpleContent(),
+                emit('message', {'conversation_id': message.conversation_id, 'message': message.getSimpleJSONCompliantContent(),
                                  'status': 'pending'}, room='conversation_' + str(message.conversation_id), namespace='/')
             db_session.commit()
             conversation = db_session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
