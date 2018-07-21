@@ -219,6 +219,19 @@ class User(Base):
             "type": self.type,
         }
 
+    def getSimpleJSONCompliantContent(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "birthday": None if self.birthday is None else self.birthday.isoformat(),
+            "created": None if self.created is None else self.created.isoformat(),
+            "updated": None if self.updated is None else self.updated.isoformat(),
+            "isOnline": self.is_online,
+            "type": self.type,
+        }
+
     def getContent(self):
         return {
             "id": self.id,
