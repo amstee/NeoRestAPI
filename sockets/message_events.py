@@ -77,14 +77,14 @@ def message_send(content):
                 if not media_list:
                     emit('message', {
                         'conversation_id': conv.id,
-                        'message': message.getSimpleContent(),
-                        'time': message.sent,
-                        'sender': socket.client.getSimpleContent(),
+                        'message': message.getSimpleJSONCompliantContent(),
+                        'time': message.sent.isoformat(),
+                        'sender': socket.client.getSimpleJSONCompliantContent(),
                         'media_list': media_list,
                         'status': 'done'},
                          room='conversation_' + str(conv.id), namespace='/')
                 else:
-                    emit('message', {'conversation_id': conv.id, 'message': message.getSimpleContent(),
+                    emit('message', {'conversation_id': conv.id, 'message': message.getSimpleJSONCompliantContent(),
                                      'status': 'pending'}, room='conversation_' + str(conv.id), namespace='/')
     except Exception as e:
         socket.emit("error", str(e), namespace='/')
