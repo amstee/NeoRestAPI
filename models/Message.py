@@ -83,6 +83,24 @@ class Message(Base):
                 "device": self.device.getSimpleContent()
             }
 
+    def getSimpleJSONCompliantContent(self):
+        if self.isUser:
+            return {
+                "id": self.id,
+                "link_id": self.link_id,
+                "sent": None if self.sent is None else self.sent.isoformat(),
+                "read": None if self.read is None else self.read.isoformat(),
+                "content": self.text_content
+            }
+        else:
+            return {
+                "id": self.id,
+                "device_id": self.device_id,
+                "sent": None if self.sent is None else self.sent.isoformat(),
+                "read": None if self.read is None else self.read.isoformat(),
+                "content": self.text_content
+            }
+
     def getSimpleContent(self):
         if self.isUser:
             return {

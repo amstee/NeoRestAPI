@@ -2,13 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32b1a9b9-7457-4a1a-91e3-06d7851c1013" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/flaskAPI.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/flaskAPI.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/Media.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/Media.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/Device.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/Device.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/Message.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/Message.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/User.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/User.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/Hangout.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/Hangout.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/Account.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/Account.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/DeviceMessage.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/DeviceMessage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/DeviceMessageLogic.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/DeviceMessageLogic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/Message.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/Message.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/MessageLogic.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/MessageLogic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sockets/message_events.py" beforeDir="false" afterPath="$PROJECT_DIR$/sockets/message_events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/media_logic.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/media_logic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/pip-selfcheck.json" beforeDir="false" afterPath="$PROJECT_DIR$/venv/pip-selfcheck.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,15 +24,42 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="MediaLogic.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/routes/MediaLogic.py">
+    <leaf>
+      <file leaf-file-name="media_logic.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/media_logic.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="317">
-              <caret line="119" column="30" lean-forward="true" selection-start-line="119" selection-start-column="30" selection-end-line="119" selection-end-column="30" />
+            <state relative-caret-position="240">
+              <caret line="57" column="42" lean-forward="true" selection-start-line="57" selection-start-column="42" selection-end-line="57" selection-end-column="42" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Message.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/models/Message.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="605">
+              <caret line="99" column="42" selection-start-line="99" selection-start-column="42" selection-end-line="99" selection-end-column="42" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Device.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/models/Device.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="557">
+              <caret line="183" column="44" selection-start-line="183" selection-start-column="44" selection-end-line="183" selection-end-column="44" />
               <folding>
-                <element signature="e#0#37#0" expanded="true" />
+                <element signature="e#0#77#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="User.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/models/User.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="504">
+              <caret line="229" column="44" selection-start-line="229" selection-start-column="44" selection-end-line="229" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -75,7 +108,6 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/routes/Payment.py" />
-        <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/sockets/standard_events.py" />
         <option value="$PROJECT_DIR$/routes/Circle.py" />
         <option value="$PROJECT_DIR$/models/Conversation.py" />
@@ -93,24 +125,17 @@
         <option value="$PROJECT_DIR$/test/message_logic.py" />
         <option value="$PROJECT_DIR$/test/message.py" />
         <option value="$PROJECT_DIR$/classes/SocketList.py" />
-        <option value="$PROJECT_DIR$/routes/Message.py" />
         <option value="$PROJECT_DIR$/utils/testutils.py" />
         <option value="$PROJECT_DIR$/models/UserToCircle.py" />
-        <option value="$PROJECT_DIR$/models/Message.py" />
         <option value="$PROJECT_DIR$/models/MessageToMedia.py" />
         <option value="$PROJECT_DIR$/test/test_file.txt" />
-        <option value="$PROJECT_DIR$/routes/MessageLogic.py" />
-        <option value="$PROJECT_DIR$/routes/DeviceMessageLogic.py" />
-        <option value="$PROJECT_DIR$/routes/DeviceMessage.py" />
         <option value="$PROJECT_DIR$/test/media.py" />
         <option value="$PROJECT_DIR$/test/socketio_message.py" />
         <option value="$PROJECT_DIR$/models/DeviceToMedia.py" />
         <option value="$PROJECT_DIR$/models/CircleToMedia.py" />
         <option value="$PROJECT_DIR$/models/UserToMedia.py" />
         <option value="$PROJECT_DIR$/models/Circle.py" />
-        <option value="$PROJECT_DIR$/models/Device.py" />
         <option value="$PROJECT_DIR$/utils/decorators.py" />
-        <option value="$PROJECT_DIR$/routes/Account.py" />
         <option value="$PROJECT_DIR$/test/circle.py" />
         <option value="$PROJECT_DIR$/test/account.py" />
         <option value="$PROJECT_DIR$/sockets/room_events.py" />
@@ -120,11 +145,19 @@
         <option value="$PROJECT_DIR$/routes/MediaLogic.py" />
         <option value="$PROJECT_DIR$/config/__init__.py" />
         <option value="$PROJECT_DIR$/routes/Hangout.py" />
-        <option value="$PROJECT_DIR$/sockets/message_events.py" />
         <option value="$PROJECT_DIR$/config/database.py" />
         <option value="$PROJECT_DIR$/models/Media.py" />
-        <option value="$PROJECT_DIR$/models/User.py" />
+        <option value="$PROJECT_DIR$/requirements.txt" />
+        <option value="$PROJECT_DIR$/routes/Account.py" />
+        <option value="$PROJECT_DIR$/sockets/message_events.py" />
+        <option value="$PROJECT_DIR$/routes/Message.py" />
+        <option value="$PROJECT_DIR$/routes/MessageLogic.py" />
+        <option value="$PROJECT_DIR$/routes/DeviceMessage.py" />
+        <option value="$PROJECT_DIR$/routes/DeviceMessageLogic.py" />
         <option value="$PROJECT_DIR$/test/media_logic.py" />
+        <option value="$PROJECT_DIR$/models/Message.py" />
+        <option value="$PROJECT_DIR$/models/Device.py" />
+        <option value="$PROJECT_DIR$/models/User.py" />
       </list>
     </option>
   </component>
@@ -159,7 +192,22 @@
             <path>
               <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
               <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
+              <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
               <item name="routes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
+              <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
+              <item name="sockets" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="flaskapi" type="b2602c69:ProjectViewProjectNode" />
+              <item name="flaskapi" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -270,13 +318,27 @@
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1323606" />
+      <window_info anchor="right" id="SciView" order="4" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="12" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32943678" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32979852" />
+      <window_info anchor="bottom" id="Terminal" order="10" />
+      <window_info anchor="bottom" id="Python Console" order="9" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -297,13 +359,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/routes/ConversationLogic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="648">
-          <caret line="34" column="36" selection-start-line="34" selection-start-column="36" selection-end-line="34" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/routes/Facebook.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-72" />
@@ -342,13 +397,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/models/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/UserToCircle.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="48">
-          <caret line="2" column="44" selection-start-line="2" selection-start-column="44" selection-end-line="2" selection-end-column="44" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/test_file.txt" />
     <entry file="file://$PROJECT_DIR$/utils/apiUtils.py">
@@ -389,24 +437,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/DeviceMessage.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
-          <caret line="115" column="17" lean-forward="true" selection-start-line="115" selection-start-column="17" selection-end-line="115" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/routes/Device.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="868">
           <caret line="172" column="28" lean-forward="true" selection-start-line="172" selection-start-column="28" selection-end-line="172" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/DeviceMessageLogic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="629">
-          <caret line="85" column="56" lean-forward="true" selection-start-line="85" selection-start-column="56" selection-end-line="85" selection-end-column="56" />
         </state>
       </provider>
     </entry>
@@ -442,20 +476,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="288">
           <caret line="12" column="55" lean-forward="true" selection-start-line="12" selection-start-column="55" selection-end-line="12" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/Device.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-24">
-          <caret line="5" column="13" lean-forward="true" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/Account.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1680">
-          <caret line="82" lean-forward="true" selection-start-line="82" selection-end-line="82" />
         </state>
       </provider>
     </entry>
@@ -532,27 +552,6 @@
     <entry file="file://$PROJECT_DIR$/routes/Circle.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/Message.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="26" lean-forward="true" selection-start-line="26" selection-end-line="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/Message.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2616">
-          <caret line="121" column="45" selection-start-line="121" selection-start-column="45" selection-end-line="121" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/MessageLogic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="197">
-          <caret line="119" column="64" lean-forward="true" selection-start-line="119" selection-start-column="64" selection-end-line="119" selection-end-column="64" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/utils/security.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="269">
@@ -602,37 +601,100 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/User.py">
+    <entry file="file://$PROJECT_DIR$/routes/MediaLogic.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="92" column="20" selection-start-line="92" selection-start-column="20" selection-end-line="92" selection-end-column="20" />
+        <state relative-caret-position="317">
+          <caret line="119" column="30" lean-forward="true" selection-start-line="119" selection-start-column="30" selection-end-line="119" selection-end-column="30" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/media_logic.py">
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1248">
-          <caret line="22" column="20" lean-forward="true" selection-start-line="22" selection-start-column="20" selection-end-line="22" selection-end-column="20" />
+        <state relative-caret-position="700">
+          <caret line="32" selection-start-line="32" selection-end-line="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/Account.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="413">
+          <caret line="148" column="17" lean-forward="true" selection-start-line="148" selection-start-column="17" selection-end-line="148" selection-end-column="17" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/sockets/message_events.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="845">
-          <caret line="66" column="31" lean-forward="true" selection-start-line="66" selection-start-column="31" selection-end-line="66" selection-end-column="31" />
+        <state relative-caret-position="509">
+          <caret line="79" column="75" lean-forward="true" selection-start-line="79" selection-start-column="75" selection-end-line="79" selection-end-column="75" />
           <folding>
             <element signature="e#0#56#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/MediaLogic.py">
+    <entry file="file://$PROJECT_DIR$/routes/DeviceMessageLogic.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="317">
-          <caret line="119" column="30" lean-forward="true" selection-start-line="119" selection-start-column="30" selection-end-line="119" selection-end-column="30" />
+        <state relative-caret-position="341">
+          <caret line="82" column="63" lean-forward="true" selection-start-line="82" selection-start-column="63" selection-end-line="82" selection-end-column="63" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/DeviceMessage.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="576">
+          <caret line="58" column="28" lean-forward="true" selection-start-line="58" selection-start-column="28" selection-end-line="58" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/MessageLogic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="581">
+          <caret line="126" column="53" lean-forward="true" selection-start-line="126" selection-start-column="53" selection-end-line="126" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/Message.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="312">
+          <caret line="37" column="33" lean-forward="true" selection-start-line="37" selection-start-column="33" selection-end-line="37" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/media_logic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="57" column="42" lean-forward="true" selection-start-line="57" selection-start-column="42" selection-end-line="57" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/Message.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="605">
+          <caret line="99" column="42" selection-start-line="99" selection-start-column="42" selection-end-line="99" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/Device.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="557">
+          <caret line="183" column="44" selection-start-line="183" selection-start-column="44" selection-end-line="183" selection-end-column="44" />
           <folding>
-            <element signature="e#0#37#0" expanded="true" />
+            <element signature="e#0#77#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/UserToCircle.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="48">
+          <caret line="2" column="44" selection-start-line="2" selection-start-column="44" selection-end-line="2" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/User.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="504">
+          <caret line="229" column="44" selection-start-line="229" selection-start-column="44" selection-end-line="229" selection-end-column="44" />
         </state>
       </provider>
     </entry>
