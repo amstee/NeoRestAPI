@@ -142,7 +142,7 @@ def SendMessageChoice(recipient_id, message_text):
 def sendToSpace(space_id, message):
     scopes = ['https://www.googleapis.com/auth/chat.bot']
     credentials = ServiceAccountCredentials.from_json_keyfile_name(
-        '../ressources/NeoBot-0b200e9c7567.json', scopes)
+        'ressources/NeoBot-0b200e9c7567.json', scopes)
     http = Http()
     credentials.authorize(http)
     chat = build('chat', 'v1', http=http)
@@ -163,7 +163,6 @@ class WebhookHangout(Resource):
                 elif content['type'] == 'MESSAGE':
                     sender_id = content["space"]["name"]
                     message_text = content["message"]["text"]
-                    sendToSpace(sender_id, "sendToSpace message")
                     splitMessage = message_text.split(' ')
                     if len(splitMessage) >= 2 and splitMessage[0] == "/token":
                         message = LinkUserToHangout(splitMessage[1], sender_id)
