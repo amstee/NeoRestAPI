@@ -81,14 +81,14 @@ class DeviceMessageSend(Resource):
             if not media_list:
                 emit('message', {
                     'conversation_id': message.conversation_id,
-                    'message': message.getSimpleContent(),
-                    'time': message.sent,
-                    'sender': device.getSimpleContent(),
+                    'message': message.getSimpleJSONCompliantContent(),
+                    'time': message.sent.isoformat(),
+                    'sender': device.getSimpleJSONCompliantContent(),
                     'media_list': media_list,
                     'status': 'done'},
                      room='conversation_' + str(message.conversation_id), namespace='/')
             else:
-                emit('message', {'conversation_id': message.conversation_id, 'message': message.getSimpleContent(),
+                emit('message', {'conversation_id': message.conversation_id, 'message': message.getSimpleJSONCompliantContent(),
                                  'status': 'pending'}, room='conversation_' + str(message.conversation_id), namespace='/')
             db_session.commit()
             info_sender = "[" + conv.name + "] " + device.name + " : "

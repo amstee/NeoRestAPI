@@ -172,7 +172,20 @@ class Device(Base):
             "updated": self.updated,
             "circle_id": self.circle.id if self.circle is not None else -1,
             "activated": self.activated,
-            "username": self.username
+            "username": self.username,
+            "is_online": self.is_online
+        }
+
+    def getSimpleJSONCompliantContent(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "created": None if self.created is None else self.created.isoformat(),
+            "updated": None if self.updated is None else self.updated.isoformat(),
+            "circle_id": self.circle.id if self.circle is not None else -1,
+            "activated": self.activated,
+            "username": self.username,
+            "is_online": self.is_online
         }
 
     def getContent(self):
@@ -185,5 +198,6 @@ class Device(Base):
             "username": self.username,
             "circle": self.circle.getSimpleContent() if self.circle is not None else {},
             "messages": [message.getSimpleContent() for message in self.messages],
-            "medias": [link.getContent() for link in self.media_links]
+            "medias": [link.getContent() for link in self.media_links],
+            "is_online": self.is_online
         }

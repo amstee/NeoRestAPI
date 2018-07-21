@@ -150,14 +150,16 @@ class AccountModify(Resource):
     @securedRoute
     def post(self, content, user):
         try:
-            content["email"] = None if 'email' not in content else content['email']
-            content["first_name"] = None if 'first_name' not in content else content['first_name']
-            content["last_name"] = None if 'last_name' not in content else content['last_name']
-            content['birthday'] = None if 'birthday' not in content else content['birthday']
-            content["searchText"] = None if 'searchText' not in content else content['searchText']
-            user.updateContent(email=content["email"],
-                               first_name=content["first_name"], last_name=content["last_name"],
-                            birthday=content["birthday"], searchText=content["searchText"])
+            email = None if 'email' not in content else content['email']
+            first_name = None if 'first_name' not in content else content['first_name']
+            last_name = None if 'last_name' not in content else content['last_name']
+            birthday = None if 'birthday' not in content else content['birthday']
+            hangout = None if 'hangout_email' not in content else content['hangout_email']
+            user.updateContent(email=email,
+                               first_name=first_name,
+                               last_name=last_name,
+                               birthday=birthday,
+                               hangoutEmail=hangout)
             resp = jsonify({"success": True})
             resp.status_code = 200
             return resp

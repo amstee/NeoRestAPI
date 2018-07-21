@@ -41,14 +41,14 @@ class DeviceMessageCreate(Resource):
             if not media_list:
                 emit('message', {
                     'conversation_id': conversation.id,
-                    'message': message.getSimpleContent(),
-                    'time': message.sent,
+                    'message': message.getSimpleJSONCompliantContent(),
+                    'time': message.sent.isoformat(),
                     'sender': {"email": "ADMIN"},
                     'media_list': media_list,
                     'status': 'done'},
                      room='conversation_' + str(conversation.id), namespace='/')
             else:
-                emit('message', {'conversation_id': conversation.id, 'message': message.getSimpleContent(),
+                emit('message', {'conversation_id': conversation.id, 'message': message.getSimpleJSONCompliantContent(),
                                  'status': 'pending'}, room='conversation_' + str(conversation.id), namespace='/')
             info_sender = "[" + conversation.name + "] " + device.name + " : "
             MessengerConversationModelSend(0, conversation, info_sender + message.text_content)
