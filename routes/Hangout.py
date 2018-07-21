@@ -12,6 +12,9 @@ from utils.contentChecker import contentChecker
 from utils.apiUtils import *
 from webargs import fields, validate
 from webargs.flaskparser import use_args, use_kwargs, parser, abort
+from httplib2 import Http
+from oauth2client.service_account import ServiceAccountCredentials
+from apiclient.discovery import build, build_from_document
 import requests
 import sys
 import hashlib
@@ -137,16 +140,16 @@ def SendMessageChoice(recipient_id, message_text):
     return resp
 
 def sendToSpace(space_id, message):
-    headers = {
-        "Content-Type": "application/json"
-    }
-    data = json.dumps({
-        "text": message
-    })
-    r = requests.post("https://chat.googleapis.com/v1/" + space_id + "/messages", headers=headers, data=data)
-    if r.status_code != 200:
-        return False
-    return True
+    scopes = ['https://www.googleapis.com/auth/chat.bot']
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(
+        '../ressources/NeoBot-0b200e9c7567.json', scopes)
+    http = Http()
+    credentials.authorize(http)
+    chat = build('chat', 'v1', http=http)
+    resp = chat.spaces().messages().create(
+        parent=space_id,
+        body={'text': message}).execute()
+    print(resp)
 
 class WebhookHangout(Resource):
     @checkContent
@@ -158,8 +161,9 @@ class WebhookHangout(Resource):
                 if content['type'] == 'ADDED_TO_SPACE' and content['space']['type'] == 'ROOM':
                     text = 'Thanks for adding me to "%s"!' % content['space']['displayName']
                 elif content['type'] == 'MESSAGE':
-                    sender_id = content["message"]["sender"]["email"]
+                    sender_id = content["space"]["name"]
                     message_text = content["message"]["text"]
+                    sendToSpace(sender_id, "sendToSpace message")
                     splitMessage = message_text.split(' ')
                     if len(splitMessage) >= 2 and splitMessage[0] == "/token":
                         message = LinkUserToHangout(splitMessage[1], sender_id)
