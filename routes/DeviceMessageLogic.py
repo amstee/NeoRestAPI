@@ -48,7 +48,10 @@ class FirstDeviceMessageSend(Resource):
                                 {"conversation_id": conversation.id,
                                  "event": 'invite'})
             info_and_message = "[" + conversation.name + "] " + device.name + " : " + str(message.text_content)
-            MessengerUserModelSend(userTarget=user, text_message=info_and_message)
+            try:
+                MessengerUserModelSend(userTarget=user, text_message=info_and_message)
+            except Exception:
+                pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
             resp.status_code = 200
             return resp
@@ -92,7 +95,10 @@ class DeviceMessageSend(Resource):
                                  'status': 'pending'}, room='conversation_' + str(message.conversation_id), namespace='/')
             db_session.commit()
             info_sender = "[" + conv.name + "] " + device.name + " : "
-            MessengerConversationModelSend(0, conv, info_sender + message.text_content)
+            try:
+                MessengerConversationModelSend(0, conv, info_sender + message.text_content)
+            except Exception:
+                pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
             resp.status_code = 200
             return resp
