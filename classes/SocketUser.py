@@ -20,6 +20,8 @@ class SocketUser:
 
     def authenticate(self, jwt_token):
         try:
+            if self.authenticated is True:
+                return False, "Already authenticated"
             b, client = User.decodeAuthToken(jwt_token)
             if not b:
                 b, client = Device.decodeAuthToken(jwt_token)

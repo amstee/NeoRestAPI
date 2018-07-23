@@ -37,18 +37,21 @@ class MessageCreate(Resource):
             if not media_list:
                 emit('message', {
                     'conversation_id': link.conversation_id,
-                    'message': message.getSimpleContent(),
-                    'time': message.sent,
+                    'message': message.getSimpleJSONCompliantContent(),
+                    'time': message.sent.isoformat(),
                     'sender': {'email': 'ADMIN'},
                     'media_list': media_list,
                     'status': 'done'},
                      room='conversation_' + str(link.conversation_id), namespace='/')
             else:
-                emit('message', {'conversation_id': link.conversation_id, 'message': message.getSimpleContent(),
+                emit('message', {'conversation_id': link.conversation_id, 'message': message.getSimpleJSONCompliantContent(),
                                  'status': 'pending'}, room='conversation_' + str(link.conversation_id), namespace='/')
             conversation = db_session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
-            info_sender = "[" + link.conversation.name + "] " + admin.first_name + " : " 
-            MessengerConversationModelSend(link.user_id, conversation, info_sender + message.text_content)
+            info_sender = "[" + link.conversation.name + "] " + admin.first_name + " : "
+            try:
+                MessengerConversationModelSend(link.user_id, conversation, info_sender + message.text_content)
+            except Exception:
+                pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
             resp.status_code = 200
             return resp

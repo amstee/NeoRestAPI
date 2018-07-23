@@ -48,7 +48,10 @@ class FirstMessageToDeviceSend(Resource):
                                 {"conversation_id": conversation.id,
                                  "event": 'invite'})
             info_sender = "[" + conversation.name + "] " + user.first_name + " : "
-            MessengerCircleModelSend(0, circle, info_sender + message.text_content)
+            try:
+                MessengerCircleModelSend(0, circle, info_sender + message.text_content)
+            except Exception:
+                pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
             resp.status_code = 200
             return resp
@@ -91,7 +94,10 @@ class FirstMessageSend(Resource):
                                 {"conversation_id": conversation.id,
                                  "event": 'invite'})
             info_sender = "[" + conversation.name + "] " + user.first_name + " : "
-            MessengerCircleModelSend(0, circle, info_sender + message.text_content)
+            try:
+                MessengerCircleModelSend(0, circle, info_sender + message.text_content)
+            except Exception:
+                pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id, 'conversation_id': message.conversation_id})
             resp.status_code = 200
             return resp
@@ -123,19 +129,22 @@ class MessageSend(Resource):
             if not media_list:
                 emit('message', {
                     'conversation_id': message.conversation_id,
-                    'message': message.getSimpleContent(),
-                    'time': message.sent,
-                    'sender': user.getSimpleContent(),
+                    'message': message.getSimpleJSONCompliantContent(),
+                    'time': message.sent.isoformat(),
+                    'sender': user.getSimpleJSONCompliantContent(),
                     'media_list': media_list,
                     'status': 'done'},
                      room='conversation_' + str(message.conversation_id), namespace='/')
             else:
-                emit('message', {'conversation_id': message.conversation_id, 'message': message.getSimpleContent(),
+                emit('message', {'conversation_id': message.conversation_id, 'message': message.getSimpleJSONCompliantContent(),
                                  'status': 'pending'}, room='conversation_' + str(message.conversation_id), namespace='/')
             db_session.commit()
             conversation = db_session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
             info_sender = "[" + link.conversation.name + "] " + user.first_name + " : "
-            MessengerConversationModelSend(link.user_id, conversation, info_sender + message.text_content)
+            try:
+                MessengerConversationModelSend(link.user_id, conversation, info_sender + message.text_content)
+            except Exception:
+                pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
             resp.status_code = 200
             return resp
