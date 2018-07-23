@@ -51,7 +51,10 @@ class DeviceMessageCreate(Resource):
                 emit('message', {'conversation_id': conversation.id, 'message': message.getSimpleJSONCompliantContent(),
                                  'status': 'pending'}, room='conversation_' + str(conversation.id), namespace='/')
             info_sender = "[" + conversation.name + "] " + device.name + " : "
-            MessengerConversationModelSend(0, conversation, info_sender + message.text_content)
+            try:
+                MessengerConversationModelSend(0, conversation, info_sender + message.text_content)
+            except Exception:
+                pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
             resp.status_code = 200
             return resp
