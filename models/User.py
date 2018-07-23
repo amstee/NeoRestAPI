@@ -22,6 +22,7 @@ class User(Base):
     updated = Column(DateTime)
     jsonToken = Column(String(4096))
     facebookPSID = Column(BigInteger)
+    hangoutEmail = Column(String(2048))
     type = Column(String(10))
     is_online = Column(Boolean)
 
@@ -77,6 +78,25 @@ class User(Base):
             return True, None
         except Exception as e:
             return False, str(e)
+
+    def hasMatchingCircle(self, user):
+        for link in self.circleLink:
+            for link2 in user.circleLink:
+                if link.circle_id == link2.circle_id:
+                    return True
+        return False
+
+    def isInConversation(self, conversation_id):
+        for link in self.conversationLinks:
+            if link.conversation_id == conversation_id:
+                return True
+        return False
+
+    def isInCircle(self, circle_id):
+        for link in self.circleLink:
+            if link.circle_id == circle_id:
+                return True
+        return False
 
     @staticmethod
     def decodeAuthToken(auth_token):
@@ -151,7 +171,7 @@ class User(Base):
             db_session.commit()
 
     def updateContent(self, email=None, first_name=None, last_name=None, birthday=None,
-                      facebookPSID=None, is_online=None, created=None, updated=datetime.datetime.now()):
+                      facebookPSID=None, hangoutEmail=None, is_online=None, created=None, updated=datetime.datetime.now()):
         if email is not None and email is not "":
             self.email = email
         if first_name is not None and first_name is not "":
@@ -169,6 +189,7 @@ class User(Base):
         elif created is not None:
             self.created = created
         self.facebookPSID = facebookPSID
+        self.hangoutEmail = hangoutEmail
         if is_online is not None:
             self.is_online = is_online
         db_session.commit()
@@ -194,6 +215,19 @@ class User(Base):
             "birthday": self.birthday,
             "created": self.created,
             "updated": self.updated,
+            "isOnline": self.is_online,
+            "type": self.type,
+        }
+
+    def getSimpleJSONCompliantContent(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "birthday": None if self.birthday is None else self.birthday.isoformat(),
+            "created": None if self.created is None else self.created.isoformat(),
+            "updated": None if self.updated is None else self.updated.isoformat(),
             "isOnline": self.is_online,
             "type": self.type,
         }

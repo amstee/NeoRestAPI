@@ -98,6 +98,9 @@ class SocketioMessageEvents(unittest.TestCase):
         err = self.client.get_received()
         res = self.client2.get_received()
         res2 = self.deviceClient.get_received()
+        print(err)
+        print(res)
+        print(res2)
         assert len(err) == 2
         assert len(res) == 1
         assert len(res2) == 1
