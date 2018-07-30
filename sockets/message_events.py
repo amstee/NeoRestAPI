@@ -67,6 +67,10 @@ def message_send(content):
                     MessengerConversationModelSend(socket.client.id, conv, content["text_message"])
                 except Exception:
                     pass
+                try:
+                    HangoutConversationModelSend(socket.client.id, conv, content["text_message"])
+                except Exception:
+                    pass
                 media_list = []
                 if 'files' in content:
                     for file in content["files"]:
