@@ -151,6 +151,17 @@ def sendToSpace(space_id, message):
         body={'text': message}).execute()
     print(resp)
 
+def HangoutCircleModelSend(senderID, circle, text_message):
+    circleTargets = db_session.query(UserToCircle).filter(UserToCircle.circle_id == circle.id)
+    for targetUser in circleTargets:
+        targetUserData = db_session.query(User).filter(targetUser.user_id == User.id).first()
+        if senderID != targetUserData.id and targetUserData.hangoutEmail is not None and len(targetUserData.hangoutEmail) > 0:
+            SendMessage(targetUserData.hangoutEmail, text_message)
+
+def HangoutConversationModelSend(senderID, conversation, text_message):
+    circle = db_session.query(Circle).filter(Circle.id == conversation.circle_id).first()
+    HangoutCircleModelSend(senderID, circle, text_message)
+
 class WebhookHangout(Resource):
     @checkContent
     def post(self, content):
@@ -174,7 +185,7 @@ class WebhookHangout(Resource):
                 elif content['type'] == "CARD_CLICKED":
                     print(str(content['action']['parameters']))
                     for elem in content['action']['parameters']:
-                        resp = jsonify("text":handleConversationPayload(elem['value']))
+                        resp = jsonify({"text" : handleConversationPayload(elem['value'])})
                 resp.status_code = 200
                 return resp
             return
