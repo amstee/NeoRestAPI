@@ -14,6 +14,7 @@ class Media(Base):
     extension = Column(String(10))
     directory = Column(String(1024))
     identifier = Column(String(10))
+    uploaded = Boolean()
 
     message_link = relationship("MessageToMedia", back_populates="media", uselist=False,
                                 cascade="save-update, delete")
@@ -34,10 +35,12 @@ class Media(Base):
         if not os.path.exists(UPLOAD_FOLDER + self.directory + os.path.sep):
             os.makedirs(UPLOAD_FOLDER + self.directory + os.path.sep)
         file.save(os.path.join(UPLOAD_FOLDER + self.directory + os.path.sep, file_name))
+        self.uploaded = True
 
     def clearFile(self):
         try:
             os.remove(os.path.join(UPLOAD_FOLDER + self.directory + os.path.sep, self.filename + self.extension))
+            self.uploaded = False
             return True
         except Exception as e:
             return False
@@ -100,6 +103,7 @@ class Media(Base):
         if identifier is not None and identifier != "":
             self.identifier = identifier
         self.directory = directory
+        self.uploaded = False
         db_session.add(self)
 
     def setContent(self, file):
@@ -167,7 +171,8 @@ class Media(Base):
             "filename": self.filename,
             "extension": self.extension,
             "directory": self.directory,
-            "identifier": self.identifier
+            "identifier": self.identifier,
+            "uploaded": self.uploaded
         }
 
     def getSimpleContent(self):
@@ -175,7 +180,8 @@ class Media(Base):
             "id": self.id,
             "filename": self.filename,
             "extension": self.extension,
-            "identifier": self.identifier
+            "identifier": self.identifier,
+            "uploaded": self.uploaded
         }
 
 
