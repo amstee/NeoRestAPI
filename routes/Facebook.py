@@ -1,5 +1,4 @@
 from flask_restful import Resource
-from flask.views import MethodView
 from config.database import db_session
 from models.User import User
 from models.Circle import Circle
@@ -7,14 +6,11 @@ from models.UserToCircle import UserToCircle
 from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
 from models.Message import Message
-from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute
-from utils.contentChecker import contentChecker
-from utils.apiUtils import *
-from webargs import fields, validate
-from webargs.flaskparser import use_args, use_kwargs, parser, abort
+from utils.decorators import checkContent
+from webargs import fields
+from webargs.flaskparser import use_args
 import requests
 import sys
-import hashlib
 import jwt
 import datetime
 import json
