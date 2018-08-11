@@ -66,7 +66,7 @@ class TestMediaRequest(unittest.TestCase):
             'file': (io.BytesIO(b"user1 sent a file"), 'test_file.txt')
         }
         media_id = response_json['media_list'][0]['id']
-        response = self.api.post('/media/upload/' + str(response_json['media_list'][0]['id']), data=data,
+        response = self.api.post('/media/upload_for_message/' + str(response_json['media_list'][0]['id']), data=data,
                                  headers=headers)
         response_json = json.loads(response.data)
         assert response_json["success"] is True
@@ -133,7 +133,7 @@ class TestDeviceMediaRequest(unittest.TestCase):
             'file': (io.BytesIO(b"device sent a file"), 'test_file.txt')
         }
         media_id = response_json['media_list'][0]['id']
-        response = self.api.post('/device/media/upload/' + str(response_json['media_list'][0]['id']), data=data, headers=headers)
+        response = self.api.post('/device/media/upload_for_message/' + str(response_json['media_list'][0]['id']), data=data, headers=headers)
         response_json = json.loads(response.data)
         assert response_json["success"] is True
         assert os.path.exists('user_files' + os.path.sep + 'conversation_' + str(self.conversation.id) + os.path.sep)
@@ -193,7 +193,7 @@ class TestMediaUpload(unittest.TestCase):
         data = {
             'file': (io.BytesIO(b"user1 sent a file"), 'test_file.txt')
         }
-        response = self.api.post('/media/upload/' + str(response_json['media_list'][0]['id']), data=data, headers=headers)
+        response = self.api.post('/media/upload_for_message/' + str(response_json['media_list'][0]['id']), data=data, headers=headers)
         response_json = json.loads(response.data)
         assert response_json["success"] is True
         assert os.path.exists('user_files' + os.path.sep + 'conversation_' + str(self.conversation.id) + os.path.sep)
@@ -252,7 +252,7 @@ class TestDeviceMediaUpload(unittest.TestCase):
         data = {
             'file': (io.BytesIO(b"device sent a file"), 'test_file.txt')
         }
-        response = self.api.post('/device/media/upload/' + str(response_json['media_list'][0]['id']), data=data, headers=headers)
+        response = self.api.post('/device/media/upload_for_message/' + str(response_json['media_list'][0]['id']), data=data, headers=headers)
         response_json = json.loads(response.data)
         assert response_json["success"] is True
         assert os.path.exists('user_files' + os.path.sep + 'conversation_' + str(self.conversation.id) + os.path.sep)

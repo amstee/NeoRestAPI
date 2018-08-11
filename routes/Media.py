@@ -1,13 +1,8 @@
-from flask import request
 from flask_restful import Resource
 from config.database import db_session
-from models.MessageToMedia import MessageToMedia
-from models.CircleToMedia import CircleToMedia
-from models.DeviceToMedia import DeviceToMedia
-from models.UserToMedia import UserToMedia
 from models.Message import Message
 from models.Media import Media
-from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute
+from utils.decorators import securedRoute, checkContent, securedAdminRoute
 from utils.apiUtils import *
 from utils.contentChecker import contentChecker
 from utils.security import userHasAccessToMessage, deviceHasAccessToMessage
@@ -31,7 +26,7 @@ class MediaInfo(Resource):
 
 class DeviceMediaInfo(Resource):
     @checkContent
-    @securedDeviceRoute
+    @securedRoute
     def post(self, content, device):
         try:
             contentChecker("media_id")
@@ -93,7 +88,7 @@ class MediaList(Resource):
 
 class DeviceMediaList(Resource):
     @checkContent
-    @securedDeviceRoute
+    @securedRoute
     def post(self, content, device):
         try:
             contentChecker("message_id")

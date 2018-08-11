@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource
 from config.database import db_session
 from models.Circle import Circle
-from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute
+from utils.decorators import securedRoute, checkContent, securedAdminRoute
 from utils.contentChecker import contentChecker
 from models.UserToCircle import UserToCircle
 from utils.apiUtils import *
@@ -84,9 +84,8 @@ class CircleInfo(Resource):
 
 
 class CircleDeviceInfo(Resource):
-    @checkContent
-    @securedDeviceRoute
-    def post(self, content, device):
+    @securedRoute
+    def post(self, device):
         try:
             return jsonify({"success": True, "content": device.circle.getContent()})
         except Exception as e:
@@ -94,9 +93,8 @@ class CircleDeviceInfo(Resource):
 
 
 class CircleList(Resource):
-    @checkContent
     @securedRoute
-    def post(self, content, user):
+    def post(self, user):
         try:
             circle_list = []
             for link in user.circleLink:
