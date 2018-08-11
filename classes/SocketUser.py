@@ -1,6 +1,10 @@
 from flask_socketio import emit
 from models.User import User
 from models.Device import Device
+import time
+from config.webrtc import EXPIRY, SECRET_KEY
+import hashlib
+import hmac
 
 
 class SocketUser:
@@ -10,6 +14,9 @@ class SocketUser:
     token = None
     client = None
     is_device = False
+    webrtc_username = ""
+    webrtc_password = ""
+    webrtc_credentials_valididity = 0
 
     def __init__(self, sid):
         self.sid = sid
@@ -17,6 +24,15 @@ class SocketUser:
     def __str__(self):
         return '<SocketUser(' + str(self.sid) + " Connected : " + \
                str(self.connected) + " Authenticated : " + str(self.authenticated) + ')>'
+
+    def genereateCredentials(self):
+        validity = time.time() + EXPIRY
+        self.webrtc_username = str(validity) + ':' + str(self.client.id) + str(self.is_device)
+        digest_maker = hmac.new(SECRET_KEY, '', hashlib.sha1)
+        digest_maker.update(self.webrtc_username)
+        self.webrtc_password = digest_maker.digest()
+        self.webrtc_credentials_valididity = validity
+        return self.webrtc_username, self.webrtc_password
 
     def authenticate(self, jwt_token):
         try:
