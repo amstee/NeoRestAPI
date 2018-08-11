@@ -81,6 +81,7 @@ class DeviceMessageSend(Resource):
                     MessageToMedia(message=message, media=media)
                     db_session.commit()
                     media_list.append(media.getSimpleContent())
+            db_session.commit()
             if not media_list:
                 emit('message', {
                     'conversation_id': message.conversation_id,
@@ -93,7 +94,6 @@ class DeviceMessageSend(Resource):
             else:
                 emit('message', {'conversation_id': message.conversation_id, 'message': message.getSimpleJSONCompliantContent(),
                                  'status': 'pending'}, room='conversation_' + str(message.conversation_id), namespace='/')
-            db_session.commit()
             info_sender = "[" + conv.name + "] " + device.name + " : "
             try:
                 MessengerConversationModelSend(0, conv, info_sender + message.text_content)

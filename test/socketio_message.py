@@ -12,6 +12,7 @@ from models.UserToCircle import UserToCircle
 from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
 from models.Device import Device
+import json
 
 
 class SocketioMessageEvents(unittest.TestCase):
@@ -98,9 +99,6 @@ class SocketioMessageEvents(unittest.TestCase):
         err = self.client.get_received()
         res = self.client2.get_received()
         res2 = self.deviceClient.get_received()
-        print(err)
-        print(res)
-        print(res2)
         assert len(err) == 2
         assert len(res) == 1
         assert len(res2) == 1
@@ -155,4 +153,59 @@ class SocketioMessageEvents(unittest.TestCase):
         assert len(res) == 1
         assert len(res2) == 2
 
+    def test_notif_on_conversation(self):
+        data = {
+            'token': self.token1
+        }
+        assert len(self.neo.sockets) == 0
+        self.client.connect()
+        self.client2.connect()
+        self.deviceClient.connect()
+        self.client.emit('authenticate', data, json=True)
+        self.client2.emit('authenticate', {'token': self.token2}, json=True)
+        self.deviceClient.emit('authenticate', {'token': self.device_token}, json=True)
+        res1 = self.client.get_received()
+        res2 = self.client2.get_received()
+        res3 = self.deviceClient.get_received()
+        assert len(res1) == 1
+        assert res1[0]['name'] == 'success'
+        assert len(res2) == 1
+        assert res2[0]['name'] == 'success'
+        assert len(res3) == 1
+        assert res3[0]['name'] == 'success'
+        self.client.emit('join_conversation',
+                         {'conversation_id': self.conversation.id}, json=True)
+        self.client2.emit('join_conversation',
+                         {'conversation_id': self.conversation.id}, json=True)
+        self.deviceClient.emit('join_conversation',
+                         {'conversation_id': self.conversation.id}, json=True)
+        res1 = self.client.get_received()
+        res2 = self.client2.get_received()
+        res3 = self.deviceClient.get_received()
+        assert len(res1) == 1
+        assert res1[0]['name'] == 'success'
+        assert len(res2) == 1
+        assert res2[0]['name'] == 'success'
+        assert len(res3) == 1
+        assert res3[0]['name'] == 'success'
+        json_data = {
+            'token': self.token1,
+            'conversation_id': self.conversation.id,
+            'text_message': 'test web socket'
+        }
+        response = self.api.post('/message/send', data=json.dumps(json_data), content_type='application/json')
+        response_json = json.loads(response.data)
+        print(response_json)
+        err = self.client.get_received()
+        res = self.client2.get_received()
+        res2 = self.deviceClient.get_received()
+        print(err)
+        print(res)
+        print(res2)
+        assert len(err) == 1
+        assert len(res) == 1
+        assert len(res2) == 1
+        self.client.disconnect()
+        self.client2.disconnect()
+        self.deviceClient.disconnect()
 
