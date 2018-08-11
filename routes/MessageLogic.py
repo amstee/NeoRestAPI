@@ -126,7 +126,9 @@ class MessageSend(Resource):
                     MessageToMedia(message=message, media=media)
                     db_session.commit()
                     media_list.append(media.getSimpleContent())
+            db_session.commit()
             if not media_list:
+                print(message.conversation_id)
                 emit('message', {
                     'conversation_id': message.conversation_id,
                     'message': message.getSimpleJSONCompliantContent(),
@@ -138,7 +140,6 @@ class MessageSend(Resource):
             else:
                 emit('message', {'conversation_id': message.conversation_id, 'message': message.getSimpleJSONCompliantContent(),
                                  'status': 'pending'}, room='conversation_' + str(message.conversation_id), namespace='/')
-            db_session.commit()
             conversation = db_session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
             info_sender = "[" + link.conversation.name + "] " + user.first_name + " : "
             try:

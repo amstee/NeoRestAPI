@@ -1,5 +1,4 @@
 from flask_restful import Resource
-from flask.views import MethodView
 from config.database import db_session
 from models.User import User
 from models.Circle import Circle
@@ -7,20 +6,14 @@ from models.UserToCircle import UserToCircle
 from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
 from models.Message import Message
-from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute
-from utils.contentChecker import contentChecker
+from utils.decorators import checkContent
 from utils.apiUtils import *
-from webargs import fields, validate
-from webargs.flaskparser import use_args, use_kwargs, parser, abort
 from httplib2 import Http
 from oauth2client.service_account import ServiceAccountCredentials
 from apiclient.discovery import build, build_from_document
-import requests
 import sys
-import hashlib
 import jwt
 import datetime
-import json
 
 SECRET_KEY = "defaultusersecretkey"
 TOKEN="yZZieXB8D64T1qMxI9fJVCgC1vVMUB70PB9p3lIYSN4="
@@ -151,6 +144,17 @@ def sendToSpace(space_id, message):
         body={'text': message}).execute()
     print(resp)
 
+def HangoutCircleModelSend(senderID, circle, text_message):
+    circleTargets = db_session.query(UserToCircle).filter(UserToCircle.circle_id == circle.id)
+    for targetUser in circleTargets:
+        targetUserData = db_session.query(User).filter(targetUser.user_id == User.id).first()
+        if senderID != targetUserData.id and targetUserData.hangoutEmail is not None and len(targetUserData.hangoutEmail) > 0:
+            SendMessage(targetUserData.hangoutEmail, text_message)
+
+def HangoutConversationModelSend(senderID, conversation, text_message):
+    circle = db_session.query(Circle).filter(Circle.id == conversation.circle_id).first()
+    HangoutCircleModelSend(senderID, circle, text_message)
+
 class WebhookHangout(Resource):
     @checkContent
     def post(self, content):
@@ -174,7 +178,7 @@ class WebhookHangout(Resource):
                 elif content['type'] == "CARD_CLICKED":
                     print(str(content['action']['parameters']))
                     for elem in content['action']['parameters']:
-                        resp = jsonify("text":handleConversationPayload(elem['value']))
+                        resp = jsonify({"text" : handleConversationPayload(elem['value'])})
                 resp.status_code = 200
                 return resp
             return
