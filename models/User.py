@@ -169,6 +169,8 @@ class User(Base):
                 return True, self.encodeAuthToken()
             except jwt.ExpiredSignatureError:
                 return True, self.encodeAuthToken()
+            except Exception:
+                return True, self.encodeAuthToken()
         return False, "Aucun mot de passe fourni"
 
     def updatePassword(self, password=None):
