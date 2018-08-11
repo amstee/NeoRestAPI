@@ -3,7 +3,7 @@ from config.database import db_session
 from models.Circle import Circle
 from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
-from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute
+from utils.decorators import securedRoute, checkContent, securedAdminRoute
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
 
@@ -59,7 +59,7 @@ class ConversationInfo(Resource):
 
 class ConversationDeviceInfo(Resource):
     @checkContent
-    @securedDeviceRoute
+    @securedRoute
     def post(self, content, device):
         try:
             contentChecker("conversation_id")
@@ -95,7 +95,7 @@ class ConversationList(Resource):
 
 class ConversationDeviceList(Resource):
     @checkContent
-    @securedDeviceRoute
+    @securedRoute
     def post(self, content, device):
         try:
             contentChecker("circle_id")
