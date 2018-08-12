@@ -3,10 +3,10 @@ import sys
 import json
 
 sys.path.insert(0,'..')
-from api import neoapi
+from api import NeoAPI
 from config.database import db_session
 from models.User import User as UserModel
-from utils.testutils import AuthenticateUser
+from utils.testutils import authenticate_user
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
 from models.Conversation import Conversation
@@ -15,7 +15,7 @@ from models.UserToConversation import UserToConversation as UTC
 
 class TestConversationCreate(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testconversation@test.com").first()
         if self.user1 is None:
@@ -26,9 +26,9 @@ class TestConversationCreate(unittest.TestCase):
             self.user2 = UserModel(email="testconversation2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
         self.create_circle()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def create_circle(self):
         self.circle = Circle("TESTCONVCREATE")
@@ -84,7 +84,7 @@ class TestConversationCreate(unittest.TestCase):
 
 class TestConversationDelete(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testconversationdelete@test.com").first()
         if self.user1 is None:
@@ -96,9 +96,9 @@ class TestConversationDelete(unittest.TestCase):
                                    last_name="lastname", birthday="1111-11-11")
         self.create_circle()
         self.create_conversation()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def create_conversation(self):
         self.conv = Conversation(name="TESTCONVDELETE")
@@ -167,7 +167,7 @@ class TestConversationDelete(unittest.TestCase):
 
 class TestConversationInfo(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testconversationinfo@test.com").first()
         if self.user1 is None:
@@ -183,10 +183,10 @@ class TestConversationInfo(unittest.TestCase):
                                    last_name="lastname", birthday="1111-11-11")
         self.create_circle()
         self.create_conversation()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.token3 = AuthenticateUser(self.api, self.user3, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.token3 = authenticate_user(self.api, self.user3, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def create_conversation(self):
         self.conv = Conversation(name="ConversationInfoTest")
@@ -249,7 +249,7 @@ class TestConversationInfo(unittest.TestCase):
 
 class TestConversationDeviceInfo(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         db_session.query(UserModel).delete()
         db_session.commit()
@@ -259,7 +259,7 @@ class TestConversationDeviceInfo(unittest.TestCase):
 
 class TestConversationList(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testconversationinfo@test.com").first()
         if self.user1 is None:
@@ -284,10 +284,10 @@ class TestConversationList(unittest.TestCase):
         self.create_conversation(self.conv1, self.user1, self.user2, self.utc1, self.utc2, self.circle)
         self.create_conversation(self.conv3, self.user1, self.user2, UTC(), UTC(), self.circle)
         self.create_conversation(self.conv2, self.user2, self.user3, self.utc3, self.utc4, self.circle2)
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.token3 = AuthenticateUser(self.api, self.user3, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.token3 = authenticate_user(self.api, self.user3, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def create_conversation(self, conv, u1, u2, utc1, utc2, circle):
         conv.circle = circle
@@ -377,7 +377,7 @@ class TestConversationList(unittest.TestCase):
 
 class TestConversationDeviceList(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         db_session.query(UserModel).delete()
         db_session.commit()
@@ -387,7 +387,7 @@ class TestConversationDeviceList(unittest.TestCase):
 
 class TestConversationUpdate(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testconversationinfo@test.com").first()
         if self.user1 is None:
@@ -403,10 +403,10 @@ class TestConversationUpdate(unittest.TestCase):
                                    last_name="lastname", birthday="1111-11-11")
         self.create_circle()
         self.create_conversation()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.token3 = AuthenticateUser(self.api, self.user3, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.token3 = authenticate_user(self.api, self.user3, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def create_conversation(self):
         self.conv = Conversation(name="ConversationUpdateTest")

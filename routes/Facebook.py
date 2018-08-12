@@ -6,7 +6,7 @@ from models.UserToCircle import UserToCircle
 from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
 from models.Message import Message
-from utils.decorators import checkContent
+from utils.decorators import check_content
 from webargs import fields
 from webargs.flaskparser import use_args
 import requests
@@ -17,14 +17,16 @@ import json
 
 SECRET_KEY = "defaultusersecretkey"
 SECRET_TOKEN = "abcdef12345"
-PAGE_ACCESS_TOKEN = "EAACr1x9RQUwBANslMAGv4aU4gCqGpNvZCGMZBnQ8YhaAAkssgfGj95z0bAnPUPZBAiiYkgl34TcmEGSdUzaQsx1JcnqyFsKn3EArkEQ7TUZCTQMeZChTxRsZBzmXbCMtHk3SRrtJIwB2YYTKABVwRAQArEGK2HhDOSyB7MkkbMnOsrn8DEtdGF"
+PAGE_ACCESS_TOKEN = "EAACr1x9RQUwBANslMAGv4aU4gCqGpNvZCGMZBnQ8YhaAAkssgfGj95z0bAnPUPZBAiiYkgl34TcmEGSdUzaQsx1JcnqyF" +\
+                    "sKn3EArkEQ7TUZCTQMeZChTxRsZBzmXbCMtHk3SRrtJIwB2YYTKABVwRAQArEGK2HhDOSyB7MkkbMnOsrn8DEtdGF"
 
-def encodePostBackPayload(facebookPSID, message_text, link):
+
+def encodePostBackPayload(facebook_psid, message_text, link):
     try:
         payload = {
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30, seconds=1),
             'iat': datetime.datetime.utcnow(),
-            'facebookPSID': facebookPSID,
+            'facebook_psid': facebook_psid,
             'user_id': link.user_id,
             'link_id': link.id,
             'message_text': message_text
@@ -33,24 +35,27 @@ def encodePostBackPayload(facebookPSID, message_text, link):
         return token.decode()
     except Exception as e:
         print(e)
-        return (str(e))
+        return str(e)
+
 
 def handleConversationPayload(messagePayload):
     try:
         payload = jwt.decode(messagePayload, SECRET_KEY)
         try:
-            link = db_session.query(UserToConversation).filter(UserToConversation.id == payload["link_id"] and UserToConversation.user_id == payload["user_id"]).first()
+            link = db_session.query(UserToConversation).filter(UserToConversation.id == payload["link_id"] and
+                                                               UserToConversation.user_id == payload["user_id"]).first()
             message = Message(content=payload["message_text"])
             message.link = link
             message.conversation = link.conversation
             db_session.commit()
         except Exception as e:
             print("Une erreur est survenue : " + str(e), file=sys.stderr)
-            return ("Une erreur est survenue : " + str(e))
+            return "Une erreur est survenue : " + str(e)
     except jwt.ExpiredSignatureError:
-        return ('Message expiré, renvoyez le message')
+        return 'Message expiré, renvoyez le message'
     except jwt.InvalidTokenError:
-        return ('Message expiré, renvoyez le message')
+        return 'Message expiré, renvoyez le message'
+
 
 def SendMessage(recipient_id, message_text):
     params = {
@@ -70,13 +75,14 @@ def SendMessage(recipient_id, message_text):
     r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
     return data, r.status_code
 
+
 def MessageChoice(sender_id, message_text):
     quick_replies = []
-    user = db_session.query(User).filter(User.facebookPSID == sender_id).first()
+    user = db_session.query(User).filter(User.facebook_psid == sender_id).first()
     for UserToConv in user.conversationLinks:
         conv = db_session.query(Conversation).filter(Conversation.id == UserToConv.conversation_id).first()
         payload = encodePostBackPayload(sender_id, message_text, UserToConv)
-        quick_replies.append({"content_type":"text","title":conv.name,"payload": payload})
+        quick_replies.append({"content_type": "text", "title": conv.name, "payload": payload})
     return quick_replies
 
 
@@ -91,7 +97,7 @@ def SendMessageChoice(recipient_id, message_text):
         "recipient": {
             "id": recipient_id
         },
-        "message":{
+        "message": {
             "text": "Choisissez une conversation",
             "quick_replies": MessageChoice(recipient_id, message_text)
         }
@@ -99,28 +105,33 @@ def SendMessageChoice(recipient_id, message_text):
     r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
     return data, r.status_code
 
+
 def MessengerUserModelSend(userTarget, text_message):
-    if userTarget.facebookPSID != -1:
-        SendMessage(userTarget.facebookPSID, text_message)
+    if userTarget.facebook_psid != -1:
+        SendMessage(userTarget.facebook_psid, text_message)
         return True
     return False
+
 
 def MessengerCircleModelSend(senderID, circle, text_message):
     circleTargets = db_session.query(UserToCircle).filter(UserToCircle.circle_id == circle.id)
     for targetUser in circleTargets:
         targetUserData = db_session.query(User).filter(targetUser.user_id == User.id).first()
-        if senderID != targetUserData.id and targetUserData.facebookPSID != -1:
-            SendMessage(targetUserData.facebookPSID, text_message)
+        if senderID != targetUserData.id and targetUserData.facebook_psid != -1:
+            SendMessage(targetUserData.facebook_psid, text_message)
+
 
 def MessengerConversationModelSend(senderID, conversation, text_message):
     circle = db_session.query(Circle).filter(Circle.id == conversation.circle_id).first()
     MessengerCircleModelSend(senderID, circle, text_message)
 
-def IsUserLinked(facebookPSID):
-    user = db_session.query(User).filter(User.facebookPSID == facebookPSID).first()
+
+def IsUserLinked(facebook_psid):
+    user = db_session.query(User).filter(User.facebook_psid == facebook_psid).first()
     if user is not None:
         return True
     return False
+
 
 def LinkUserToFacebook(apiToken, psid):
         try:
@@ -128,8 +139,8 @@ def LinkUserToFacebook(apiToken, psid):
             try:
                 user = db_session.query(User).filter(User.id == payload['sub']).first()
                 if user is not None:
-                    user.updateContent(facebookPSID=psid)
-                    return ("Bienvenue sur NEO, " + payload['first_name'] + " " + payload['last_name'] + " !")
+                    user.update_content(facebook_psid=psid)
+                    return "Bienvenue sur NEO, " + payload['first_name'] + " " + payload['last_name'] + " !"
                 else:
                     return 'Token invalide !'
             except Exception as e:
@@ -138,6 +149,7 @@ def LinkUserToFacebook(apiToken, psid):
             return 'La token a expiré, authentifiez vous a nouveau'
         except jwt.InvalidTokenError:
             return 'Token invalide, authentifiez vous a nouveau'
+
 
 class Webhook(Resource):
     messenger_hook = {
@@ -154,7 +166,7 @@ class Webhook(Resource):
             return args["hub"]["challenge"], 200
         return "Hello Facebook", 200
 
-    @checkContent
+    @check_content
     def post(self, content):
         try:
             if content["object"] == "page":
@@ -162,16 +174,14 @@ class Webhook(Resource):
                     for messaging_event in entry["messaging"]:
                         if messaging_event.get("message"):
                             sender_id = messaging_event["sender"]["id"]        
-                            recipient_id = messaging_event["recipient"]["id"]  
                             message_text = messaging_event["message"]["text"]
                             splitMessage = message_text.split(' ')
-                            # messenger
                             if 'quick_reply' not in messaging_event["message"]:
                                 if len(splitMessage) >= 2 and splitMessage[0] == "/token":
                                     message = LinkUserToFacebook(splitMessage[1], sender_id)
                                     resp = SendMessage(sender_id, message)
                                     return resp
-                                elif IsUserLinked(sender_id) == True:
+                                elif IsUserLinked(sender_id):
                                     SendMessageChoice(sender_id, message_text)
                                     return "To handle", 200
                                 else:
@@ -180,9 +190,7 @@ class Webhook(Resource):
                             if 'quick_reply' in messaging_event["message"]:
                                 handleConversationPayload(messaging_event["message"]["quick_reply"]["payload"])
                                 return "To handle", 200
-            #to ignore unhandled request (if not it stay locked in queue)
             return "ok", 200
         except Exception as e:
             print(e, file=sys.stderr)
             return "Failed", 200
-        

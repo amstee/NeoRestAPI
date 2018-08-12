@@ -3,17 +3,17 @@ import sys
 import json
 
 sys.path.insert(0,'..')
-from api import neoapi
+from api import NeoAPI
 from config.database import db_session
 from models.User import User as UserModel
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
-from utils.testutils import AuthenticateUser
+from utils.testutils import authenticate_user
 
 
 class TestCircleCreate(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcircle@test.com").first()
         if self.user1 is None:
@@ -24,8 +24,8 @@ class TestCircleCreate(unittest.TestCase):
             self.user2 = UserModel(email="testcircle2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
 
     def test_valid_request(self):
         json_data = {
@@ -49,7 +49,7 @@ class TestCircleCreate(unittest.TestCase):
 
 class TestCircleDelete(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcircledelete@test.com").first()
         if self.user1 is None:
@@ -60,9 +60,9 @@ class TestCircleDelete(unittest.TestCase):
             self.user2 = UserModel(email="testcircledelete2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
         self.create_circle()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def create_circle(self):
         self.circle = Circle("TESTDELETION")
@@ -116,7 +116,7 @@ class TestCircleDelete(unittest.TestCase):
 
 class TestCircleUpdate(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcircleupdate@test.com").first()
         if self.user1 is None:
@@ -127,9 +127,9 @@ class TestCircleUpdate(unittest.TestCase):
             self.user2 = UserModel(email="testcircleupdate2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
         self.create_circle()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def create_circle(self):
         self.circle = Circle("TESTUPDATE")
@@ -184,7 +184,7 @@ class TestCircleUpdate(unittest.TestCase):
 
 class TestCircleInfo(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcircleinfo@test.com").first()
         if self.user1 is None:
@@ -195,9 +195,9 @@ class TestCircleInfo(unittest.TestCase):
             self.user2 = UserModel(email="testcircleinfo2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
         self.create_circle()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def create_circle(self):
         self.circle = Circle("TESTUPDATE")
@@ -238,7 +238,7 @@ class TestCircleInfo(unittest.TestCase):
 
 class TestCircleList(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcirclelist@test.com").first()
         if self.user1 is None:
@@ -251,9 +251,9 @@ class TestCircleList(unittest.TestCase):
         self.create_circle("INFO1")
         self.create_circle("INFO2")
         self.create_circle("INFO3")
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def create_circle(self, name):
         self.circle = Circle(name)

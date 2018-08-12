@@ -4,13 +4,13 @@ from models.User import User
 from models.Device import Device
 
 
-def securedRoute(func):
+def secured_route(func):
     def func_wrapper(*args, **kwargs):
         try:
             content = request.get_json()
             if "token" in content and content["token"] != "":
                     json_token = content["token"]
-                    res, data = User.decodeAuthToken(json_token)
+                    res, data = User.decode_auth_token(json_token)
                     if res is True:
                         kwargs['user'] = data
                         return func(*args, **kwargs)
@@ -20,7 +20,7 @@ def securedRoute(func):
                         return resp
             elif "device_token" in content and content["device_token"] != "":
                 json_token = content["device_token"]
-                res, data = Device.decodeAuthToken(json_token)
+                res, data = Device.decode_auth_token(json_token)
                 if res is True:
                     kwargs['device'] = data
                     return func(*args, **kwargs)
@@ -38,7 +38,7 @@ def securedRoute(func):
     return func_wrapper
 
 
-def securedAdminRoute(func):
+def secured_admin_route(func):
     def func_wrapper(*args, **kwargs):
         try:
             content = request.get_json()
@@ -46,7 +46,7 @@ def securedAdminRoute(func):
                 resp = jsonify({"success": False, "message": "Aucun jwt trouvé dans le contenu de la requete"})
                 return resp
             json_token = content["token"]
-            res, data = User.decodeAuthToken(json_token)
+            res, data = User.decode_auth_token(json_token)
             if res:
                 if data.type == "ADMIN":
                     kwargs['admin'] = data
@@ -68,7 +68,7 @@ def securedAdminRoute(func):
     return func_wrapper
 
 
-def checkContent(func):
+def check_content(func):
     def func_wrapper(*args, **kwargs):
         try:
             content = request.get_json()

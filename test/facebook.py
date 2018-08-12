@@ -3,7 +3,7 @@ import sys
 import json
 
 sys.path.insert(0,'..')
-from api import neoapi
+from api import NeoAPI
 from routes.Facebook import SendMessage
 
 MESSENGER_ID_TESTING="1726772610739883"
@@ -23,7 +23,7 @@ class Messaging(unittest.TestCase):
 
 class TokenLink(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
     
     def test_invalid_token(self):

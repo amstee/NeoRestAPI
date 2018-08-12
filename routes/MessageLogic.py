@@ -8,8 +8,8 @@ from models.Message import Message
 from models.Circle import Circle
 from models.User import User as UserModel
 from models.MessageToMedia import MessageToMedia
-from utils.decorators import securedRoute, checkContent
-from utils.contentChecker import contentChecker
+from utils.decorators import secured_route, check_content
+from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from config.sockets import sockets
 from flask_socketio import emit
@@ -17,17 +17,18 @@ from .Facebook import MessengerCircleModelSend, MessengerConversationModelSend
 
 
 class FirstMessageToDeviceSend(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("circle_id")
-            circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
+            content_checker("circle_id")
+            circle = db_session.query(Circle).filter(Circle.id == content["circle_id"]).first()
             if circle is None:
                 return FAILED("Cercle spécifié introuvable")
-            if not circle.hasMember(user):
+            if not circle.has_member(user):
                 return FAILED("Vous n'appartenez pas a ce cercle", 403)
-            conversation = Conversation(name=content["conversation_name"] if "conversation_name" in content else circle.name, device_access=True)
+            conversation = Conversation(name=content["conversation_name"] if "conversation_name" in content else
+                                        circle.name, device_access=True)
             conversation.circle = circle
             link = UserToConversation(privilege="ADMIN")
             link.user = user
@@ -42,7 +43,7 @@ class FirstMessageToDeviceSend(Resource):
                     media.identifier = file
                     MessageToMedia(message=message, media=media)
                     db_session.commit()
-                    media_list.append(media.getSimpleContent())
+                    media_list.append(media.get_simple_content())
             db_session.commit()
             sockets.notify_user(circle.device, True, 'conversation',
                                 {"conversation_id": conversation.id,
@@ -60,25 +61,25 @@ class FirstMessageToDeviceSend(Resource):
 
 
 class FirstMessageSend(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("email", "circle_id")
-            dest = db_session.query(UserModel).filter(UserModel.email==content["email"]).first()
-            circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
+            content_checker("email", "circle_id")
+            dest = db_session.query(UserModel).filter(UserModel.email == content["email"]).first()
+            circle = db_session.query(Circle).filter(Circle.id == content["circle_id"]).first()
             if dest is None:
                 return FAILED("Destinataire introuvable")
             if circle is None:
                 return FAILED("Cercle spécifié introuvable")
-            if not circle.hasMember(user):
+            if not circle.has_member(user):
                 return FAILED("Vous n'appartenez pas a ce cercle", 403)
-            if not circle.hasMember(dest) and circle.hasMember(user):
+            if not circle.has_member(dest) and circle.has_member(user):
                 return FAILED("Ce cercle ne contient pas l'utilisateur recherché", 403)
             conversation = Conversation()
             conversation.circle = circle
-            link1 = UserToConversation(privilege="ADMIN", user=user, conversation=conversation)
-            link2 = UserToConversation(privilege="STANDARD", user=dest, conversation=conversation)
+            UserToConversation(privilege="ADMIN", user=user, conversation=conversation)
+            UserToConversation(privilege="STANDARD", user=dest, conversation=conversation)
             message = Message(content=content["text_message"] if "text_message" in content else "")
             message.conversation = conversation
             media_list = []
@@ -88,7 +89,7 @@ class FirstMessageSend(Resource):
                     media.identifier = file
                     MessageToMedia(message=message, media=media)
                     db_session.commit()
-                    media_list.append(media.getSimpleContent())
+                    media_list.append(media.get_simple_content())
             db_session.commit()
             sockets.notify_user(dest, False, 'conversation',
                                 {"conversation_id": conversation.id,
@@ -98,7 +99,8 @@ class FirstMessageSend(Resource):
                 MessengerCircleModelSend(0, circle, info_sender + message.text_content)
             except Exception:
                 pass
-            resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id, 'conversation_id': message.conversation_id})
+            resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id,
+                            'conversation_id': message.conversation_id})
             resp.status_code = 200
             return resp
         except Exception as e:
@@ -106,13 +108,14 @@ class FirstMessageSend(Resource):
 
 
 class MessageSend(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("conversation_id")
-            link = db_session.query(UserToConversation).filter(UserToConversation.conversation_id==content["conversation_id"],
-                                                               UserToConversation.user_id==user.id).first()
+            content_checker("conversation_id")
+            link = db_session.query(UserToConversation).filter(UserToConversation.conversation_id ==
+                                                               content["conversation_id"],
+                                                               UserToConversation.user_id == user.id).first()
             if link is None:
                 return FAILED("Conversation introuvable", 403)
             message = Message(content=content["text_message"] if "text_message" in content else "")
@@ -125,21 +128,23 @@ class MessageSend(Resource):
                     media.identifier = file
                     MessageToMedia(message=message, media=media)
                     db_session.commit()
-                    media_list.append(media.getSimpleContent())
+                    media_list.append(media.get_simple_content())
             db_session.commit()
             if not media_list:
                 print(message.conversation_id)
                 emit('message', {
                     'conversation_id': message.conversation_id,
-                    'message': message.getSimpleJSONCompliantContent(),
+                    'message': message.get_simple_json_compliant_content(),
                     'time': message.sent.isoformat(),
-                    'sender': user.getSimpleJSONCompliantContent(),
+                    'sender': user.get_simple_json_compliant_content(),
                     'media_list': media_list,
                     'status': 'done'},
                      room='conversation_' + str(message.conversation_id), namespace='/')
             else:
-                emit('message', {'conversation_id': message.conversation_id, 'message': message.getSimpleJSONCompliantContent(),
-                                 'status': 'pending'}, room='conversation_' + str(message.conversation_id), namespace='/')
+                emit('message', {'conversation_id': message.conversation_id,
+                                 'message': message.get_simple_json_compliant_content(),
+                                 'status': 'pending'}, room='conversation_' + str(message.conversation_id),
+                     namespace='/')
             conversation = db_session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
             info_sender = "[" + link.conversation.name + "] " + user.first_name + " : "
             try:
