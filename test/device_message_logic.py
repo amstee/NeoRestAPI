@@ -3,22 +3,22 @@ import sys
 import json
 
 sys.path.insert(0,'..')
-from api import neoapi
+from api import NeoAPI
 from config.database import db_session
 from models.User import User as UserModel
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
 from models.Conversation import Conversation
 from models.Device import Device
-from utils.testutils import AuthenticateUser
-from utils.testutils import AuthenticateDevice
+from utils.testutils import authenticate_user
+from utils.testutils import authenticate_device
 from models.UserToConversation import UserToConversation
 from models.Message import Message
 
 
 class TestFirstDeviceMessageSend(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -35,17 +35,17 @@ class TestFirstDeviceMessageSend(unittest.TestCase):
         self.device = Device(name="Papie")
         self.device2 = Device(name="test")
         self.device2.circle = self.circle2
-        self.device2_password = self.device2.getPreActivationPassword()
+        self.device2_password = self.device2.get_pre_activation_password()
         self.device2.activate(self.device2.key)
         self.device.circle = self.circle
-        self.device_password = self.device.getPreActivationPassword()
+        self.device_password = self.device.get_pre_activation_password()
         self.device.activate(self.device.key)
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.device_token = AuthenticateDevice(self.api, self.device, self.device_password)
-        self.device2_token = AuthenticateDevice(self.api, self.device2, self.device2_password)
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.device_token = authenticate_device(self.api, self.device, self.device_password)
+        self.device2_token = authenticate_device(self.api, self.device2, self.device2_password)
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_message_send(self):
         json_data = {
@@ -93,7 +93,7 @@ class TestFirstDeviceMessageSend(unittest.TestCase):
 
 class TestDeviceMessageSend(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -113,20 +113,20 @@ class TestDeviceMessageSend(unittest.TestCase):
         self.device = Device(name="Papie")
         self.device2 = Device(name="test")
         self.device2.circle = self.circle2
-        self.device2_password = self.device2.getPreActivationPassword()
+        self.device2_password = self.device2.get_pre_activation_password()
         self.device2.activate(self.device2.key)
         self.device.circle = self.circle
-        self.device_password = self.device.getPreActivationPassword()
+        self.device_password = self.device.get_pre_activation_password()
         self.device.activate(self.device.key)
-        self.message = Message(isUser=False)
+        self.message = Message(is_user=False)
         self.message.conversation = self.conversation
         self.message.device = self.device
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.device_token = AuthenticateDevice(self.api, self.device, self.device_password)
-        self.device2_token = AuthenticateDevice(self.api, self.device2, self.device2_password)
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.device_token = authenticate_device(self.api, self.device, self.device_password)
+        self.device2_token = authenticate_device(self.api, self.device2, self.device2_password)
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_message_send(self):
         json_data = {

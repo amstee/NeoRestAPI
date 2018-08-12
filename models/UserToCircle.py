@@ -14,11 +14,12 @@ class UserToCircle(Base):
     updated = Column(DateTime)
     privilege = Column(String(10))
 
-    user = relationship("User", back_populates="circleLink")
-    circle = relationship("Circle", back_populates="userLink")
+    user = relationship("User", back_populates="circle_link")
+    circle = relationship("Circle", back_populates="user_link")
 
     def __repr__(self):
-        return "<UserToCircle(id='%d' user_id='%d' circle_id='%d' created='%s' updated='%s' privilege='%s')>"%(self.id, self.user_id, self.circle_id, str(self.created), str(self.updated), self.privilege)
+        return "<UserToCircle(id='%d' user_id='%d' circle_id='%d' created='%s' updated='%s' privilege='%s')>"\
+               % (self.id, self.user_id, self.circle_id, str(self.created), str(self.updated), self.privilege)
 
     def __init__(self, created=datetime.datetime.now(), updated=datetime.datetime.now(), privilege="DEFAULT",
                  user=None, circle=None):
@@ -40,7 +41,7 @@ class UserToCircle(Base):
             self.circle = circle
         db_session.add(self)
 
-    def updateContent(self, created=None, updated=datetime.datetime.now(), privilege=None):
+    def update_content(self, created=None, updated=datetime.datetime.now(), privilege=None):
         if created is not None:
             if type(created) is str:
                 self.created = DateParser.parse(created)
@@ -55,12 +56,12 @@ class UserToCircle(Base):
             self.privilege = privilege
         db_session.commit()
 
-    def getContent(self, user=True):
+    def get_content(self, user=True):
         if user:
             return {
                 "id": self.id,
                 "user": self.user_id,
-                "circle": self.circle.getSimpleContent(),
+                "circle": self.circle.get_simple_content(),
                 "created": self.created,
                 "updated": self.updated,
                 "privilege": self.privilege
@@ -68,7 +69,7 @@ class UserToCircle(Base):
         else:
             return {
                 "id": self.id,
-                "user": self.user.getSimpleContent(),
+                "user": self.user.get_simple_content(),
                 "circle": self.circle_id,
                 "created": self.created,
                 "updated": self.updated,

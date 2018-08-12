@@ -3,9 +3,9 @@ import sys
 import json
 
 sys.path.insert(0,'..')
-from api import neoapi
+from api import NeoAPI
 from config.database import db_session
-from utils.testutils import AuthenticateUser
+from utils.testutils import authenticate_user
 from models.User import User as UserModel
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
@@ -18,7 +18,7 @@ class TestFakePayment(unittest.TestCase):
     token2 = None
 
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testpayment@test.com").first()
         if self.user1 is None:
@@ -31,8 +31,8 @@ class TestFakePayment(unittest.TestCase):
         self.link1.user = self.user1
         self.link1.circle = self.circle1
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
 
     def test_valid_request(self):
         json_data = {

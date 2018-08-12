@@ -52,12 +52,14 @@ def message_send(content):
                     emit('error', 'Conversation introuvable', room=sid, namespace='/')
                 else:
                     if socket.is_device:
-                        message = Message(content=content["text_message"] if "text_message" in content else "", isUser=False)
+                        message = Message(content=content["text_message"] if "text_message" in content else "",
+                                          is_user=False)
                         message.conversation = conv
                         message.device = socket.client
                     else:
-                        link = db_session.query(UserToConversation).filter(UserToConversation.user_id == socket.client.id,
-                                                                           UserToConversation.conversation_id == conv.id).first()
+                        link = db_session.query(UserToConversation).\
+                            filter(UserToConversation.user_id == socket.client.id,
+                                   UserToConversation.conversation_id == conv.id).first()
                         if link is None:
                             emit('error', "Vous ne faites pas partie de cette conversation", room=sid, namespace='/')
                             return
@@ -81,20 +83,21 @@ def message_send(content):
                             media.identifier = file
                             media.message = message
                             db_session.commit()
-                            media_list.append(media.getSimpleContent())
+                            media_list.append(media.get_simple_content())
                         socket.emit('media', {'media_list': media_list, 'message_id': message.id})
                     socket.emit('success', {'received': True, 'message_id': message.id})
                     if not media_list:
                         emit('message', {
                             'conversation_id': conv.id,
-                            'message': message.getSimpleJSONCompliantContent(),
+                            'message': message.get_simple_json_compliant_content(),
                             'time': message.sent.isoformat(),
-                            'sender': socket.client.getSimpleJSONCompliantContent(),
+                            'sender': socket.client.get_simple_json_compliant_content(),
                             'media_list': media_list,
                             'status': 'done'},
                              room='conversation_' + str(conv.id), namespace='/')
                     else:
-                        emit('message', {'conversation_id': conv.id, 'message': message.getSimpleJSONCompliantContent(),
+                        emit('message', {'conversation_id': conv.id,
+                                         'message': message.get_simple_json_compliant_content(),
                                          'status': 'pending'}, room='conversation_' + str(conv.id), namespace='/')
         except Exception as e:
             socket.emit("error", str(e), namespace='/')

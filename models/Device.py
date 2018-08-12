@@ -21,7 +21,7 @@ class Device(Base):
     activated = Column(Boolean)
     username = Column(String(120), unique=True)
     password = Column(String(2048))
-    jsonToken = Column(String(2048))
+    json_token = Column(String(2048))
     name = Column(String(120))
     created = Column(DateTime)
     updated = Column(DateTime)
@@ -69,15 +69,14 @@ class Device(Base):
         self.key = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
         db_session.add(self)
 
-    def setPassword(self, password):
+    def set_password(self, password):
         self.password = base64.b64encode(str.encode(password)).decode('utf-8')
 
     def __repr__(self):
         return "<Device(id='%s' name='%s' created='%s' updated='%s')>" % \
                (self.id, self.name, str(self.created), str(self.updated))
 
-    def updateContent(self, created=None, updated=datetime.datetime.now(),
-                      name=None, activated=None, is_online=None):
+    def update_content(self, created=None, updated=datetime.datetime.now(), name=None, activated=None, is_online=None):
         if type(created) is str:
             self.created = DateParser.parse(created)
         elif created is not None:
@@ -95,16 +94,16 @@ class Device(Base):
         db_session.commit()
 
     def disconnect(self):
-        self.jsonToken = ""
+        self.json_token = ""
         db_session.commit()
 
     @staticmethod
-    def decodeAuthToken(auth_token):
+    def decode_auth_token(auth_token):
         try:
             payload = jwt.decode(auth_token, SECRET_KEY)
             device = db_session.query(Device).filter(Device.id == payload['sub']).first()
             if device is not None:
-                if device.jsonToken == "" or device.jsonToken is None:
+                if device.json_token == "" or device.json_token is None:
                     return False, "Device non authentifié"
                 if not device.activated:
                     return False, "Device non activé"
@@ -118,7 +117,7 @@ class Device(Base):
         except Exception as e:
             return False, 'Une erreur est survenue : ' + str(e)
 
-    def encodeAuthToken(self):
+    def encode_auth_token(self):
         try:
             payload = {
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=30, seconds=1),
@@ -126,33 +125,33 @@ class Device(Base):
                 'sub': self.id
             }
             token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
-            self.jsonToken = token.decode()
+            self.json_token = token.decode()
             db_session.commit()
             return token.decode()
         except Exception as e:
             print(e)
             return None
 
-    def checkPassword(self, password=None):
+    def check_password(self, password=None):
         if password is not None and password != "":
             if self.password == hashlib.sha512(password.encode("utf-8")).hexdigest():
                 return True
         return False
 
-    def Authenticate(self, password=None):
+    def authenticate(self, password=None):
         if password is not None and password != "":
             if self.password != hashlib.sha512(password.encode('utf-8')).hexdigest():
                 return False, "Mot de pass invalide"
             try:
-                if self.jsonToken is not None:
-                    jwt.decode(self.jsonToken, SECRET_KEY)
-                    return True, self.jsonToken
-                return True, self.encodeAuthToken()
+                if self.json_token is not None:
+                    jwt.decode(self.json_token, SECRET_KEY)
+                    return True, self.json_token
+                return True, self.encode_auth_token()
             except jwt.ExpiredSignatureError:
-                return True, self.encodeAuthToken()
+                return True, self.encode_auth_token()
         return False, "Aucun mot de passe fourni"
 
-    def updatePassword(self, password=None):
+    def update_password(self, password=None):
         if password is not None and password != "":
             self.password = hashlib.sha512(password.encode('utf-8')).hexdigest()
             db_session.commit()
@@ -165,12 +164,12 @@ class Device(Base):
             db_session.commit()
         return self.activated
 
-    def getPreActivationPassword(self):
+    def get_pre_activation_password(self):
         if self.activated is False:
             return base64.b64decode(str.encode(self.password)).decode('utf-8')
         raise Exception("Ce device est active")
 
-    def getSimpleContent(self):
+    def get_simple_content(self):
         return {
             "id": self.id,
             "name": self.name,
@@ -182,7 +181,7 @@ class Device(Base):
             "is_online": self.is_online
         }
 
-    def getSimpleJSONCompliantContent(self):
+    def get_simple_json_compliant_content(self):
         return {
             "id": self.id,
             "name": self.name,
@@ -194,7 +193,7 @@ class Device(Base):
             "is_online": self.is_online
         }
 
-    def getContent(self):
+    def get_content(self):
         return {
             "id": self.id,
             "name": self.name,
@@ -202,8 +201,8 @@ class Device(Base):
             "updated": self.updated,
             "activated": self.activated,
             "username": self.username,
-            "circle": self.circle.getSimpleContent() if self.circle is not None else {},
-            "messages": [message.getSimpleContent() for message in self.messages],
-            "medias": [link.getContent() for link in self.media_links],
+            "circle": self.circle.get_simple_content() if self.circle is not None else {},
+            "messages": [message.get_simple_content() for message in self.messages],
+            "medias": [link.get_content() for link in self.media_links],
             "is_online": self.is_online
         }

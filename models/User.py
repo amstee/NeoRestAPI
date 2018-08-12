@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, BigInteger, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, BigInteger, Boolean
 from sqlalchemy.orm import relationship
 from config.database import Base
 from config.database import db_session
@@ -20,19 +20,19 @@ class User(Base):
     birthday = Column(DateTime)
     created = Column(DateTime)
     updated = Column(DateTime)
-    jsonToken = Column(String(4096))
-    facebookPSID = Column(BigInteger)
-    hangoutEmail = Column(String(2048))
+    json_token = Column(String(4096))
+    facebook_psid = Column(BigInteger)
+    hangout_email = Column(String(2048))
     type = Column(String(10))
     is_online = Column(Boolean)
 
     # RELATIONS
-    circleLink = relationship("UserToCircle", back_populates="user", order_by="UserToCircle.id",
-                              cascade="save-update, delete")
-    conversationLinks = relationship("UserToConversation", back_populates="user", order_by="UserToConversation.id",
-                                     cascade="save-update, delete")
-    circleInvite = relationship("CircleInvite", back_populates="user", order_by="CircleInvite.id",
-                                cascade="save-update, delete")
+    circle_link = relationship("UserToCircle", back_populates="user", order_by="UserToCircle.id",
+                               cascade="save-update, delete")
+    conversation_links = relationship("UserToConversation", back_populates="user", order_by="UserToConversation.id",
+                                      cascade="save-update, delete")
+    circle_invite = relationship("CircleInvite", back_populates="user", order_by="CircleInvite.id",
+                                 cascade="save-update, delete")
     media_links = relationship("UserToMedia", back_populates="user", order_by="UserToMedia.id",
                                cascade="save-update, delete")
 
@@ -65,7 +65,7 @@ class User(Base):
                 self.updated = updated
         self.is_online = is_online
         self.type = "DEFAULT"
-        self.facebookPSID = -1
+        self.facebook_psid = -1
         db_session.add(self)
 
     def __repr__(self):
@@ -73,39 +73,39 @@ class User(Base):
 
     def disconnect(self):
         try:
-            self.jsonToken = ""
+            self.json_token = ""
             db_session.commit()
             return True, None
         except Exception as e:
             return False, str(e)
 
-    def hasMatchingCircle(self, user):
-        for link in self.circleLink:
-            for link2 in user.circleLink:
+    def has_matching_circle(self, user):
+        for link in self.circle_link:
+            for link2 in user.circle_link:
                 if link.circle_id == link2.circle_id:
                     return True
         return False
 
-    def isInConversation(self, conversation_id):
-        for link in self.conversationLinks:
+    def is_in_conversation(self, conversation_id):
+        for link in self.conversation_links:
             if link.conversation_id == conversation_id:
                 return True
         return False
 
-    def isInCircle(self, circle_id):
-        for link in self.circleLink:
+    def is_in_circle(self, circle_id):
+        for link in self.circle_link:
             if link.circle_id == circle_id:
                 return True
         return False
 
     @staticmethod
-    def decodeAuthToken(auth_token):
+    def decode_auth_token(auth_token):
         try:
             payload = jwt.decode(auth_token, SECRET_KEY)
             try:
                 user = db_session.query(User).filter(User.id == payload['sub']).first()
                 if user is not None:
-                    if user.jsonToken == "" or user.jsonToken is None:
+                    if user.json_token == "" or user.json_token is None:
                         return False, 'Utilisateur non authentifié'
                     return True, user
                 else:
@@ -117,11 +117,11 @@ class User(Base):
         except jwt.InvalidTokenError:
             return False, 'Token invalide, authentifiez vous a nouveau'
 
-    def notifyCircles(self, p2):
-        for link in self.circleLink:
+    def notify_circles(self, p2):
+        for link in self.circle_link:
             link.circle.notify_users(p2=p2)
 
-    def encodeAuthToken(self):
+    def encode_auth_token(self):
         try:
             payload = {
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1, seconds=1),
@@ -129,14 +129,14 @@ class User(Base):
                 'sub': self.id
             }
             token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
-            self.jsonToken = token.decode()
+            self.json_token = token.decode()
             db_session.commit()
             return token.decode()
         except Exception as e:
             print(e)
-            return (None)
+            return None
 
-    def encodeApiToken(self):
+    def encode_api_token(self):
         try:
             payload = {
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1, seconds=1),
@@ -151,35 +151,36 @@ class User(Base):
             print(e)
             return None
 
-    def checkPassword(self, password=None):
+    def check_password(self, password=None):
         if password is not None and password != "":
             if self.password != hashlib.sha512(password.encode("utf-8")).hexdigest():
                 return False
             return True
         return False
 
-    def Authenticate(self, password=None):
+    def authenticate(self, password=None):
         if password is not None and password != "":
             if self.password != hashlib.sha512(password.encode('utf-8')).hexdigest():
                 return False, "Mot de passe invalide"
             try:
-                if self.jsonToken is not None:
-                    jwt.decode(self.jsonToken, SECRET_KEY)
-                    return True, self.jsonToken
-                return True, self.encodeAuthToken()
+                if self.json_token is not None:
+                    jwt.decode(self.json_token, SECRET_KEY)
+                    return True, self.json_token
+                return True, self.encode_auth_token()
             except jwt.ExpiredSignatureError:
-                return True, self.encodeAuthToken()
+                return True, self.encode_auth_token()
             except Exception:
-                return True, self.encodeAuthToken()
+                return True, self.encode_auth_token()
         return False, "Aucun mot de passe fourni"
 
-    def updatePassword(self, password=None):
+    def update_password(self, password=None):
         if password is not None and password != "":
             self.password = hashlib.sha512(password.encode('utf-8')).hexdigest()
             db_session.commit()
 
-    def updateContent(self, email=None, first_name=None, last_name=None, birthday=None,
-                      facebookPSID=None, hangoutEmail=None, is_online=None, created=None, updated=datetime.datetime.now()):
+    def update_content(self, email=None, first_name=None, last_name=None, birthday=None,
+                       facebook_psid=None, hangout_email=None, is_online=None, created=None,
+                       updated=datetime.datetime.now()):
         if email is not None and email is not "":
             self.email = email
         if first_name is not None and first_name is not "":
@@ -196,13 +197,13 @@ class User(Base):
             self.created = DateParser.parse(created)
         elif created is not None:
             self.created = created
-        self.facebookPSID = facebookPSID
-        self.hangoutEmail = hangoutEmail
+        self.facebook_psid = facebook_psid
+        self.hangout_email = hangout_email
         if is_online is not None:
             self.is_online = is_online
         db_session.commit()
 
-    def promoteAdmin(self):
+    def promote_admin(self):
         self.type = "ADMIN"
         db_session.commit()
 
@@ -212,9 +213,9 @@ class User(Base):
         if admin is None:
             user = User(email="contact.projetneo@gmail.com", password="PapieNeo2019",
                         first_name="Neo", last_name="Admin", birthday=datetime.datetime.now())
-            user.promoteAdmin()
+            user.promote_admin()
 
-    def getSimpleContent(self):
+    def get_simple_content(self):
         return {
             "id": self.id,
             "email": self.email,
@@ -227,7 +228,7 @@ class User(Base):
             "type": self.type,
         }
 
-    def getSimpleJSONCompliantContent(self):
+    def get_simple_json_compliant_content(self):
         return {
             "id": self.id,
             "email": self.email,
@@ -240,7 +241,7 @@ class User(Base):
             "type": self.type,
         }
 
-    def getContent(self):
+    def get_content(self):
         return {
             "id": self.id,
             "email": self.email,
@@ -251,10 +252,10 @@ class User(Base):
             "updated": self.updated,
             "isOnline": self.is_online,
             "type": self.type,
-            "hangout": False if self.hangoutEmail is None or len(self.hangoutEmail) == 0 else True,
-            "facebook": False if self.facebookPSID is None or len(self.facebookPSID) == 0 else True,
-            "circles": [link.getContent() for link in self.circleLink],
-            "invites": [invite.getContent() for invite in self.circleInvite],
-            "conversations": [link.getSimpleContent() for link in self.conversationLinks],
-            "medias": [link.getContent() for link in self.media_links]
+            "hangout": False if self.hangout_email is None or len(self.hangout_email) == 0 else True,
+            "facebook": False if self.facebook_psid is None or len(self.facebook_psid) == 0 else True,
+            "circles": [link.get_content() for link in self.circle_link],
+            "invites": [invite.get_content() for invite in self.circle_invite],
+            "conversations": [link.get_simple_content() for link in self.conversation_links],
+            "medias": [link.get_content() for link in self.media_links]
         }

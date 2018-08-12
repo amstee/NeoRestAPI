@@ -3,14 +3,14 @@ import sys
 import json
 
 sys.path.insert(0,'..')
-from api import neoapi
+from api import NeoAPI
 from routes.Hangout import sendToSpace
 
 TESTING_SPACE="spaces/v4YQNAAAAAE"
 
 class Messaging(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
 
     def test_message_valid_space(self):
@@ -31,7 +31,7 @@ class Messaging(unittest.TestCase):
 
 class TokenLink(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
 
     def test_invalide_token(self):
