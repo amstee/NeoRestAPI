@@ -3,7 +3,7 @@ import sys
 import json
 
 sys.path.insert(0,'..')
-from api import neoapi
+from api import NeoAPI
 from config.database import db_session
 from models.User import User as UserModel
 from models.UserToCircle import UserToCircle
@@ -11,11 +11,11 @@ from models.Conversation import Conversation
 from models.Circle import Circle
 from models.UserToConversation import UserToConversation
 from models.Message import Message
-from utils.testutils import AuthenticateUser
+from utils.testutils import authenticate_user
 
 class TestMessageCreate(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -32,9 +32,9 @@ class TestMessageCreate(unittest.TestCase):
         self.linkConversation = UserToConversation(user=self.user1, conversation=self.conversation, privilege="ADMIN")
         self.linkConversation2 = UserToConversation(user=self.user2, conversation=self.conversation)
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_message(self):
         json_data = {
@@ -91,7 +91,7 @@ class TestMessageCreate(unittest.TestCase):
 
 class TestMessageDelete(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -114,9 +114,9 @@ class TestMessageDelete(unittest.TestCase):
         self.message3 = Message(link=self.linkConversation2, conversation=self.conversation,
                                content="3")
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_deletion(self):
         json_data = {
@@ -162,7 +162,7 @@ class TestMessageDelete(unittest.TestCase):
 
 class TestMessageInfo(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -185,9 +185,9 @@ class TestMessageInfo(unittest.TestCase):
         self.message3 = Message(link=self.linkConversation2, conversation=self.conversation,
                                content="3")
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_info(self):
         json_data = {
@@ -242,7 +242,7 @@ class TestMessageInfo(unittest.TestCase):
 
 class TestMessageList(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -265,9 +265,9 @@ class TestMessageList(unittest.TestCase):
         self.message3 = Message(link=self.linkConversation2, conversation=self.conversation,
                                content="3")
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_list(self):
         json_data = {
@@ -344,7 +344,7 @@ class TestMessageList(unittest.TestCase):
 
 class TestMessageUpdate(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -367,9 +367,9 @@ class TestMessageUpdate(unittest.TestCase):
         self.message3 = Message(link=self.linkConversation2, conversation=self.conversation,
                                content="3")
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_update(self):
         json_data = {

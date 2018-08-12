@@ -15,11 +15,15 @@ class CircleInvite(Base):
     created = Column(DateTime)
     updated = Column(DateTime)
 
-    user = relationship("User", back_populates="circleInvite")
-    circle = relationship("Circle", back_populates="circleInvite")
+    user = relationship("User", back_populates="circle_invite")
+    circle = relationship("Circle", back_populates="circle_invite")
 
     def __repr__(self):
-        return "<CircleInvite(id='%d' circle_id='%d' user_id='%d' created='%s' updated='%s')>"%(self.id, self.circle_id, self.user_id, str(self.created), str(self.updated))
+        return "<CircleInvite(id='%d' circle_id='%d' user_id='%d' created='%s' updated='%s')>" % (self.id,
+                                                                                                  self.circle_id,
+                                                                                                  self.user_id,
+                                                                                                  str(self.created),
+                                                                                                  str(self.updated))
 
     def __init__(self, created=datetime.datetime.now(), updated=datetime.datetime.now()):
         if created is not None:
@@ -34,7 +38,7 @@ class CircleInvite(Base):
                 self.updated = updated
         db_session.add(self)
 
-    def updateContent(self, created=None, updated=datetime.datetime.now()):
+    def update_content(self, created=None, updated=datetime.datetime.now()):
         if created is not None:
             if type(created) is str:
                 self.created = DateParser.parse(created)
@@ -53,20 +57,20 @@ class CircleInvite(Base):
         p2['circle_invite_id'] = self.id
         sockets.notify_user(self.user, False, p1, p2)
 
-    def getContent(self, user=True):
+    def get_content(self, user=True):
         if user:
             return {
                 "id": self.id,
                 "updated": self.updated,
                 "created": self.created,
                 "user": self.user_id,
-                "circle": self.circle.getSimpleContent()
+                "circle": self.circle.get_simple_content()
             }
         else:
             return {
                 "id": self.id,
                 "updated": self.updated,
                 "created": self.created,
-                "user": self.user.getSimpleContent(),
+                "user": self.user.get_simple_content(),
                 "circle": self.circle_id
             }

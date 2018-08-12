@@ -3,10 +3,10 @@ import sys
 from flask_socketio import SocketIOTestClient
 import json
 sys.path.insert(0, '..')
-from api import neoapi
+from api import NeoAPI
 from config.database import db_session
-from utils.testutils import AuthenticateUser
-from utils.testutils import AuthenticateDevice
+from utils.testutils import authenticate_user
+from utils.testutils import authenticate_device
 from models.User import User as UserModel
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
@@ -17,7 +17,7 @@ from models.Device import Device
 
 class SocketioConversation(unittest.TestCase):
     def setUp(self):
-        self.neo = neoapi()
+        self.neo = NeoAPI()
         self.api = self.neo.activate_testing()
         self.client = SocketIOTestClient(self.neo.app, self.neo.socketio)
         self.client2 = SocketIOTestClient(self.neo.app, self.neo.socketio)
@@ -42,13 +42,13 @@ class SocketioConversation(unittest.TestCase):
         self.link = UserToConversation(user=self.user1, conversation=self.conversation, privilege='ADMIN')
         self.device = Device(name="Papie")
         self.device.circle = self.circle
-        self.device_password = self.device.getPreActivationPassword()
+        self.device_password = self.device.get_pre_activation_password()
         self.device.activate(self.device.key)
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.device_token = AuthenticateDevice(self.api, self.device, self.device_password)
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.device_token = authenticate_device(self.api, self.device, self.device_password)
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def tearDown(self):
         self.client.disconnect()
@@ -172,7 +172,7 @@ class SocketioConversation(unittest.TestCase):
 
 class SocketioCircle(unittest.TestCase):
     def setUp(self):
-        self.neo = neoapi()
+        self.neo = NeoAPI()
         self.api = self.neo.activate_testing()
         self.client = SocketIOTestClient(self.neo.app, self.neo.socketio)
         self.client2 = SocketIOTestClient(self.neo.app, self.neo.socketio)
@@ -201,13 +201,13 @@ class SocketioCircle(unittest.TestCase):
         self.link = UserToConversation(user=self.user1, conversation=self.conversation, privilege='ADMIN')
         self.device = Device(name="Papie")
         self.device.circle = self.circle
-        self.device_password = self.device.getPreActivationPassword()
+        self.device_password = self.device.get_pre_activation_password()
         self.device.activate(self.device.key)
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.device_token = AuthenticateDevice(self.api, self.device, self.device_password)
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.device_token = authenticate_device(self.api, self.device, self.device_password)
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def tearDown(self):
         self.client.disconnect()
@@ -372,7 +372,7 @@ class SocketioCircle(unittest.TestCase):
         assert res2[0]['name'] == 'success'
         assert len(res3) == 1
         assert res2[0]['name'] == 'success'
-        self.token3 = AuthenticateUser(self.api, self.user3, "test")
+        self.token3 = authenticate_user(self.api, self.user3, "test")
         res = self.client2.get_received()
         assert len(res) == 1
         res3 = self.deviceClient.get_received()

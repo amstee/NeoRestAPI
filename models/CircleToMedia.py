@@ -34,7 +34,7 @@ class CircleToMedia(Base):
             self.purpose = purpose
         db_session.add(self)
 
-    def updateContent(self, circle=None, media=None, upload_time=None, purpose=None):
+    def update_content(self, circle=None, media=None, upload_time=None, purpose=None):
         if circle is not None:
             self.circle = circle
         if media is not None:
@@ -48,16 +48,16 @@ class CircleToMedia(Base):
             self.purpose = purpose
         db_session.commit()
 
-    def getContent(self):
+    def get_content(self):
         return {
             "id": self.id,
-            "circle": self.circle.getSimpleContent(),
-            "media": self.media.getSimpleContent(),
+            "circle": self.circle.get_simple_content(),
+            "media": self.media.get_simple_content(),
             "upload_time": self.upload_time,
             "purpose": self.purpose
         }
 
-    def getSimpleContent(self):
+    def get_simple_content(self):
         return {
             "id": self.id,
             "circle_id": self.circle_id,
@@ -65,5 +65,3 @@ class CircleToMedia(Base):
             "upload_time": self.upload_time,
             "purpose": self.purpose
         }
-
-

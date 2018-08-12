@@ -4,9 +4,9 @@ from models.Media import Media
 from models.UserToConversation import UserToConversation
 from models.Message import Message
 from models.User import User as UserModel
-from utils.decorators import checkContent, securedRoute
+from utils.decorators import check_content, secured_route
 from models.Conversation import Conversation
-from utils.contentChecker import contentChecker
+from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from flask_socketio import emit
 from config.sockets import sockets
@@ -15,15 +15,15 @@ from .Facebook import MessengerConversationModelSend, MessengerUserModelSend
 
 
 class FirstDeviceMessageSend(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, device):
         try:
-            contentChecker("email")
-            user = db_session.query(UserModel).filter(UserModel.email==content["email"]).first()
+            content_checker("email")
+            user = db_session.query(UserModel).filter(UserModel.email == content["email"]).first()
             if user is None:
                 return FAILED("Utilisateur spécifié introuvable")
-            if not device.circle.hasMember(user):
+            if not device.circle.has_member(user):
                 return FAILED("L'utilisateur n'est pas dans votre cercle")
             conversation = Conversation(device_access=True)
             conversation.circle = device.circle
@@ -31,7 +31,7 @@ class FirstDeviceMessageSend(Resource):
             link = UserToConversation(privilege="ADMIN")
             link.user = user
             link.conversation = conversation
-            message = Message(content=content["text_message"] if "text_message" in content else "", isUser=False)
+            message = Message(content=content["text_message"] if "text_message" in content else "", is_user=False)
             message.conversation = conversation
             message.device = device
             media_list = []
@@ -41,7 +41,7 @@ class FirstDeviceMessageSend(Resource):
                     media.identifier = file
                     MessageToMedia(message=message, media=media)
                     db_session.commit()
-                    media_list.append(media.getSimpleContent())
+                    media_list.append(media.get_simple_content())
             db_session.commit()
             sockets.notify_user(user, False, 'conversation',
                                 {"conversation_id": conversation.id,
@@ -59,17 +59,17 @@ class FirstDeviceMessageSend(Resource):
 
 
 class DeviceMessageSend(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, device):
         try:
-            contentChecker("conversation_id")
-            conv = db_session.query(Conversation).filter(Conversation.id==content["conversation_id"]).first()
+            content_checker("conversation_id")
+            conv = db_session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
             if conv is None:
                 return FAILED("Conversation introuvable")
             if conv.device_access is False or conv.circle.id != device.circle.id:
                 return FAILED("Vous ne pouvez pas acceder a cette conversation", 403)
-            message = Message(content=content["text_message"] if "text_message" in content else "", isUser=False)
+            message = Message(content=content["text_message"] if "text_message" in content else "", is_user=False)
             message.conversation = conv
             message.device = device
             media_list = []
@@ -79,20 +79,21 @@ class DeviceMessageSend(Resource):
                     media.identifier = file
                     MessageToMedia(message=message, media=media)
                     db_session.commit()
-                    media_list.append(media.getSimpleContent())
+                    media_list.append(media.get_simple_content())
             db_session.commit()
             if not media_list:
                 emit('message', {
                     'conversation_id': message.conversation_id,
-                    'message': message.getSimpleJSONCompliantContent(),
+                    'message': message.get_simple_json_compliant_content(),
                     'time': message.sent.isoformat(),
-                    'sender': device.getSimpleJSONCompliantContent(),
+                    'sender': device.get_simple_json_compliant_content(),
                     'media_list': media_list,
                     'status': 'done'},
                      room='conversation_' + str(message.conversation_id), namespace='/')
             else:
-                emit('message', {'conversation_id': message.conversation_id, 'message': message.getSimpleJSONCompliantContent(),
-                                 'status': 'pending'}, room='conversation_' + str(message.conversation_id), namespace='/')
+                emit('message', {'conversation_id': message.conversation_id, 'message':
+                     message.get_simple_json_compliant_content(),
+                     'status': 'pending'}, room='conversation_' + str(message.conversation_id), namespace='/')
             info_sender = "[" + conv.name + "] " + device.name + " : "
             try:
                 MessengerConversationModelSend(0, conv, info_sender + message.text_content)
