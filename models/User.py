@@ -253,7 +253,7 @@ class User(Base):
             "isOnline": self.is_online,
             "type": self.type,
             "hangout": False if self.hangout_email is None or len(self.hangout_email) == 0 else True,
-            "facebook": False if self.facebook_psid is None or len(self.facebook_psid) == 0 else True,
+            "facebook": False if self.facebook_psid is None or self.facebook_psid <= 0 else True,
             "circles": [link.get_content() for link in self.circle_link],
             "invites": [invite.get_content() for invite in self.circle_invite],
             "conversations": [link.get_simple_content() for link in self.conversation_links],
