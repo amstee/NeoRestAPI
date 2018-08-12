@@ -162,12 +162,15 @@ class User(Base):
         if password is not None and password != "":
             if self.password != hashlib.sha512(password.encode('utf-8')).hexdigest():
                 return False, "Mot de passe invalide"
-            if self.jsonToken is not None:
-                try:
+            try:
+                if self.jsonToken is not None:
                     jwt.decode(self.jsonToken, SECRET_KEY)
-                except jwt.ExpiredSignatureError:
-                    return True, self.encodeAuthToken()
-                return True, self.jsonToken
+                    return True, self.jsonToken
+                return True, self.encodeAuthToken()
+            except jwt.ExpiredSignatureError:
+                return True, self.encodeAuthToken()
+            except Exception:
+                return True, self.encodeAuthToken()
         return False, "Aucun mot de passe fourni"
 
     def updatePassword(self, password=None):

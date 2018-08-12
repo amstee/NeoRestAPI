@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from utils.decorators import checkContent, securedAdminRoute, securedRoute, securedDeviceRoute
+from utils.decorators import checkContent, securedAdminRoute, securedRoute
 from models.Device import Device
 from models.Circle import Circle
 from config.database import db_session
@@ -63,9 +63,8 @@ class DeviceInfo(Resource):
 
 
 class InfoForDevice(Resource):
-    @checkContent
-    @securedDeviceRoute
-    def post(self, content, device):
+    @securedRoute
+    def post(self, device):
         try:
             return jsonify({"success": True, "content": device.getContent()})
         except Exception as e:
@@ -150,7 +149,7 @@ class ModifyDevicePassword(Resource):
 
 class CheckDeviceToken(Resource):
     @checkContent
-    @securedDeviceRoute
+    @securedRoute
     def post(self, content, device):
         return jsonify({"success": True, "message": "Le token json de ce device est valide"})
 

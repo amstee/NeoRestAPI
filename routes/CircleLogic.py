@@ -29,8 +29,8 @@ class CircleInvite(Resource):
                     circle_invite = CircleInviteModel()
                     circle_invite.user = dest
                     circle_invite.circle = circle
-                    circle_invite.notify_user(p2={'event': 'invite', 'circle_id': circle.id})
                     db_session.commit()
+                    circle_invite.notify_user(p2={'event': 'invite', 'circle_id': circle.id})
                     return SUCCESS()
                 return FAILED("Utilisateur spécifié introuvable")
             return FAILED("Cercle spécifié introuvable")

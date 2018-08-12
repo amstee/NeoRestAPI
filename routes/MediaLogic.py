@@ -7,7 +7,7 @@ from models.UserToMedia import UserToMedia
 from models.DeviceToMedia import DeviceToMedia
 from models.CircleToMedia import CircleToMedia
 from models.Circle import Circle
-from utils.decorators import securedRoute, checkContent, securedDeviceRoute
+from utils.decorators import securedRoute, checkContent
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
 from utils.security import getUserFromHeader, getDeviceFromHeader
@@ -45,7 +45,7 @@ class CreateMedia(Resource):
 
 class DeviceCreateMedia(Resource):
     @checkContent
-    @securedDeviceRoute
+    @securedRoute
     def post(self, content, device):
         try:
             contentChecker("medias")
@@ -72,7 +72,7 @@ class DeviceCreateMedia(Resource):
 
 class DeviceFindMedia(Resource):
     @checkContent
-    @securedDeviceRoute
+    @securedRoute
     def post(self, content, device):
         try:
             contentChecker("purpose")
@@ -223,7 +223,7 @@ class MediaRequest(Resource):
 
 class DeviceMediaRequest(Resource):
     @checkContent
-    @securedDeviceRoute
+    @securedRoute
     def post(self, content, device):
         try:
             contentChecker("media_id")

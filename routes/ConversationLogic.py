@@ -31,9 +31,9 @@ class ConversationInvite(Resource):
                 new_link = UserToConversation(privilege="STANDARD")
                 new_link.user = dest
                 new_link.conversation = link.conversation
+                db_session.commit()
                 sockets.notify_user(client=dest, is_device=False, p1='conversation',
                                     p2={'event': 'invite', 'conversation_id': link.conversation_id})
-                db_session.commit()
             else:
                 return FAILED("Vous n'avez pas les droits suffisants", 403)
             return SUCCESS()
@@ -61,7 +61,8 @@ class ConversationUserPromote(Resource):
             if link.privilege == "ADMIN":
                 temp.updateContent(privilege="ADMIN")
                 link.updateContent(privilege="STANDARD")
-                sockets.notify_user(client=dest, is_device=False, p1='conversation', p2={'event': 'promoted', 'conversation_id': link.conversation_id})
+                sockets.notify_user(client=dest, is_device=False, p1='conversation', p2={'event': 'promoted',
+                                                                                         'conversation_id': link.conversation_id})
                 return SUCCESS()
             else:
                 return FAILED("Vous n'avez pas les droits suffisants", 403)
