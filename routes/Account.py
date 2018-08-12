@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource
 from config.database import db_session
 from models.User import User as UserModel
-from utils.decorators import securedRoute, checkContent, securedAdminRoute, securedDeviceRoute
+from utils.decorators import securedRoute, checkContent, securedAdminRoute
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
 
@@ -132,7 +132,7 @@ class AccountInfo(Resource):
 
 class DeviceAccountInfo(Resource):
     @checkContent
-    @securedDeviceRoute
+    @securedRoute
     def post(self, content, device):
         try:
             user = db_session.query(UserModel).filter(UserModel.id==content["user_id"]).first()

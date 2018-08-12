@@ -143,7 +143,13 @@ class Device(Base):
         if password is not None and password != "":
             if self.password != hashlib.sha512(password.encode('utf-8')).hexdigest():
                 return False, "Mot de pass invalide"
-            return True, self.encodeAuthToken()
+            try:
+                if self.jsonToken is not None:
+                    jwt.decode(self.jsonToken, SECRET_KEY)
+                    return True, self.jsonToken
+                return True, self.encodeAuthToken()
+            except jwt.ExpiredSignatureError:
+                return True, self.encodeAuthToken()
         return False, "Aucun mot de passe fourni"
 
     def updatePassword(self, password=None):

@@ -1,11 +1,10 @@
-from flask import request
 from flask_restful import Resource
 from config.database import db_session
 from models.Media import Media
 from models.UserToConversation import UserToConversation
 from models.Message import Message
 from models.User import User as UserModel
-from utils.decorators import checkContent, securedDeviceRoute
+from utils.decorators import checkContent, securedRoute
 from models.Conversation import Conversation
 from utils.contentChecker import contentChecker
 from utils.apiUtils import *
@@ -17,7 +16,7 @@ from .Facebook import MessengerConversationModelSend, MessengerUserModelSend
 
 class FirstDeviceMessageSend(Resource):
     @checkContent
-    @securedDeviceRoute
+    @securedRoute
     def post(self, content, device):
         try:
             contentChecker("email")
@@ -61,7 +60,7 @@ class FirstDeviceMessageSend(Resource):
 
 class DeviceMessageSend(Resource):
     @checkContent
-    @securedDeviceRoute
+    @securedRoute
     def post(self, content, device):
         try:
             contentChecker("conversation_id")
@@ -81,6 +80,7 @@ class DeviceMessageSend(Resource):
                     MessageToMedia(message=message, media=media)
                     db_session.commit()
                     media_list.append(media.getSimpleContent())
+            db_session.commit()
             if not media_list:
                 emit('message', {
                     'conversation_id': message.conversation_id,
@@ -93,7 +93,6 @@ class DeviceMessageSend(Resource):
             else:
                 emit('message', {'conversation_id': message.conversation_id, 'message': message.getSimpleJSONCompliantContent(),
                                  'status': 'pending'}, room='conversation_' + str(message.conversation_id), namespace='/')
-            db_session.commit()
             info_sender = "[" + conv.name + "] " + device.name + " : "
             try:
                 MessengerConversationModelSend(0, conv, info_sender + message.text_content)
