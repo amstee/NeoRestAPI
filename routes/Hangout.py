@@ -25,6 +25,19 @@ import json
 SECRET_KEY = "defaultusersecretkey"
 TOKEN="yZZieXB8D64T1qMxI9fJVCgC1vVMUB70PB9p3lIYSN4="
 
+KEY_FILE={
+  "type": "service_account",
+  "project_id": "neobot-1531083330987",
+  "private_key_id": "0b200e9c75678a354c927ca231982c68c3182956",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDR3Z+9E86VhQHX\nTyk0j5TZILSFq2XnmRjJ2/4buQhfNVS6YDRRPA2r/OpmSMPEYAfqGx4k+dWE4sq4\nm7q1d2jiy2aRsfTc3GiLJJvsC0hmixgGf4SlMCKNkEqLc1fzmyAp3ryj+NBwiXrN\nUavCfzMa4sjeOZYMR62sswOC7E+hZRJXqMZPCnYF7/BceYL14ohHm9uGimhWHgu+\nkP7POpNj5YC6bw3LjgLBSPZMF2lPYkIx7WXqlyB/Gv4OGgl5H4mMHis0WFA/SYkg\nxFoXzU9mwzYnenprhd2/VsgRvgOgBsXZda2I8fRM+dL1V+Fn1BahRGF0eii6s72L\niJTSOx5vAgMBAAECggEAHTehmY08YYyW6QbYUbz7mA75kvJ9yXSDAvdhtTJZfAfM\nt/XU0sptjNg1OfA/cQN9lpYX6EXv+AQq/PCRWdo5+/kdWoNP97+nvldmbcJUXhJX\nUfBG40iERvkjp65zPDMIk0uzL5DgVAqP0i3gn79dugyAso+J2EPSZgy2HHAR1gIf\nh2ZUZPDt9AXvnhx6T2IbkSl2HDMjYTn2F/TSVkfhNHZdSBT/+i2yPNHRJBxzUQlS\nzi8jkQqA/tEoEtSprs5m8m91TTn3wkpFM25oNCqWcatzXEUg9lB3qhJeq3bBQUFC\ndNECfyk0unriBEDvlBvAD/IHoqeMEYUiEemee8McgQKBgQD5whO1DUL95b53hV96\n6BjQHH27v1yeg79awd5jY1vpM9KYUWgUq1n6DJgr1bzLObvAX2ojw3GBFmtXC4X2\niToSJdO48Ti9HTK4rNz9l3tVGF1AdHG+8DKP4JSiQvFD7j66DjDRZ+7ASAXsSVIb\n8j2H3Vshj2gkSomSyTkCq3+UXwKBgQDXHFH1cao1NYU08FnhHQorc12q5gHq63jc\nQTB3a5VHo5J3UxP9hp+m/mzV99MO1eKOLnzsoKK0InsowAEmCAYTmi++HIlE5oyr\n7gXJSygKzAtcLK3nCw3HAkdYfChPPP158nPndaS1GCe88jJU+V3gQP2TQ3rgmzpX\nAUgKT/0v8QKBgQDSBnFaE//c0IDds0t6aIjNINhetGonZnTY1iS0AU6+CXUz32kd\n0IZGbqbcXc14PGF1QQdZcbYWLosvVKJfkkBCGIs1f6wN4+rOP5dKrULqaSWp2QH5\n5bUvJlT3KkIGtOcMwHgu8C5mhWptq66fj5JMmUlULGsP8ZpE1G/bneoYEwKBgGKV\nTQ5yeDIIhDLd0CM2HtoI9i2DWe+i2PIAQkkImhKJ6W8cOPYgw3xR7+kjuat75GeK\n8J+1gruRbeYgEKawWLCVIjo7c8GK8388B5TYB9Li7nXg2BYh37+L0MzBoeumpPhF\nYE78gG6qUlPqn5yH6DkFL/FUpLTZDySeprhrLjrRAoGAY4A+w/+MsEuseamRR1BC\n1M2NZwD/Yj7skN8XR8Jo/jnAXg4QdAoNaVr5mJdVccF9N0u9sVUdHrkHoWIdjJ9I\nO4e0WQqikm7cvamzwoQ1ur/ITahdxwLtft9M+wl208KEGzZpRBs7TOvKqxy6+SyC\nG2OGa7Xhy9wJPA2zFyJO7GE=\n-----END PRIVATE KEY-----\n",
+  "client_email": "starting-account-oxs2g8j3eirm@neobot-1531083330987.iam.gserviceaccount.com",
+  "client_id": "117878793462799396292",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/starting-account-oxs2g8j3eirm%40neobot-1531083330987.iam.gserviceaccount.com"
+}
+
 def encodePostBackPayload(hangoutEmail, message_text, link):
     try:
         payload = {
@@ -85,7 +98,6 @@ def LinkUserToHangout(apiToken, email):
 
 def isTokenValid(content):
     try:
-        print("---Check hangout token---", file=sys.stderr)
         if content['token'] == TOKEN:
             return True
         return False
@@ -141,15 +153,14 @@ def SendMessageChoice(recipient_id, message_text):
 
 def sendToSpace(space_id, message):
     scopes = ['https://www.googleapis.com/auth/chat.bot']
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(
-        'ressources/NeoBot-0b200e9c7567.json', scopes)
+    credentials = ServiceAccountCredentials.from_json_keyfile_dict(KEY_FILE, scopes)
     http = Http()
     credentials.authorize(http)
     chat = build('chat', 'v1', http=http)
     resp = chat.spaces().messages().create(
         parent=space_id,
         body={'text': message}).execute()
-    print(resp)
+    return resp
 
 def HangoutCircleModelSend(senderID, circle, text_message):
     circleTargets = db_session.query(UserToCircle).filter(UserToCircle.circle_id == circle.id)
@@ -165,8 +176,6 @@ def HangoutConversationModelSend(senderID, conversation, text_message):
 class WebhookHangout(Resource):
     @checkContent
     def post(self, content):
-        print("---Hangout---", file=sys.stderr)
-        print(content, file=sys.stderr)
         try:
             if isTokenValid(content) == True:
                 if content['type'] == 'ADDED_TO_SPACE' and content['space']['type'] == 'ROOM':
@@ -183,7 +192,6 @@ class WebhookHangout(Resource):
                     else:
                         resp = jsonify({"text":"Votre compte hangout n'est lié a aucun compte NEO"})
                 elif content['type'] == "CARD_CLICKED":
-                    print(str(content['action']['parameters']))
                     for elem in content['action']['parameters']:
                         resp = jsonify({"text" : handleConversationPayload(elem['value'])})
                 resp.status_code = 200
