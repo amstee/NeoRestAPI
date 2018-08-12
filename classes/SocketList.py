@@ -20,8 +20,10 @@ class SocketList:
     def remove(self, sid):
         if sid in self.socket_dic:
             self.socket_dic.pop(sid)
-            session.pop("socket")
-            session.pop("sid")
+            if session.get("socket") is True:
+                session.pop("socket")
+            if session.get("sid") is True:
+                session.pop("sid")
             return True
         return False
 
