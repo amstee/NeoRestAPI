@@ -1,11 +1,10 @@
-from flask import request
 from flask_restful import Resource
 from config.database import db_session
 from models.MessageToMedia import MessageToMedia
 from models.Media import Media
 from models.Device import Device
 from models.Message import Message
-from utils.decorators import checkContent, securedAdminRoute, securedDeviceRoute
+from utils.decorators import checkContent, securedAdminRoute, securedRoute
 from utils.security import deviceHasAccessToMessage
 from models.Conversation import Conversation
 from utils.contentChecker import contentChecker
@@ -64,7 +63,7 @@ class DeviceMessageCreate(Resource):
 
 class DeviceMessageDelete(Resource):
     @checkContent
-    @securedDeviceRoute
+    @securedRoute
     def post(self, content, device):
         try:
             contentChecker("message_id")
@@ -86,7 +85,7 @@ class DeviceMessageDelete(Resource):
 
 class DeviceMessageInfo(Resource):
     @checkContent
-    @securedDeviceRoute
+    @securedRoute
     def post(self, content, device):
         try:
             contentChecker("message_id")
@@ -102,7 +101,7 @@ class DeviceMessageInfo(Resource):
 
 class DeviceMessageList(Resource):
     @checkContent
-    @securedDeviceRoute
+    @securedRoute
     def post(self, content, device):
         try:
             contentChecker("conversation_id", "quantity")
@@ -117,7 +116,7 @@ class DeviceMessageList(Resource):
 
 class DeviceMessageUpdate(Resource):
     @checkContent
-    @securedDeviceRoute
+    @securedRoute
     def post(self, content, device):
         try:
             contentChecker("message_id")
