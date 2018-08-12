@@ -72,9 +72,7 @@ def SendMessage(recipient_id, message_text):
         }
     })
     r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
-    if r.status_code != 200:
-        return False
-    return True
+    return data, r.status_code
 
 def MessageChoice(sender_id, message_text):
     quick_replies = []
@@ -103,9 +101,7 @@ def SendMessageChoice(recipient_id, message_text):
         }
     })
     r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
-    if r.status_code != 200:
-        return False
-    return True
+    return data, r.status_code
 
 def MessengerUserModelSend(userTarget, text_message):
     if userTarget.facebookPSID != -1:
@@ -165,9 +161,6 @@ class Webhook(Resource):
     @checkContent
     def post(self, content):
         try:
-            print("----facebook content----", file=sys.stderr)
-            print(content, file=sys.stderr)
-            print("----facebook content end---", file=sys.stderr)
             if content["object"] == "page":
                 for entry in content["entry"]:
                     for messaging_event in entry["messaging"]:
@@ -176,25 +169,22 @@ class Webhook(Resource):
                             recipient_id = messaging_event["recipient"]["id"]  
                             message_text = messaging_event["message"]["text"]
                             splitMessage = message_text.split(' ')
-                            print(splitMessage, file=sys.stderr)
                             # messenger
                             if 'quick_reply' not in messaging_event["message"]:
                                 if len(splitMessage) >= 2 and splitMessage[0] == "/token":
                                     message = LinkUserToFacebook(splitMessage[1], sender_id)
-                                    SendMessage(sender_id, message)
+                                    resp = SendMessage(sender_id, message)
+                                    return resp
                                 elif IsUserLinked(sender_id) == True:
                                     SendMessageChoice(sender_id, message_text)
+                                    return "To handle", 200
                                 else:
-                                    SendMessage(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
+                                    resp = SendMessage(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
+                                    return resp
                             if 'quick_reply' in messaging_event["message"]:
                                 handleConversationPayload(messaging_event["message"]["quick_reply"]["payload"])
-                                print("----handling conversation----", file=sys.stderr)
-                            # messenger
-                            print("----messenger content----", file=sys.stderr)
-                            print("sender id : " + str(sender_id), file=sys.stderr)
-                            print("recipient_id : " + str(recipient_id), file=sys.stderr)
-                            print("message_text : " + message_text, file=sys.stderr)
-                            print("----messenger content end----", file=sys.stderr)
+                                return "To handle", 200
+            #to ignore unhandled request (if not it stay locked in queue)
             return "ok", 200
         except Exception as e:
             print(e, file=sys.stderr)
