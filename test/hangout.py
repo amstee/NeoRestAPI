@@ -4,9 +4,10 @@ import json
 
 sys.path.insert(0,'..')
 from api import NeoAPI
-from routes.Hangout import sendToSpace
+from bot.hangout import send_to_space
 
 TESTING_SPACE="spaces/v4YQNAAAAAE"
+
 
 class Messaging(unittest.TestCase):
     def setUp(self):
@@ -14,27 +15,28 @@ class Messaging(unittest.TestCase):
         self.api = neo.activate_testing()
 
     def test_message_valid_space(self):
-        response = sendToSpace(TESTING_SPACE, "unitary test")
+        response = send_to_space(TESTING_SPACE, "unitary test")
         assert response['text'] == "unitary test"
 
     def test_message_invalid_space(self):
         try:
-            sendToSpace("spaces/----", "unitary test")
+            send_to_space("spaces/----", "unitary test")
         except Exception as ex:
             assert "Error received" == "Error received"
     
     def test_invalid_message(self):
         try:
-            sendToSpace(TESTING_SPACE, "")
+            send_to_space(TESTING_SPACE, "")
         except Exception as ex:
             assert "Error received" == "Error received"
+
 
 class TokenLink(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
 
-    def test_invalide_token(self):
+    def test_invalid_token(self):
         json_data = {
             'type': 'MESSAGE',
             'eventTime': '2018-07-20T22:42:11.139359Z',
@@ -44,7 +46,8 @@ class TokenLink(unittest.TestCase):
                 'sender': {
                     'name': 'users/110936718053534267233',
                     'displayName': 'Paul-Sirawit Kerebel',
-                    'avatarUrl': 'https://lh3.googleusercontent.com/-Pqpjwgvt0ho/AAAAAAAAAAI/AAAAAAAAAAA/AAnnY7ptADXkPoNldHy6z8kq7gUKOjeJNw/mo/photo.jpg',
+                    'avatarUrl': 'https://lh3.googleusercontent.com/-Pqpjwgvt0ho/AAAAAAAAAAI/AAAAAAAAAAA/AAnnY7ptADXkPo'
+                                 'NldHy6z8kq7gUKOjeJNw/mo/photo.jpg',
                     'email': 'paul.kerebel@api.neo.ovh',
                     'type': 'HUMAN'
                     },
@@ -65,7 +68,8 @@ class TokenLink(unittest.TestCase):
             'user': {
                 'name': 'users/110936718053534267233',
                 'displayName': 'Paul-Sirawit Kerebel',
-                'avatarUrl': 'https://lh3.googleusercontent.com/-Pqpjwgvt0ho/AAAAAAAAAAI/AAAAAAAAAAA/AAnnY7ptADXkPoNldHy6z8kq7gUKOjeJNw/mo/photo.jpg',
+                'avatarUrl': 'https://lh3.googleusercontent.com/-Pqpjwgvt0ho/AAAAAAAAAAI/AAAAAAAAAAA'
+                             '/AAnnY7ptADXkPoNldHy6z8kq7gUKOjeJNw/mo/photo.jpg',
                 'email': 'paul.kerebel@api.neo.ovh',
                 'type': 'HUMAN'
                 },
@@ -73,7 +77,9 @@ class TokenLink(unittest.TestCase):
                 'name': 'spaces/v4YQNAAAAAE',
                 'type': 'DM'
                 },
-            'configCompleteRedirectUrl': 'https://chat.google.com/api/bot_config_complete?token=AI8PGBaeEDhoPgLv9v6ltym1tAB6wum7HRSLk3dZrIkFKCnJyCDt-hVZoA9NgXoeWtdpgu_CyoSmuCL11Sl7uranPehaBsBXKGCvN6uhJHMBPHHcIY3MjqTeClYDzumPS6LH2Qwdmkv5IJ1-ymbR'
+            'configCompleteRedirectUrl': 'https://chat.google.com/api/bot_config_complete?token=AI8PGBaeEDhoPgLv9v6ltym'
+                                         '1tAB6wum7HRSLk3dZrIkFKCnJyCDt-hVZoA9NgXoeWtdpgu_CyoSmuCL11Sl7uranPehaBsBXKGCv'
+                                         'N6uhJHMBPHHcIY3MjqTeClYDzumPS6LH2Qwdmkv5IJ1-ymbR'
             }
         response = self.api.post('/api/hangout/webhook', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
@@ -90,7 +96,8 @@ class TokenLink(unittest.TestCase):
                 'sender': {
                     'name': 'users/110936718053534267233',
                     'displayName': 'Paul-Sirawit Kerebel',
-                    'avatarUrl': 'https://lh3.googleusercontent.com/-Pqpjwgvt0ho/AAAAAAAAAAI/AAAAAAAAAAA/AAnnY7ptADXkPoNldHy6z8kq7gUKOjeJNw/mo/photo.jpg',
+                    'avatarUrl': 'https://lh3.googleusercontent.com/-Pqpjwgvt0ho/AAAAAAAAAAI/AAAAAAAAAAA/AAnnY7ptADXkPo'
+                                 'NldHy6z8kq7gUKOjeJNw/mo/photo.jpg',
                     'email': 'paul.kerebel@api.neo.ovh',
                     'type': 'HUMAN'
                     },
@@ -111,7 +118,8 @@ class TokenLink(unittest.TestCase):
             'user': {
                 'name': 'users/110936718053534267233',
                 'displayName': 'Paul-Sirawit Kerebel',
-                'avatarUrl': 'https://lh3.googleusercontent.com/-Pqpjwgvt0ho/AAAAAAAAAAI/AAAAAAAAAAA/AAnnY7ptADXkPoNldHy6z8kq7gUKOjeJNw/mo/photo.jpg',
+                'avatarUrl': 'https://lh3.googleusercontent.com/-Pqpjwgvt0ho/AAAAAAAAAAI/AAAAAAAAAAA/AAnnY7ptADXkPoNldH'
+                             'y6z8kq7gUKOjeJNw/mo/photo.jpg',
                 'email': 'paul.kerebel@api.neo.ovh',
                 'type': 'HUMAN'
                 },
@@ -119,14 +127,16 @@ class TokenLink(unittest.TestCase):
                 'name': 'spaces/v4YQNAAAAAE',
                 'type': 'DM'
                 },
-            'configCompleteRedirectUrl': 'https://chat.google.com/api/bot_config_complete?token=AI8PGBaeEDhoPgLv9v6ltym1tAB6wum7HRSLk3dZrIkFKCnJyCDt-hVZoA9NgXoeWtdpgu_CyoSmuCL11Sl7uranPehaBsBXKGCvN6uhJHMBPHHcIY3MjqTeClYDzumPS6LH2Qwdmkv5IJ1-ymbR'
+            'configCompleteRedirectUrl': 'https://chat.google.com/api/bot_config_complete?token=AI8PGBaeEDhoPgLv9v6ltym'
+                                         '1tAB6wum7HRSLk3dZrIkFKCnJyCDt-hVZoA9NgXoeWtdpgu_CyoSmuCL11Sl7uranPehaBsBXKGCv'
+                                         'N6uhJHMBPHHcIY3MjqTeClYDzumPS6LH2Qwdmkv5IJ1-ymbR'
             }
         response = self.api.post('/api/hangout/webhook', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['text'] == 'Token invalide, authentifiez vous a nouveau'
 
-    def test_unliked_account(self):
+    def test_unlinked_account(self):
         json_data = {
             'type': 'MESSAGE',
             'eventTime': '2018-07-20T22:42:11.139359Z',
@@ -136,7 +146,8 @@ class TokenLink(unittest.TestCase):
                 'sender': {
                     'name': 'users/110936718053534267233',
                     'displayName': 'Paul-Sirawit Kerebel',
-                    'avatarUrl': 'https://lh3.googleusercontent.com/-Pqpjwgvt0ho/AAAAAAAAAAI/AAAAAAAAAAA/AAnnY7ptADXkPoNldHy6z8kq7gUKOjeJNw/mo/photo.jpg',
+                    'avatarUrl': 'https://lh3.googleusercontent.com/-Pqpjwgvt0ho/AAAAAAAAAAI/AAAAAAAAAAA/AAnnY7ptADXkPo'
+                                 'NldHy6z8kq7gUKOjeJNw/mo/photo.jpg',
                     'email': 'paul.kerebel@api.neo.ovh',
                     'type': 'HUMAN'
                     },
@@ -157,7 +168,8 @@ class TokenLink(unittest.TestCase):
             'user': {
                 'name': 'users/110936718053534267233',
                 'displayName': 'Paul-Sirawit Kerebel',
-                'avatarUrl': 'https://lh3.googleusercontent.com/-Pqpjwgvt0ho/AAAAAAAAAAI/AAAAAAAAAAA/AAnnY7ptADXkPoNldHy6z8kq7gUKOjeJNw/mo/photo.jpg',
+                'avatarUrl': 'https://lh3.googleusercontent.com/-Pqpjwgvt0ho/AAAAAAAAAAI/AAAAAAAAAAA/AAnnY7ptADXkPoNldH'
+                             'y6z8kq7gUKOjeJNw/mo/photo.jpg',
                 'email': 'paul.kerebel@api.neo.ovh',
                 'type': 'HUMAN'
                 },
@@ -165,7 +177,9 @@ class TokenLink(unittest.TestCase):
                 'name': 'spaces/v4YQNAAAAAE',
                 'type': 'DM'
                 },
-            'configCompleteRedirectUrl': 'https://chat.google.com/api/bot_config_complete?token=AI8PGBaeEDhoPgLv9v6ltym1tAB6wum7HRSLk3dZrIkFKCnJyCDt-hVZoA9NgXoeWtdpgu_CyoSmuCL11Sl7uranPehaBsBXKGCvN6uhJHMBPHHcIY3MjqTeClYDzumPS6LH2Qwdmkv5IJ1-ymbR'
+            'configCompleteRedirectUrl': 'https://chat.google.com/api/bot_config_complete?token=AI8PGBaeEDhoPgLv9v6ltym'
+                                         '1tAB6wum7HRSLk3dZrIkFKCnJyCDt-hVZoA9NgXoeWtdpgu_CyoSmuCL11Sl7uranPehaBsBXKGCv'
+                                         'N6uhJHMBPHHcIY3MjqTeClYDzumPS6LH2Qwdmkv5IJ1-ymbR'
             }
         response = self.api.post('/api/hangout/webhook', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
