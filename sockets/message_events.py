@@ -8,7 +8,7 @@ from models.Conversation import Conversation
 from models.Media import Media
 from models.Message import Message
 from routes.Facebook import MessengerConversationModelSend
-from routes.Hangout import HangoutConversationModelSend
+from bot.hangout import hangout_conversation_model_send
 
 
 @socketio.on('writing')
@@ -73,7 +73,7 @@ def message_send(content):
                     except Exception:
                         pass
                     try:
-                        HangoutConversationModelSend(socket.client.id, conv, content["text_message"])
+                        hangout_conversation_model_send(socket.client.id, conv, content["text_message"])
                     except Exception:
                         pass
                     media_list = []
