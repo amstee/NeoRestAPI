@@ -7,7 +7,7 @@ from utils.contentChecker import check_json
 from models.Conversation import Conversation
 from models.Media import Media
 from models.Message import Message
-from routes.Facebook import MessengerConversationModelSend
+from bot.facebook import messenger_conversation_model_send
 from bot.hangout import hangout_conversation_model_send
 
 
@@ -69,7 +69,7 @@ def message_send(content):
                             message.link = link
                     db_session.commit()
                     try:
-                        MessengerConversationModelSend(socket.client.id, conv, content["text_message"])
+                        messenger_conversation_model_send(socket.client.id, conv, content["text_message"])
                     except Exception:
                         pass
                     try:

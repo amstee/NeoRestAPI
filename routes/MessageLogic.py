@@ -13,7 +13,7 @@ from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from config.sockets import sockets
 from flask_socketio import emit
-from .Facebook import MessengerCircleModelSend, MessengerConversationModelSend
+from bot.facebook import messenger_circle_model_send, messenger_conversation_model_send
 
 
 class FirstMessageToDeviceSend(Resource):
@@ -50,7 +50,7 @@ class FirstMessageToDeviceSend(Resource):
                                  "event": 'invite'})
             info_sender = "[" + conversation.name + "] " + user.first_name + " : "
             try:
-                MessengerCircleModelSend(0, circle, info_sender + message.text_content)
+                messenger_circle_model_send(0, circle, info_sender + message.text_content)
             except Exception:
                 pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
@@ -96,7 +96,7 @@ class FirstMessageSend(Resource):
                                  "event": 'invite'})
             info_sender = "[" + conversation.name + "] " + user.first_name + " : "
             try:
-                MessengerCircleModelSend(0, circle, info_sender + message.text_content)
+                messenger_circle_model_send(0, circle, info_sender + message.text_content)
             except Exception:
                 pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id,
@@ -148,7 +148,7 @@ class MessageSend(Resource):
             conversation = db_session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
             info_sender = "[" + link.conversation.name + "] " + user.first_name + " : "
             try:
-                MessengerConversationModelSend(link.user_id, conversation, info_sender + message.text_content)
+                messenger_conversation_model_send(link.user_id, conversation, info_sender + message.text_content)
             except Exception:
                 pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
