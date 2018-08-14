@@ -4,21 +4,21 @@ import json
 
 sys.path.insert(0,'..')
 from api import NeoAPI
-from routes.Facebook import SendMessage
+from routes.Facebook import send_message
 
 MESSENGER_ID_TESTING="1726772610739883"
 
 class Messaging(unittest.TestCase):
     def test_invalid_recipient(self):
-        response = SendMessage(0000000000000, "unitary test")
+        response = send_message(0000000000000, "unitary test")
         assert response[1] == 400
 
     def test_valid_recipient(self):
-        response = SendMessage(MESSENGER_ID_TESTING, "unitary test")
+        response = send_message(MESSENGER_ID_TESTING, "unitary test")
         assert response[1] == 200
 
     def test_invalid_message(self):
-        response = SendMessage(MESSENGER_ID_TESTING, "")
+        response = send_message(MESSENGER_ID_TESTING, "")
         assert response[1] == 400
 
 class TokenLink(unittest.TestCase):

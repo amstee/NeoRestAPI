@@ -1,157 +1,14 @@
 from flask_restful import Resource
-from config.database import db_session
-from models.User import User
-from models.Circle import Circle
-from models.UserToCircle import UserToCircle
-from models.Conversation import Conversation
-from models.UserToConversation import UserToConversation
-from models.Message import Message
 from utils.decorators import check_content
 from webargs import fields
 from webargs.flaskparser import use_args
-import requests
+from bot.facebook import send_message, link_user_to_facebook, is_user_linked, send_message_choice
+from bot.facebook import handle_conversation_payload
+from config.facebook import SECRET_TOKEN
 import sys
-import jwt
-import datetime
-import json
-
-SECRET_KEY = "defaultusersecretkey"
-SECRET_TOKEN = "abcdef12345"
-PAGE_ACCESS_TOKEN = "EAACr1x9RQUwBANslMAGv4aU4gCqGpNvZCGMZBnQ8YhaAAkssgfGj95z0bAnPUPZBAiiYkgl34TcmEGSdUzaQsx1JcnqyF" +\
-                    "sKn3EArkEQ7TUZCTQMeZChTxRsZBzmXbCMtHk3SRrtJIwB2YYTKABVwRAQArEGK2HhDOSyB7MkkbMnOsrn8DEtdGF"
 
 
-def encodePostBackPayload(facebook_psid, message_text, link):
-    try:
-        payload = {
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30, seconds=1),
-            'iat': datetime.datetime.utcnow(),
-            'facebook_psid': facebook_psid,
-            'user_id': link.user_id,
-            'link_id': link.id,
-            'message_text': message_text
-        }
-        token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
-        return token.decode()
-    except Exception as e:
-        print(e)
-        return str(e)
-
-
-def handleConversationPayload(messagePayload):
-    try:
-        payload = jwt.decode(messagePayload, SECRET_KEY)
-        try:
-            link = db_session.query(UserToConversation).filter(UserToConversation.id == payload["link_id"] and
-                                                               UserToConversation.user_id == payload["user_id"]).first()
-            message = Message(content=payload["message_text"])
-            message.link = link
-            message.conversation = link.conversation
-            db_session.commit()
-        except Exception as e:
-            print("Une erreur est survenue : " + str(e), file=sys.stderr)
-            return "Une erreur est survenue : " + str(e)
-    except jwt.ExpiredSignatureError:
-        return 'Message expiré, renvoyez le message'
-    except jwt.InvalidTokenError:
-        return 'Message expiré, renvoyez le message'
-
-
-def SendMessage(recipient_id, message_text):
-    params = {
-        "access_token": PAGE_ACCESS_TOKEN
-    }
-    headers = {
-        "Content-Type": "application/json"
-    }
-    data = json.dumps({
-        "recipient": {
-            "id": recipient_id
-        },
-        "message": {
-            "text": message_text
-        }
-    })
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
-    return data, r.status_code
-
-
-def MessageChoice(sender_id, message_text):
-    quick_replies = []
-    user = db_session.query(User).filter(User.facebook_psid == sender_id).first()
-    for UserToConv in user.conversationLinks:
-        conv = db_session.query(Conversation).filter(Conversation.id == UserToConv.conversation_id).first()
-        payload = encodePostBackPayload(sender_id, message_text, UserToConv)
-        quick_replies.append({"content_type": "text", "title": conv.name, "payload": payload})
-    return quick_replies
-
-
-def SendMessageChoice(recipient_id, message_text):
-    params = {
-        "access_token": PAGE_ACCESS_TOKEN
-    }
-    headers = {
-        "Content-Type": "application/json"
-    }
-    data = json.dumps({
-        "recipient": {
-            "id": recipient_id
-        },
-        "message": {
-            "text": "Choisissez une conversation",
-            "quick_replies": MessageChoice(recipient_id, message_text)
-        }
-    })
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
-    return data, r.status_code
-
-
-def MessengerUserModelSend(userTarget, text_message):
-    if userTarget.facebook_psid != -1:
-        SendMessage(userTarget.facebook_psid, text_message)
-        return True
-    return False
-
-
-def MessengerCircleModelSend(senderID, circle, text_message):
-    circleTargets = db_session.query(UserToCircle).filter(UserToCircle.circle_id == circle.id)
-    for targetUser in circleTargets:
-        targetUserData = db_session.query(User).filter(targetUser.user_id == User.id).first()
-        if senderID != targetUserData.id and targetUserData.facebook_psid != -1:
-            SendMessage(targetUserData.facebook_psid, text_message)
-
-
-def MessengerConversationModelSend(senderID, conversation, text_message):
-    circle = db_session.query(Circle).filter(Circle.id == conversation.circle_id).first()
-    MessengerCircleModelSend(senderID, circle, text_message)
-
-
-def IsUserLinked(facebook_psid):
-    user = db_session.query(User).filter(User.facebook_psid == facebook_psid).first()
-    if user is not None:
-        return True
-    return False
-
-
-def LinkUserToFacebook(apiToken, psid):
-        try:
-            payload = jwt.decode(apiToken, SECRET_KEY)
-            try:
-                user = db_session.query(User).filter(User.id == payload['sub']).first()
-                if user is not None:
-                    user.update_content(facebook_psid=psid)
-                    return "Bienvenue sur NEO, " + payload['first_name'] + " " + payload['last_name'] + " !"
-                else:
-                    return 'Token invalide !'
-            except Exception as e:
-                return "Une erreur est survenue, merci de réessayer ultérieurement"
-        except jwt.ExpiredSignatureError:
-            return 'La token a expiré, authentifiez vous a nouveau'
-        except jwt.InvalidTokenError:
-            return 'Token invalide, authentifiez vous a nouveau'
-
-
-class Webhook(Resource):
+class WebHookMessenger(Resource):
     messenger_hook = {
         "hub.mode": fields.Str(missing=None),
         "hub.challenge": fields.Int(missing=None),
@@ -175,20 +32,20 @@ class Webhook(Resource):
                         if messaging_event.get("message"):
                             sender_id = messaging_event["sender"]["id"]        
                             message_text = messaging_event["message"]["text"]
-                            splitMessage = message_text.split(' ')
+                            split_message = message_text.split(' ')
                             if 'quick_reply' not in messaging_event["message"]:
-                                if len(splitMessage) >= 2 and splitMessage[0] == "/token":
-                                    message = LinkUserToFacebook(splitMessage[1], sender_id)
-                                    resp = SendMessage(sender_id, message)
+                                if len(split_message) >= 2 and split_message[0] == "/token":
+                                    message = link_user_to_facebook(split_message[1], sender_id)
+                                    resp = send_message(sender_id, message)
                                     return resp
-                                elif IsUserLinked(sender_id):
-                                    SendMessageChoice(sender_id, message_text)
+                                elif is_user_linked(sender_id):
+                                    send_message_choice(sender_id, message_text)
                                     return "To handle", 200
                                 else:
-                                    resp = SendMessage(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
+                                    resp = send_message(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
                                     return resp
                             if 'quick_reply' in messaging_event["message"]:
-                                handleConversationPayload(messaging_event["message"]["quick_reply"]["payload"])
+                                handle_conversation_payload(messaging_event["message"]["quick_reply"]["payload"])
                                 return "To handle", 200
             return "ok", 200
         except Exception as e:

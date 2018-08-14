@@ -9,7 +9,7 @@ from utils.security import device_has_access_to_message
 from models.Conversation import Conversation
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
-from .Facebook import MessengerConversationModelSend
+from bot.facebook import messenger_conversation_model_send
 from flask_socketio import emit
 
 
@@ -52,7 +52,7 @@ class DeviceMessageCreate(Resource):
                                  'status': 'pending'}, room='conversation_' + str(conversation.id), namespace='/')
             info_sender = "[" + conversation.name + "] " + device.name + " : "
             try:
-                MessengerConversationModelSend(0, conversation, info_sender + message.text_content)
+                messenger_conversation_model_send(0, conversation, info_sender + message.text_content)
             except Exception:
                 pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
