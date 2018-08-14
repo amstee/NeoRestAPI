@@ -3,17 +3,18 @@ import sys
 import json
 
 sys.path.insert(0,'..')
-from api import neoapi
+from api import NeoAPI
 from config.database import db_session
 from models.User import User as UserModel
 from models.UserToCircle import UserToCircle
 from models.CircleInvite import CircleInvite
 from models.Circle import Circle
-from utils.testutils import AuthenticateUser
+from utils.testutils import authenticate_user
+
 
 class TestCircleInvite(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcirclelogic@test.com").first()
         if self.user1 is None:
@@ -32,9 +33,9 @@ class TestCircleInvite(unittest.TestCase):
         self.link.user = self.user1
         self.link.circle = self.circle
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.token3 = AuthenticateUser(self.api, self.user3, "test")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.token3 = authenticate_user(self.api, self.user3, "test")
 
     def tearDown(self):
         db_session.delete(self.user1)
@@ -121,7 +122,7 @@ class TestCircleInvite(unittest.TestCase):
 
 class TestCircleJoin(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcirclejoin@test.com").first()
         if self.user1 is None:
@@ -139,8 +140,8 @@ class TestCircleJoin(unittest.TestCase):
         self.invite.user = self.user2
         self.invite.circle = self.circle
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
 
     def tearDown(self):
         db_session.delete(self.user1)
@@ -189,7 +190,7 @@ class TestCircleJoin(unittest.TestCase):
 
 class TestCircleReject(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcirclereject@test.com").first()
         if self.user1 is None:
@@ -207,8 +208,8 @@ class TestCircleReject(unittest.TestCase):
         self.invite.user = self.user2
         self.invite.circle = self.circle
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
 
     def tearDown(self):
         db_session.delete(self.user1)
@@ -257,7 +258,7 @@ class TestCircleReject(unittest.TestCase):
 
 class TestCircleQuit(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcirclequit@test.com").first()
         if self.user1 is None:
@@ -282,9 +283,9 @@ class TestCircleQuit(unittest.TestCase):
         self.link1.user = self.user3
         self.link1.circle = self.circle
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.token3 = AuthenticateUser(self.api, self.user3, "test")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.token3 = authenticate_user(self.api, self.user3, "test")
 
     def tearDown(self):
         db_session.delete(self.user1)
@@ -345,7 +346,7 @@ class TestCircleQuit(unittest.TestCase):
 
 class TestCircleKick(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcirclequit@test.com").first()
         if self.user1 is None:
@@ -370,9 +371,9 @@ class TestCircleKick(unittest.TestCase):
         self.link1.user = self.user3
         self.link1.circle = self.circle
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.token3 = AuthenticateUser(self.api, self.user3, "test")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.token3 = authenticate_user(self.api, self.user3, "test")
 
     def tearDown(self):
         db_session.delete(self.user1)

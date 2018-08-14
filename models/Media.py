@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, event, Boolean
+from sqlalchemy import Column, Integer, String, event, Boolean
 from sqlalchemy.orm import relationship
 from config.database import Base
 from config.database import db_session
@@ -37,7 +37,7 @@ class Media(Base):
         file.save(os.path.join(UPLOAD_FOLDER + self.directory + os.path.sep, file_name))
         self.uploaded = True
 
-    def clearFile(self):
+    def clear_file(self):
         try:
             os.remove(os.path.join(UPLOAD_FOLDER + self.directory + os.path.sep, self.filename + self.extension))
             self.uploaded = False
@@ -45,34 +45,34 @@ class Media(Base):
         except Exception as e:
             return False
 
-    def CanBeAccessedByDevice(self, device):
+    def can_be_accessed_by_device(self, device):
         if self.message_link is not None:
             if self.message_link.message.conversation.device_access is True:
                 return self.message_link.message.conversation.circle_id == device.circle_id
         elif self.user_link is not None:
-            return self.user_link.user.isInCircle(device.circle_id)
+            return self.user_link.user.is_in_circle(device.circle_id)
         elif self.device_link is not None:
             return self.device_link.device_id == device.id
         elif self.circle_link is not None:
             return self.circle_link.circle.device.id == device.id
         return False
 
-    def CanBeAccessedByUser(self, user):
+    def can_be_accessed_by_user(self, user):
         if self.message_link is not None:
-            return user.isInConversation(self.message_link.message.conversation_id)
+            return user.is_in_conversation(self.message_link.message.conversation_id)
         elif self.user_link is not None:
             if self.user_link.user_id == user.id:
                 return True
-            return user.hasMatchingCircle(self.user_link.user)
+            return user.has_matching_circle(self.user_link.user)
         elif self.device_link is not None:
-            return user.isInCircle(self.device_link.device.circle_id)
+            return user.is_in_circle(self.device_link.device.circle_id)
         elif self.circle_link is not None:
-            return self.circle_link.circle.hasAdmin(user)
+            return self.circle_link.circle.has_admin(user)
         return False
 
-    def CanBeUploadedByDevice(self, device):
+    def can_be_uploaded_by_device(self, device):
         if self.message_link is not None:
-            if self.message_link.message.isUser is False:
+            if self.message_link.message.is_user is False:
                 if self.message_link.message.conversation.device_access is True:
                     return self.message_link.message.conversation.circle_id == device.circle_id
         elif self.user_link is not None:
@@ -83,16 +83,16 @@ class Media(Base):
             return self.circle_link.circle.device.id == device.id
         return False
 
-    def CanBeUploadedByUser(self, user):
+    def can_be_uploaded_by_user(self, user):
         if self.message_link is not None:
-            if self.message_link.message.isUser is True:
+            if self.message_link.message.is_user is True:
                 return self.message_link.message.link.user_id == user.id
         elif self.user_link is not None:
             return self.user_link.user_id == user.id
         elif self.device_link is not None:
             return False
         elif self.circle_link is not None:
-            return self.circle_link.circle.hasAdmin(user)
+            return self.circle_link.circle.has_admin(user)
         return False
 
     def __init__(self, filename=None, extension=None, identifier=None, directory='default'):
@@ -106,7 +106,7 @@ class Media(Base):
         self.uploaded = False
         db_session.add(self)
 
-    def setContent(self, file):
+    def set_content(self, file):
         file_name = secure_filename(file.filename)
         f, e = os.path.splitext(file_name)
         self.filename = f
@@ -122,13 +122,13 @@ class Media(Base):
         else:
             raise Exception("Ce media est corrompu, vous ne pouvez pas upload de fichier")
 
-    def getDirectory(self):
+    def get_directory(self):
         return UPLOAD_FOLDER + self.directory + os.path.sep
 
-    def getFullName(self):
+    def get_full_name(self):
         return self.filename + self.extension
 
-    def updateContent(self, filename=None, extension=None, directory=None, identifier=None):
+    def update_content(self, filename=None, extension=None, directory=None, identifier=None):
         if filename is not None and filename != "":
             self.filename = filename
         if extension is not None and extension != "":
@@ -139,7 +139,7 @@ class Media(Base):
             self.identifier = identifier
         db_session.commit()
 
-    def getLinkType(self):
+    def get_link_type(self):
         if self.message_link is not None:
             return "conversation"
         elif self.user_link is not None:
@@ -151,23 +151,23 @@ class Media(Base):
         else:
             return "error"
 
-    def getLinkContent(self):
+    def get_link_content(self):
         if self.message_link is not None:
-            return self.message_link.getContent()
+            return self.message_link.get_content()
         elif self.user_link is not None:
-            return self.user_link.getContent()
+            return self.user_link.get_content()
         elif self.circle_link is not None:
-            return self.circle_link.getContent()
+            return self.circle_link.get_content()
         elif self.device_link is not None:
-            return self.device_link.getContent()
+            return self.device_link.get_content()
         else:
             return "error"
 
-    def getContent(self):
+    def get_content(self):
         return {
             "id": self.id,
-            "media_link": self.getLinkType(),
-            "link_content": self.getLinkContent(),
+            "media_link": self.get_link_type(),
+            "link_content": self.get_link_content(),
             "filename": self.filename,
             "extension": self.extension,
             "directory": self.directory,
@@ -175,7 +175,7 @@ class Media(Base):
             "uploaded": self.uploaded
         }
 
-    def getSimpleContent(self):
+    def get_simple_content(self):
         return {
             "id": self.id,
             "filename": self.filename,
@@ -187,4 +187,4 @@ class Media(Base):
 
 @event.listens_for(Media, 'before_delete')
 def receive_before_delete(mapper, connection, target):
-    target.clearFile()
+    target.clear_file()

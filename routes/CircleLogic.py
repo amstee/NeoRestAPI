@@ -3,29 +3,26 @@ from config.database import db_session
 from models.User import User as UserModel
 from models.Circle import Circle
 from models.CircleInvite import CircleInvite as CircleInviteModel
-from utils.decorators import securedRoute, checkContent
+from utils.decorators import secured_route, check_content
 from models.UserToCircle import UserToCircle
-from utils.contentChecker import contentChecker
-from config.sockets import sockets
+from utils.contentChecker import content_checker
 from utils.apiUtils import *
 
 
 class CircleInvite(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("circle_id", "email")
-            circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
+            content_checker("circle_id", "email")
+            circle = db_session.query(Circle).filter(Circle.id == content["circle_id"]).first()
             if circle is not None:
                 dest = db_session.query(UserModel).filter(UserModel.email == content["email"]).first()
                 if dest is not None:
-                    if not circle.hasMember(user):
+                    if not circle.has_member(user):
                         return FAILED("Utilisateur n'appartient pas au cercle spécifié", 403)
-                    if circle.hasMember(dest) or circle.hasInvite(dest):
+                    if circle.has_member(dest) or circle.has_invite(dest):
                         return FAILED("Utilisateur fait déjà partie de ce cercle")
-# if not circle.hasAdmin(user):
-#     return FAILED("Utilisateur n'a pas les privileges necessaires", 403)
                     circle_invite = CircleInviteModel()
                     circle_invite.user = dest
                     circle_invite.circle = circle
@@ -39,11 +36,11 @@ class CircleInvite(Resource):
 
 
 class CircleJoin(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("invite_id")
+            content_checker("invite_id")
             invite = db_session.query(CircleInviteModel).filter(CircleInviteModel.id == content["invite_id"]).first()
             if invite is not None:
                 if invite.user_id != user.id:
@@ -61,11 +58,11 @@ class CircleJoin(Resource):
 
 
 class CircleReject(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("invite_id")
+            content_checker("invite_id")
             invite = db_session.query(CircleInviteModel).filter(CircleInviteModel.id == content["invite_id"]).first()
             if invite is not None:
                 if invite.user_id != user.id:
@@ -78,20 +75,20 @@ class CircleReject(Resource):
 
 
 class CircleQuit(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("circle_id")
-            link = db_session.query(UserToCircle).filter(UserToCircle.circle_id==content["circle_id"],
-                                                         UserToCircle.user_id==user.id).first()
+            content_checker("circle_id")
+            link = db_session.query(UserToCircle).filter(UserToCircle.circle_id == content["circle_id"],
+                                                         UserToCircle.user_id == user.id).first()
             if link is not None:
-                id = link.circle.id
+                id_circle = link.circle.id
                 link.circle.notify_users('circle', {'event': 'quit', 'user': link.user.email})
                 db_session.delete(link)
                 db_session.commit()
-                circle = db_session.query(Circle).filter(Circle.id == id).first()
-                circle.checkValidity()
+                circle = db_session.query(Circle).filter(Circle.id == id_circle).first()
+                circle.check_validity()
                 return SUCCESS()
             return FAILED("L'utilisateur n'appartient pas a ce cercle", 403)
         except Exception as e:
@@ -99,16 +96,17 @@ class CircleQuit(Resource):
 
 
 class CircleKick(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("email", "circle_id")
+            content_checker("email", "circle_id")
             kick = db_session.query(UserModel).filter(UserModel.email == content["email"]).first()
             if kick is not None:
                 circle = db_session.query(Circle).filter(Circle.id == content["circle_id"]).first()
                 if circle is not None:
-                    link = db_session.query(UserToCircle).filter(UserToCircle.user_id==kick.id, UserToCircle.circle_id==circle.id).first()
+                    link = db_session.query(UserToCircle).filter(UserToCircle.user_id == kick.id,
+                                                                 UserToCircle.circle_id == circle.id).first()
                     if link is not None:
                         db_session.delete(link)
                         db_session.commit()

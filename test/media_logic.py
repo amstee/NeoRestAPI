@@ -3,14 +3,14 @@ import sys
 import json
 
 sys.path.insert(0,'..')
-from api import neoapi
+from api import NeoAPI
 from config.database import db_session
 from models.User import User as UserModel
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
 from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
-from utils.testutils import AuthenticateUser, AuthenticateDevice
+from utils.testutils import authenticate_user, authenticate_device
 from models.Message import Message
 from models.Media import Media
 import io
@@ -21,7 +21,7 @@ from models.Device import Device
 
 class TestMediaRequest(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -42,9 +42,9 @@ class TestMediaRequest(unittest.TestCase):
         self.media = Media('test', '.txt', 'test.txt')
         self.media.message = self.message
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_request(self):
         json_data = {
@@ -54,7 +54,6 @@ class TestMediaRequest(unittest.TestCase):
         }
         response = self.api.post('/message/send', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
-        print(response_json)
         assert response.status_code == 200
         assert response_json['success'] is True
         assert len(response_json['media_list']) == 1
@@ -84,7 +83,7 @@ class TestMediaRequest(unittest.TestCase):
 
 class TestDeviceMediaRequest(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -106,13 +105,13 @@ class TestDeviceMediaRequest(unittest.TestCase):
         self.media.message = self.message
         self.device = Device(name="Papie")
         self.device.circle = self.circle
-        self.device_password = self.device.getPreActivationPassword()
+        self.device_password = self.device.get_pre_activation_password()
         self.device.activate(self.device.key)
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
-        self.tokenDevice = AuthenticateDevice(self.api, self.device, self.device_password)
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.tokenDevice = authenticate_device(self.api, self.device, self.device_password)
 
     def test_valid_request(self):
         json_data = {
@@ -122,6 +121,7 @@ class TestDeviceMediaRequest(unittest.TestCase):
         }
         response = self.api.post('/device/message/send', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
+        print(response_json)
         assert response.status_code == 200
         assert response_json['success'] is True
         assert len(response_json['media_list']) == 1
@@ -150,7 +150,7 @@ class TestDeviceMediaRequest(unittest.TestCase):
 
 class TestMediaUpload(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -171,9 +171,9 @@ class TestMediaUpload(unittest.TestCase):
         self.media = Media('test', '.txt', 'test.txt')
         self.media.message = self.message
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_upload(self):
         json_data = {
@@ -204,7 +204,7 @@ class TestMediaUpload(unittest.TestCase):
 
 class TestDeviceMediaUpload(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -226,13 +226,13 @@ class TestDeviceMediaUpload(unittest.TestCase):
         self.media.message = self.message
         self.device = Device(name="Papie")
         self.device.circle = self.circle
-        self.device_password = self.device.getPreActivationPassword()
+        self.device_password = self.device.get_pre_activation_password()
         self.device.activate(self.device.key)
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
-        self.tokenDevice = AuthenticateDevice(self.api, self.device, self.device_password)
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.tokenDevice = authenticate_device(self.api, self.device, self.device_password)
 
     def test_valid_upload(self):
         json_data = {

@@ -2,64 +2,64 @@ from flask_restful import Resource
 from config.database import db_session
 from models.Message import Message
 from models.Media import Media
-from utils.decorators import securedRoute, checkContent, securedAdminRoute
+from utils.decorators import secured_route, check_content, secured_admin_route
 from utils.apiUtils import *
-from utils.contentChecker import contentChecker
-from utils.security import userHasAccessToMessage, deviceHasAccessToMessage
+from utils.contentChecker import content_checker
+from utils.security import user_has_access_to_message, device_has_access_to_message
 
 
 class MediaInfo(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("media_id")
-            media = db_session.query(Media).filter(Media.id==content["media_id"]).first()
+            content_checker("media_id")
+            media = db_session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
-            if userHasAccessToMessage(media.message, user):
-                return jsonify({"success": True, "content": media.getSimpleContent()})
+            if user_has_access_to_message(media.message, user):
+                return jsonify({"success": True, "content": media.get_simple_content()})
             return FAILED("Vous n'avez pas access a ce message")
         except Exception as e:
             return FAILED(e)
 
 
 class DeviceMediaInfo(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, device):
         try:
-            contentChecker("media_id")
-            media = db_session.query(Media).filter(Media.id==content["media_id"]).first()
+            content_checker("media_id")
+            media = db_session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
-            if deviceHasAccessToMessage(media.message, device):
-                return jsonify({"success": True, "content": media.getSimpleContent()})
+            if device_has_access_to_message(media.message, device):
+                return jsonify({"success": True, "content": media.get_simple_content()})
             return FAILED("Vous n'avez pas access a ce message")
         except Exception as e:
             return FAILED(e)
 
 
 class MediaInfoAdmin(Resource):
-    @checkContent
-    @securedAdminRoute
+    @check_content
+    @secured_admin_route
     def post(self, content, admin):
         try:
-            contentChecker("media_id")
-            media = db_session.query(Media).filter(Media.id==content["media_id"]).first()
+            content_checker("media_id")
+            media = db_session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
-            return jsonify({"success": True, "content": media.getContent()})
+            return jsonify({"success": True, "content": media.get_content()})
         except Exception as e:
             return FAILED(e)
 
 
 class MediaDelete(Resource):
-    @checkContent
-    @securedAdminRoute
+    @check_content
+    @secured_admin_route
     def post(self, content, admin):
         try:
-            contentChecker("media_id")
+            content_checker("media_id")
             media = db_session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
@@ -71,51 +71,52 @@ class MediaDelete(Resource):
 
 
 class MediaList(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("message_id")
-            message = db_session.query(Message).filter(Message.id==content["message_id"]).first()
+            content_checker("message_id")
+            message = db_session.query(Message).filter(Message.id == content["message_id"]).first()
             if message is None:
                 return FAILED("Message introuvable")
-            if userHasAccessToMessage(message, user):
-                return jsonify({"success": True, "content": [media.getContent() for media in message.media_links]})
+            if user_has_access_to_message(message, user):
+                return jsonify({"success": True, "content": [media.get_content() for media in message.media_links]})
             return FAILED("Vous n'avez pas access a ce message")
         except Exception as e:
             return FAILED(e)
 
 
 class DeviceMediaList(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, device):
         try:
-            contentChecker("message_id")
-            message = db_session.query(Message).filter(Message.id==content["message_id"]).first()
+            content_checker("message_id")
+            message = db_session.query(Message).filter(Message.id == content["message_id"]).first()
             if message is None:
                 return FAILED("Message introuvable")
-            if deviceHasAccessToMessage(message, device):
-                return jsonify({"success": True, "content": [link.media.getSimpleContent() for link in message.media_links]})
+            if device_has_access_to_message(message, device):
+                return jsonify({"success": True, "content": [link.media.get_simple_content() for
+                                                             link in message.media_links]})
             return FAILED("Vous n'avez pas access a ce message")
         except Exception as e:
             return FAILED(e)
 
 
 class MediaUpdate(Resource):
-    @checkContent
-    @securedAdminRoute
+    @check_content
+    @secured_admin_route
     def post(self, content, admin):
         try:
-            contentChecker("media_id")
-            media = db_session.query(Media).filter(Media.id==content["media_id"]).first()
+            content_checker("media_id")
+            media = db_session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
             filename = content["filename"] if "filename" in content else None
             extension = content["extension"] if "extension" in content else None
             directory = content["directory"] if "directory" in content else None
             identifier = content["identifier"] if "identifier" in content else None
-            media.updateContent(filename=filename, extension=extension, directory=directory, identifier=identifier)
+            media.update_content(filename=filename, extension=extension, directory=directory, identifier=identifier)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
