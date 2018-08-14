@@ -11,7 +11,7 @@ from utils.apiUtils import *
 from flask_socketio import emit
 from config.sockets import sockets
 from models.MessageToMedia import MessageToMedia
-from .Facebook import MessengerConversationModelSend, MessengerUserModelSend
+from bot.facebook import messenger_conversation_model_send, messenger_user_model_send
 
 
 class FirstDeviceMessageSend(Resource):
@@ -48,7 +48,7 @@ class FirstDeviceMessageSend(Resource):
                                  "event": 'invite'})
             info_and_message = "[" + conversation.name + "] " + device.name + " : " + str(message.text_content)
             try:
-                MessengerUserModelSend(userTarget=user, text_message=info_and_message)
+                messenger_user_model_send(user_target=user, text_message=info_and_message)
             except Exception:
                 pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
@@ -96,7 +96,7 @@ class DeviceMessageSend(Resource):
                      'status': 'pending'}, room='conversation_' + str(message.conversation_id), namespace='/')
             info_sender = "[" + conv.name + "] " + device.name + " : "
             try:
-                MessengerConversationModelSend(0, conv, info_sender + message.text_content)
+                messenger_conversation_model_send(0, conv, info_sender + message.text_content)
             except Exception:
                 pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
