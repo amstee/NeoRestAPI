@@ -3,7 +3,7 @@ import sys
 import json
 
 sys.path.insert(0,'..')
-from api import neoapi
+from api import NeoAPI
 from config.database import db_session
 from models.User import User as UserModel
 from models.UserToCircle import UserToCircle
@@ -11,12 +11,12 @@ from models.Conversation import Conversation
 from models.Circle import Circle
 from models.UserToConversation import UserToConversation
 from models.Message import Message
-from utils.testutils import AuthenticateUser
+from utils.testutils import authenticate_user
 
 
 class TestFirstMessageToDeviceSend(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -30,9 +30,9 @@ class TestFirstMessageToDeviceSend(unittest.TestCase):
         self.linkCircle = UserToCircle(user=self.user1, circle=self.circle)
         self.linkCircle2 = UserToCircle(user=self.user2, circle=self.circle)
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_first_message(self):
         json_data = {
@@ -84,7 +84,7 @@ class TestFirstMessageToDeviceSend(unittest.TestCase):
 
 class TestFirstMessageSend(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -98,9 +98,9 @@ class TestFirstMessageSend(unittest.TestCase):
         self.linkCircle = UserToCircle(user=self.user1, circle=self.circle)
         self.linkCircle2 = UserToCircle(user=self.user2, circle=self.circle)
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_message_send(self):
         json_data = {
@@ -166,7 +166,7 @@ class TestFirstMessageSend(unittest.TestCase):
 
 class TestMessageSend(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -183,9 +183,9 @@ class TestMessageSend(unittest.TestCase):
         self.linkConversation = UserToConversation(user=self.user1, conversation=self.conversation, privilege="ADMIN")
         self.linkConversation2 = UserToConversation(user=self.user2, conversation=self.conversation, privilege="STANDARD")
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_message_send(self):
         json_data = {

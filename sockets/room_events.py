@@ -22,11 +22,13 @@ def join_conversation_event(json):
             if socket.is_device:
                 conversation = db_session.query(Conversation).filter(Conversation.id == room).first()
             else:
-                conversation_link = db_session.query(UserToConversation).filter(UserToConversation.user_id == socket.client.id, UserToConversation.conversation_id == room).first()
+                conversation_link = db_session.query(UserToConversation).filter(
+                    UserToConversation.user_id == socket.client.id, UserToConversation.conversation_id == room).first()
             if (conversation is not None and conversation.circle_id == socket.client.circle.id
                     and conversation.device_access is True) or conversation_link is not None:
                 join_room('conversation_' + str(room))
-                socket.emit("success", "Vous avez rejoins la conversation : conversation_" + str(json['conversation_id']))
+                socket.emit("success", "Vous avez rejoins la conversation : conversation_" +
+                            str(json['conversation_id']))
             else:
                 socket.emit("error", "Vous ne faite pas partie de cette conversation")
         except Exception as e:

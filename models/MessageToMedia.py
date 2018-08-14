@@ -31,7 +31,7 @@ class MessageToMedia(Base):
                 self.upload_time = upload_time
         db_session.add(self)
 
-    def updateContent(self, message=None, media=None, upload_time=None):
+    def update_content(self, message=None, media=None, upload_time=None):
         if message is not None:
             self.message = message
         if media is not None:
@@ -43,20 +43,18 @@ class MessageToMedia(Base):
                 self.upload_time = upload_time
         db_session.commit()
 
-    def getContent(self):
+    def get_content(self):
         return {
             "id": self.id,
-            "message": self.message.getSimpleContent(),
-            "media": self.media.getSimpleContent(),
+            "message": self.message.get_simple_content(),
+            "media": self.media.get_simple_content(),
             "upload_time": self.upload_time
         }
 
-    def getSimpleContent(self):
+    def get_simple_content(self):
         return {
             "id": self.id,
             "message_id": self.message_id,
             "media_id": self.media_id,
             "upload_time": self.upload_time
         }
-
-

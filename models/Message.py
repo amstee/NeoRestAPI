@@ -14,7 +14,7 @@ class Message(Base):
     sent = Column(DateTime)
     read = Column(DateTime)
     text_content = Column(String(8192))
-    isUser = Column(Boolean)
+    is_user = Column(Boolean)
 
     link = relationship("UserToConversation", back_populates="messages")
     conversation = relationship("Conversation", back_populates="messages")
@@ -23,9 +23,9 @@ class Message(Base):
     device = relationship("Device", back_populates="messages")
 
     def __repr__(self):
-        return "<NeoMessage(id='%d' sent='%s' read='%s')>"%(self.id, str(self.sent), str(self.read))
+        return "<NeoMessage(id='%d' sent='%s' read='%s')>" % (self.id, str(self.sent), str(self.read))
 
-    def __init__(self, sent=datetime.datetime.now(), read=None, content=None, isUser=True,
+    def __init__(self, sent=datetime.datetime.now(), read=None, content=None, is_user=True,
                  link=None, conversation=None):
         if sent is not None:
             if type(sent) is str:
@@ -43,10 +43,10 @@ class Message(Base):
             self.link = link
         if conversation is not None:
             self.conversation = conversation
-        self.isUser = isUser
+        self.is_user = is_user
         db_session.add(self)
 
-    def updateContent(self, sent=None, read=datetime.datetime.now(), content=None, isUser=None):
+    def update_content(self, sent=None, read=datetime.datetime.now(), content=None, is_user=None):
         if sent is not None:
             if type(sent) is str:
                 self.sent = DateParser.parse(sent)
@@ -59,19 +59,19 @@ class Message(Base):
                 self.reed = read
         if content is not None:
             self.text_content = content
-        if isUser is not None:
-            self.isUser = isUser
+        if is_user is not None:
+            self.is_user = is_user
         db_session.commit()
 
-    def getContent(self):
-        if self.isUser:
+    def get_content(self):
+        if self.is_user:
             return {
                 "id": self.id,
-                "link": self.link.getSimpleContent() if self.link is not None else {},
+                "link": self.link.get_simple_content() if self.link is not None else {},
                 "sent": self.sent,
                 "read": self.read,
                 "content": self.text_content,
-                "medias": [media.getContent() for media in self.media_links]
+                "medias": [media.get_content() for media in self.media_links]
             }
         else:
             return {
@@ -79,12 +79,12 @@ class Message(Base):
                 "sent": self.sent,
                 "read": self.read,
                 "content": self.text_content,
-                "medias": [media.getContent() for media in self.media_links],
-                "device": self.device.getSimpleContent()
+                "medias": [media.get_content() for media in self.media_links],
+                "device": self.device.get_simple_content()
             }
 
-    def getSimpleJSONCompliantContent(self):
-        if self.isUser:
+    def get_simple_json_compliant_content(self):
+        if self.is_user:
             return {
                 "id": self.id,
                 "link_id": self.link_id,
@@ -101,8 +101,8 @@ class Message(Base):
                 "content": self.text_content
             }
 
-    def getSimpleContent(self):
-        if self.isUser:
+    def get_simple_content(self):
+        if self.is_user:
             return {
                 "id": self.id,
                 "link_id": self.link_id,

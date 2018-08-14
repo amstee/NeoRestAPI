@@ -2,65 +2,24 @@ from flask_restful import Resource
 from config.database import db_session
 from models.Device import Device
 from models.Circle import Circle
-from utils.contentChecker import contentChecker
-from utils.decorators import securedRoute, checkContent
+from utils.contentChecker import content_checker
+from utils.decorators import secured_route, check_content
 from models.UserToCircle import UserToCircle
 from utils.apiUtils import *
-from config.paypal import *
-
-
-class PaypalCreatePayment(Resource):
-    @checkContent
-    @securedRoute
-    def post(self, content, user):
-        payment = paypalrestsdk.Payment({
-            "intent": "sale",
-            "payer": {
-                "payment_method": "paypal"
-            },
-            "redirect_urls": {
-                "return_url": "https://server.neo.ovh/payement/execute",
-                "cancel_url": "https://server.neo.ovh/",
-            },
-            "transactions": [{
-                "item_list": {
-                    "items": [{
-                        "name": "Device NEO",
-                        "sku": "NEO",
-                        "price": "39.99",
-                        "currency": "EUR",
-                        "quantity": 1
-                    }]
-                },
-                "amount": {
-                    "total": "39.99",
-                    "currency": "EUR"
-                },
-                "description": "The user ['%s' '%s'] bought the program NEO for 39.99Euros"%(user.first_name, user.last_name)
-            }]
-        })
-        if (payment.create()):
-            for link in payment.links:
-                if link.rel == "approval_url":
-                    approval_url = str(link.href)
-                    return jsonify({"success": True, "content": {"approval_url": approval_url}})
-            return FAILED("Url de validation introuvable")
-        else:
-            return FAILED(str(payment.error))
 
 
 class FakePayment(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("circle_id")
-            circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
+            content_checker("circle_id")
+            circle = db_session.query(Circle).filter(Circle.id == content["circle_id"]).first()
             if circle is not None:
-                if not circle.hasMember(user):
+                if not circle.has_member(user):
                     return FAILED("Cet utilisateur ne fait pas parti du cercle spécifié")
                 link = db_session.query(UserToCircle).filter(UserToCircle.circle_id == circle.id,
-                                                            UserToCircle.user_id == user.id).first();
+                                                             UserToCircle.user_id == user.id).first()
                 if link is None:
                     return FAILED("Cet utilisateur ne fait pas parti du cercle spécifié")
                 link.privilege = "ADMIN"
@@ -68,7 +27,7 @@ class FakePayment(Resource):
                 circle.device = device
                 device.circle = circle
                 db_session.commit()
-                return jsonify({"success": True, "content": device.getContent()})
+                return jsonify({"success": True, "content": device.get_content()})
             return FAILED("Cercle spécifié introuvable")
         except Exception as e:
             return FAILED(e)

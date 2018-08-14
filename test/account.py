@@ -1,17 +1,16 @@
 import unittest
 import sys
 import json
-
-sys.path.insert(0,'..')
-from api import neoapi
+sys.path.insert(0, '..')
+from api import NeoAPI
 from config.database import db_session
 from models.User import User as UserModel
-from utils.testutils import AuthenticateUser
+from utils.testutils import authenticate_user
 
 
 class AccountCreate(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         db_session.query(UserModel).delete()
         db_session.commit()
@@ -121,7 +120,7 @@ class AccountCreate(unittest.TestCase):
 
 class AccountLogin(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         db_session.query(UserModel).delete()
         db_session.commit()
@@ -177,14 +176,14 @@ class AccountLogin(unittest.TestCase):
 
 class AccountApiToken(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcircle@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testcircle@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
 
     def test_valid_token(self):
         json_data = {
