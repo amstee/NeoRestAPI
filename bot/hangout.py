@@ -90,7 +90,7 @@ def is_token_valid(content):
 
 def message_choice(sender_id, message_text):
     quick_replies = []
-    user = db_session.query(User).filter(User.hangout_email== sender_id).first()
+    user = db_session.query(User).filter(User.hangout_email == sender_id).first()
     for user_to_conversation in user.conversationLinks:
         conv = db_session.query(Conversation).filter(Conversation.id == user_to_conversation.conversation_id).first()
         payload = encode_post_back_payload(sender_id, message_text, user_to_conversation)
