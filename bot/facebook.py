@@ -125,9 +125,9 @@ def is_user_linked(facebook_psid):
     return False
 
 
-def link_user_to_facebook(apiToken, psid):
+def link_user_to_facebook(api_token, psid):
         try:
-            payload = jwt.decode(apiToken, SECRET_KEY)
+            payload = jwt.decode(api_token, SECRET_KEY)
             try:
                 user = db_session.query(User).filter(User.id == payload['sub']).first()
                 if user is not None:
