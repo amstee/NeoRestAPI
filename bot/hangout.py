@@ -15,12 +15,12 @@ import datetime
 from config.hangout import SECRET_KEY, TOKEN, KEY_FILE
 
 
-def encode_post_back_payload(hangout_email, message_text, link):
+def encode_post_back_payload(hangout_space, message_text, link):
     try:
         payload = {
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30, seconds=1),
             'iat': datetime.datetime.utcnow(),
-            'hangout_email': hangout_email,
+            'hangout_space': hangout_space,
             'user_id': link.user_id,
             'link_id': link.id,
             'message_text': message_text
@@ -53,8 +53,8 @@ def handle_conversation_payload(message_payload):
         return 'Message expiré, renvoyez le message'
 
 
-def is_user_linked(hangout_email):
-    user = db_session.query(User).filter(User.hangout_email == hangout_email).first()
+def is_user_linked(hangout_space):
+    user = db_session.query(User).filter(User.hangout_space == hangout_space).first()
     if user is not None:
         return True
     return False
@@ -88,12 +88,12 @@ def is_token_valid(content):
         return False
 
 
-def message_choice(sender_id, message_text):
+def message_choice(hangout_space, message_text):
     quick_replies = []
-    user = db_session.query(User).filter(User.hangout_email == sender_id).first()
+    user = db_session.query(User).filter(User.hangout_space == hangout_space).first()
     for user_to_conversation in user.conversationLinks:
         conv = db_session.query(Conversation).filter(Conversation.id == user_to_conversation.conversation_id).first()
-        payload = encode_post_back_payload(sender_id, message_text, user_to_conversation)
+        payload = encode_post_back_payload(hangout_space, message_text, user_to_conversation)
         quick_replies.append({
                                 "textButton": {
                                     "text": conv.name,

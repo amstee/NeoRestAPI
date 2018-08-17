@@ -165,7 +165,7 @@ class ConversationRemoveDevice(Resource):
                 link.conversation.update_content(device_access=False)
                 link.conversation.notify_users(p2={'event': 'device', 'type': 'remove'})
             else:
-                return FAILED("Vous n'avec pas les droits pour effectuer cette action", 403)
+                return FAILED("Vous n'avez pas les droits pour effectuer cette action", 403)
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
