@@ -147,12 +147,10 @@ class AccountModify(Resource):
             first_name = None if 'first_name' not in content else content['first_name']
             last_name = None if 'last_name' not in content else content['last_name']
             birthday = None if 'birthday' not in content else content['birthday']
-            hangout = None if 'hangout_email' not in content else content['hangout_email']
             user.update_content(email=email,
                                 first_name=first_name,
                                 last_name=last_name,
-                                birthday=birthday,
-                                hangoutEmail=hangout)
+                                birthday=birthday)
             resp = jsonify({"success": True})
             resp.status_code = 200
             return resp

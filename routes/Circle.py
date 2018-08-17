@@ -37,7 +37,7 @@ class CircleDelete(Resource):
                 circle.notify_users(p1='circle', p2={'event': 'delete'})
                 return SUCCESS()
             resp = FAILED("Le cercle est introuvable")
-            resp.status_code = 401
+            resp.status_code = 404
         except Exception as e:
             return FAILED(e)
         return resp
@@ -73,7 +73,7 @@ class CircleInfo(Resource):
             circle = db_session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:
                 if not circle.has_member(user):
-                    return FAILED("Cet utilisateur n'a pas access a ce cercle", 403)
+                    return FAILED("Cet utilisateur n'a pas access à ce cercle", 403)
                 return jsonify({"success": True, "content": circle.get_content()})
             resp = FAILED("Le cercle est introuvable")
             resp.status_code = 401

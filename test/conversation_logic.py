@@ -444,8 +444,11 @@ class TestConversationQuit(unittest.TestCase):
         }
         response = self.api.post('/conversation/quit', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
+        c = db_session.query(UserToConversation).filter(UserToConversation.conversation_id == self.conv.id).filter(
+            UserToConversation.user_id == self.user2.id).first()
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success'] is True
+        assert c is None
         assert len(self.conv.links) == 1
 
     def test_invalid_user(self):
