@@ -13,17 +13,17 @@ SECRET_KEY = "defaultusersecretkey"
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
-    email = Column(String(120), unique=True)
+    email = Column(String(128), unique=True)
     password = Column(String(2048))
-    first_name = Column(String(50))
-    last_name = Column(String(50))
+    first_name = Column(String(64))
+    last_name = Column(String(64))
     birthday = Column(DateTime)
     created = Column(DateTime)
     updated = Column(DateTime)
     json_token = Column(String(4096))
     facebook_psid = Column(BigInteger)
-    hangout_email = Column(String(2048))
-    type = Column(String(10))
+    hangout_space = Column(String(1024))
+    type = Column(String(16))
     is_online = Column(Boolean)
 
     # RELATIONS
@@ -41,18 +41,19 @@ class User(Base):
                  updated=datetime.datetime.now()):
         user = db_session.query(User).filter_by(email=email).first()
         if user is not None:
-            raise Exception("User already exist")
+            raise Exception("L'utilisateur existe déja, réessayer avec une nouvelle adresse email")
         if email is None or email == "" or password is None or password == "" or first_name is None \
                 or last_name == "" or last_name is None or last_name == "" or birthday is None or birthday == "":
-            raise Exception("Missing data to create a new user")
+            raise Exception("Données incomplete, impossible de créer l'utilisateur")
         self.email = email
         self.password = hashlib.sha512(password.encode('utf-8')).hexdigest()
         self.first_name = first_name
         self.last_name = last_name
-        if type(birthday) is str:
-            self.birthday = DateParser.parse(birthday)
-        else:
-            self.birthday = birthday
+        try:
+            if type(birthday) is str:
+                self.birthday = DateParser.parse(birthday)
+        except Exception:
+            raise Exception("Date de naissance invalide")
         if created is not None:
             if type(created) is str:
                 self.created = DateParser.parse(created)
@@ -179,7 +180,7 @@ class User(Base):
             db_session.commit()
 
     def update_content(self, email=None, first_name=None, last_name=None, birthday=None,
-                       facebook_psid=None, hangout_email=None, is_online=None, created=None,
+                       facebook_psid=None, hangout_space=None, is_online=None, created=None,
                        updated=datetime.datetime.now()):
         if email is not None and email is not "":
             self.email = email
@@ -197,8 +198,10 @@ class User(Base):
             self.created = DateParser.parse(created)
         elif created is not None:
             self.created = created
-        self.facebook_psid = facebook_psid
-        self.hangout_email = hangout_email
+        if hangout_space is not None:
+            self.hangout_space = hangout_space
+        if facebook_psid is not None:
+            self.facebook_psid = facebook_psid
         if is_online is not None:
             self.is_online = is_online
         db_session.commit()
@@ -252,7 +255,7 @@ class User(Base):
             "updated": self.updated,
             "isOnline": self.is_online,
             "type": self.type,
-            "hangout": False if self.hangout_email is None or len(self.hangout_email) == 0 else True,
+            "hangout": False if self.hangout_space is None or len(self.hangout_space) == 0 else True,
             "facebook": False if self.facebook_psid is None or self.facebook_psid <= 0 else True,
             "circles": [link.get_content() for link in self.circle_link],
             "invites": [invite.get_content() for invite in self.circle_invite],
