@@ -12,7 +12,7 @@ class UserToCircle(Base):
     circle_id = Column(Integer, ForeignKey("circles.id"))
     created = Column(DateTime)
     updated = Column(DateTime)
-    privilege = Column(String(10))
+    privilege = Column(String(16))
 
     user = relationship("User", back_populates="circle_link")
     circle = relationship("Circle", back_populates="user_link")
