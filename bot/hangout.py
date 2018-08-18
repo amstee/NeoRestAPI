@@ -66,7 +66,7 @@ def link_user_to_hangout(api_token, email):
             try:
                 user = db_session.query(User).filter(User.id == payload['sub']).first()
                 if user is not None:
-                    user.updateContent(hangout_email=email)
+                    user.update_content(hangout_space=email)
                     return "Bienvenue sur NEO, " + payload['first_name'] + " " + payload['last_name'] + " !"
                 else:
                     return 'Token invalide !'
