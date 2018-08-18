@@ -79,6 +79,7 @@ class UserToConversation(Base):
             "privilege": self.privilege,
             "user_id": self.user.get_simple_content(),
             "conversation_id": self.conversation.get_simple_content(),
+            "circle_id": self.conversation.circle_id,
             "messages": [message.get_simple_content() for message in self.messages]
         }
 
