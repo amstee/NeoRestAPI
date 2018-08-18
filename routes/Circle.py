@@ -58,7 +58,7 @@ class CircleUpdate(Resource):
                 circle.notify_users(p1='circle', p2={'event': 'update'})
                 return SUCCESS()
             resp = FAILED("Le cercle est introuvable")
-            resp.status_code = 401
+            resp.status_code = 404
         except Exception as e:
             return FAILED(e)
         return resp
