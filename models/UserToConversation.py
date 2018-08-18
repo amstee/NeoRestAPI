@@ -67,7 +67,8 @@ class UserToConversation(Base):
             "updated": self.updated,
             "privilege": self.privilege,
             "user_id": self.user_id,
-            "conversation_id": self.conversation_id
+            "conversation_id": self.conversation_id,
+            "circle_id": self.conversation.circle_id
         }
 
     def get_content(self):
