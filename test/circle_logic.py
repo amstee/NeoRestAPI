@@ -225,6 +225,8 @@ class TestCircleReject(unittest.TestCase):
         }
         response = self.api.post('/circle/reject', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
+        deleted_invite = db_session.query(CircleInvite).filter_by(user_id=self.user2.id, circle_id=self.circle.id).first()
+        assert deleted_invite is None
         assert response.status_code == 200
         assert response_json['success'] == True
 
