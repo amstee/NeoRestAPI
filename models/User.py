@@ -13,17 +13,17 @@ SECRET_KEY = "defaultusersecretkey"
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
-    email = Column(String(128), unique=True)
+    email = Column(String(120), unique=True)
     password = Column(String(2048))
-    first_name = Column(String(64))
-    last_name = Column(String(64))
+    first_name = Column(String(50))
+    last_name = Column(String(50))
     birthday = Column(DateTime)
     created = Column(DateTime)
     updated = Column(DateTime)
     json_token = Column(String(4096))
     facebook_psid = Column(BigInteger)
-    hangout_space = Column(String(1024))
-    type = Column(String(16))
+    hangout_space = Column(String(255))
+    type = Column(String(10))
     is_online = Column(Boolean)
 
     # RELATIONS

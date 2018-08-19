@@ -7,7 +7,6 @@ from utils.decorators import secured_route, check_content
 from models.UserToCircle import UserToCircle
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
-from config.sockets import sockets
 
 
 class CircleInvite(Resource):
@@ -28,9 +27,7 @@ class CircleInvite(Resource):
                     circle_invite.user = dest
                     circle_invite.circle = circle
                     db_session.commit()
-                    #circle_invite.notify_user(p2={'event': 'invite', 'circle_id': circle.id})
-                    sockets.notify_user(client=dest, is_device=False, p1='circle_invite',
-                                        p2={'event': 'invite', 'circle_id': circle.id})
+                    circle_invite.notify_user(p2={'event': 'invite', 'circle_id': circle.id})
                     return SUCCESS()
                 return FAILED("Utilisateur spécifié introuvable")
             return FAILED("Cercle spécifié introuvable")
