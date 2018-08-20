@@ -53,6 +53,8 @@ class AccountLogin(Resource):
                 resp.status_code = 401
             return resp
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             return FAILED(e)
 
 
