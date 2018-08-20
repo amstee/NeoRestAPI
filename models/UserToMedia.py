@@ -34,7 +34,7 @@ class UserToMedia(Base):
             self.purpose = purpose
         db_session.add(self)
 
-    def updateContent(self, user=None, media=None, upload_time=None, purpose=None):
+    def update_content(self, user=None, media=None, upload_time=None, purpose=None):
         if user is not None:
             self.user = user
         if media is not None:
@@ -48,16 +48,16 @@ class UserToMedia(Base):
             self.purpose = purpose
         db_session.commit()
 
-    def getContent(self):
+    def get_content(self):
         return {
             "id": self.id,
-            "user": self.user.getSimpleContent(),
-            "media": self.media.getSimpleContent(),
+            "user": self.user.get_simple_content(),
+            "media": self.media.get_simple_content(),
             "upload_time": self.upload_time,
             "purpose": self.purpose
         }
 
-    def getSimpleContent(self):
+    def get_simple_content(self):
         return {
             "id": self.id,
             "user_id": self.user_id,
@@ -65,5 +65,3 @@ class UserToMedia(Base):
             "upload_time": self.upload_time,
             "purpose": self.purpose
         }
-
-

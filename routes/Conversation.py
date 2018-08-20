@@ -3,35 +3,35 @@ from config.database import db_session
 from models.Circle import Circle
 from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
-from utils.decorators import securedRoute, checkContent, securedAdminRoute
-from utils.contentChecker import contentChecker
+from utils.decorators import secured_route, check_content, secured_admin_route
+from utils.contentChecker import content_checker
 from utils.apiUtils import *
 
 
 class ConversationCreate(Resource):
-    @checkContent
-    @securedAdminRoute
+    @check_content
+    @secured_admin_route
     def post(self, content, admin):
         try:
-            contentChecker("conversation_name", "circle_id")
-            circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
+            content_checker("conversation_name", "circle_id")
+            circle = db_session.query(Circle).filter(Circle.id == content["circle_id"]).first()
             if circle is None:
                 return FAILED("Cercle introuvable")
             conv = Conversation(name=content["conversation_name"])
             conv.circle = circle
             db_session.commit()
-            return jsonify({"success": True, "content": conv.getSimpleContent()})
+            return jsonify({"success": True, "content": conv.get_simple_content()})
         except Exception as e:
             return FAILED(e)
 
 
 class ConversationDelete(Resource):
-    @checkContent
-    @securedAdminRoute
+    @check_content
+    @secured_admin_route
     def post(self, content, admin):
         try:
-            contentChecker("conversation_id")
-            conv = db_session.query(Conversation).filter(Conversation.id==content["conversation_id"]).first()
+            content_checker("conversation_id")
+            conv = db_session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
             if conv is None:
                 return FAILED("Conversation introuvable")
             db_session.delete(conv)
@@ -42,69 +42,69 @@ class ConversationDelete(Resource):
 
 
 class ConversationInfo(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("conversation_id")
-            conv = db_session.query(Conversation).filter(Conversation.id==content["conversation_id"]).first()
+            content_checker("conversation_id")
+            conv = db_session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
             if conv is None:
                 return FAILED("Conversation introuvable")
-            if conv.hasMembers(user):
-                return jsonify({"success": True, "content": conv.getContent()})
+            if conv.has_members(user):
+                return jsonify({"success": True, "content": conv.get_content()})
             return FAILED("L'utilisateur n'a pas acces a cette conversation", 403)
         except Exception as e:
             return FAILED(e)
 
 
 class ConversationDeviceInfo(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, device):
         try:
-            contentChecker("conversation_id")
-            conv = db_session.query(Conversation).filter(Conversation.id==content["conversation_id"]).first()
+            content_checker("conversation_id")
+            conv = db_session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
             if conv is None:
                 return FAILED("Conversation introuvable")
             if conv.device_access and conv.circle.device.id == device.id:
-                return jsonify({"success": True, "content": conv.getContent()})
+                return jsonify({"success": True, "content": conv.get_content()})
             return FAILED("Le device n'a pas acces a cette conversation")
         except Exception as e:
             return FAILED(e)
 
 
 class ConversationList(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("circle_id")
-            circle = db_session.query(Circle).filter(Circle.id==content["circle_id"]).first()
+            content_checker("circle_id")
+            circle = db_session.query(Circle).filter(Circle.id == content["circle_id"]).first()
             if circle is None:
                 return FAILED("Cercle introuvable")
-            if not circle.hasMember(user):
+            if not circle.has_member(user):
                 return FAILED("L'utilisateur n'appartient pas au cercle spécifié", 403)
             convs = db_session.query(Conversation).join(UserToConversation).filter(
-                Conversation.circle_id==circle.id,
-                UserToConversation.user_id==user.id
+                Conversation.circle_id == circle.id,
+                UserToConversation.user_id == user.id
             ).all()
-            return jsonify({"success": True, "content": [conv.getSimpleContent() for conv in convs]})
+            return jsonify({"success": True, "content": [conv.get_simple_content() for conv in convs]})
         except Exception as e:
             return FAILED(e)
 
 
 class ConversationDeviceList(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, device):
         try:
-            contentChecker("circle_id")
+            content_checker("circle_id")
             circle = db_session.query(Circle).filter(Circle.id == content["circle_id"]).first()
             if circle is None:
                 return FAILED("Cercle introuvable")
             if circle.device.id == device.id:
-                convs = db_session.query(Conversation).filter(Conversation.device_access==True).all()
-                return jsonify({"success": True, "content": [conv.getSimpleContent() for conv in convs]})
+                convs = db_session.query(Conversation).filter(Conversation.device_access is True).all()
+                return jsonify({"success": True, "content": [conv.get_simple_content() for conv in convs]})
             else:
                 return FAILED("Device n'a pas acces a ce cercle")
         except Exception as e:
@@ -112,21 +112,24 @@ class ConversationDeviceList(Resource):
 
 
 class ConversationUpdate(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("conversation_id")
-            link = db_session.query(UserToConversation).filter(UserToConversation.user_id==user.id,
-                                                               UserToConversation.conversation_id==content["conversation_id"]).first()
+            content_checker("conversation_id")
+            link = db_session.query(UserToConversation).filter(UserToConversation.user_id == user.id,
+                                                               UserToConversation.conversation_id ==
+                                                               content["conversation_id"]).first()
             if link is None:
                 return FAILED("Cet utilisateur n'appartient pas a cette conversation", 403)
             if link.privilege == "ADMIN":
-                link.conversation.updateContent(name=content["conversation_name"] if "conversation_name" in content else None,
-                                                created=content["created"] if "created" in content else None,
-                                                device_access=content["device_access"] if "device_access" in content else None)
+                link.conversation.update_content(name=content["conversation_name"] if "conversation_name"
+                                                                                     in content else None,
+                                                 created=content["created"] if "created" in content else None,
+                                                 device_access=content["device_access"] if "device_access"
+                                                 in content else None)
                 link.conversation.notify_users(p2={'event': 'update'})
-                return jsonify({"success": True, "content": link.conversation.getSimpleContent()})
+                return jsonify({"success": True, "content": link.conversation.get_simple_content()})
             else:
                 return FAILED("Cet utilisateur n'a pas les droits suffisants pour modifier cette conversation", 403)
         except Exception as e:

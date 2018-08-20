@@ -7,24 +7,24 @@ from models.UserToMedia import UserToMedia
 from models.DeviceToMedia import DeviceToMedia
 from models.CircleToMedia import CircleToMedia
 from models.Circle import Circle
-from utils.decorators import securedRoute, checkContent
-from utils.contentChecker import contentChecker
+from utils.decorators import secured_route, check_content
+from utils.contentChecker import content_checker
 from utils.apiUtils import *
-from utils.security import getUserFromHeader, getDeviceFromHeader
+from utils.security import get_user_from_header, get_device_from_header
 from flask_socketio import emit
 
 
 class CreateMedia(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("medias")
+            content_checker("medias")
             for media in content["medias"]:
                 if "purpose" not in media:
                     return FAILED("Purpose not specified")
                 if "circle_id" in media:
-                    circle = db_session.query(Circle).filter(Circle.id==media["circle_id"]).first()
+                    circle = db_session.query(Circle).filter(Circle.id == media["circle_id"]).first()
                     if circle is None:
                         return FAILED("Cercle introuvable")
                     link = CircleToMedia()
@@ -44,16 +44,16 @@ class CreateMedia(Resource):
 
 
 class DeviceCreateMedia(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, device):
         try:
-            contentChecker("medias")
+            content_checker("medias")
             for media in content["medias"]:
                 if "purpose" not in media:
                     return FAILED("Purpose not specified")
                 if "circle_id" in media:
-                    circle = db_session.query(Circle).filter(Circle.id==media["circle_id"]).first()
+                    circle = db_session.query(Circle).filter(Circle.id == media["circle_id"]).first()
                     if circle is None:
                         return FAILED("Cercle introuvable")
                     link = CircleToMedia()
@@ -71,41 +71,41 @@ class DeviceCreateMedia(Resource):
 
 
 class DeviceFindMedia(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, device):
         try:
-            contentChecker("purpose")
+            content_checker("purpose")
             if "circle_id" in content:
-                medias = db_session.query(CircleToMedia).filter(CircleToMedia.circle_id==content["circle_id"],
-                                                               CircleToMedia.purpose==content["purpose"]).all()
+                medias = db_session.query(CircleToMedia).filter(CircleToMedia.circle_id == content["circle_id"],
+                                                                CircleToMedia.purpose == content["purpose"]).all()
             elif "user_id" in content:
                 medias = db_session.query(UserToMedia).filter(UserToMedia.user_id == content["user_id"],
-                                                                UserToMedia.purpose == content["purpose"]).all()
+                                                              UserToMedia.purpose == content["purpose"]).all()
             else:
                 medias = db_session.query(DeviceToMedia).filter(DeviceToMedia.device_id == device.id,
                                                                 DeviceToMedia.purpose == content["purpose"]).all()
-            return jsonify({"success": True, "medias": [media.getContent() for media in medias]})
+            return jsonify({"success": True, "medias": [media.get_content() for media in medias]})
         except Exception as e:
             return FAILED(e)
 
 
 class FindMedia(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("purpose")
+            content_checker("purpose")
             if "circle_id" in content:
-                medias = db_session.query(CircleToMedia).filter(CircleToMedia.circle_id==content["circle_id"],
-                                                               CircleToMedia.purpose==content["purpose"]).all()
+                medias = db_session.query(CircleToMedia).filter(CircleToMedia.circle_id == content["circle_id"],
+                                                                CircleToMedia.purpose == content["purpose"]).all()
             elif "device_id" in content:
                 medias = db_session.query(DeviceToMedia).filter(DeviceToMedia.device_id == content["device_id"],
                                                                 DeviceToMedia.purpose == content["purpose"]).all()
             else:
                 medias = db_session.query(UserToMedia).filter(UserToMedia.user_id == user.id,
                                                               UserToMedia.purpose == content["purpose"]).all()
-            return jsonify({"success": True, "medias": [media.getContent() for media in medias]})
+            return jsonify({"success": True, "medias": [media.get_content() for media in medias]})
         except Exception as e:
             return FAILED(e)
 
@@ -113,13 +113,13 @@ class FindMedia(Resource):
 class DeviceUploadMedia(Resource):
     def post(self, media_id):
         try:
-            device = getDeviceFromHeader(request)
+            device = get_device_from_header(request)
             media = db_session.query(Media).filter(Media.id == media_id).first()
             if media is None:
                 return FAILED("Media introuvable")
-            if media.CanBeUploadedByDevice(device):
+            if media.can_be_uploaded_by_device(device):
                 if 'file' in request.files:
-                    media.setContent(request.files['file'])
+                    media.set_content(request.files['file'])
                     media.upload(request.files['file'])
                     db_session.commit()
                     return SUCCESS()
@@ -132,13 +132,13 @@ class DeviceUploadMedia(Resource):
 class UploadMedia(Resource):
     def post(self, media_id):
         try:
-            user = getUserFromHeader(request)
+            user = get_user_from_header(request)
             media = db_session.query(Media).filter(Media.id == media_id).first()
             if media is None:
                 return FAILED("Media introuvable")
-            if media.CanBeUploadedByUser(user):
+            if media.can_be_uploaded_by_user(user):
                 if 'file' in request.files:
-                    media.setContent(request.files['file'])
+                    media.set_content(request.files['file'])
                     media.upload(request.files['file'])
                     db_session.commit()
                     return SUCCESS()
@@ -151,22 +151,22 @@ class UploadMedia(Resource):
 class UploadMessageMedia(Resource):
     def post(self, media_id):
         try:
-            user = getUserFromHeader(request)
+            user = get_user_from_header(request)
             media = db_session.query(Media).filter(Media.id == media_id).first()
             if media is None:
                 return FAILED("Media introuvable")
-            if media.CanBeUploadedByUser(user):
+            if media.can_be_uploaded_by_user(user):
                 if 'file' in request.files:
                     message = media.message_link.message
-                    media.setContent(request.files['file'])
+                    media.set_content(request.files['file'])
                     media.upload(request.files['file'])
                     db_session.commit()
                     emit('message', {
                         'conversation_id': message.conversation.id,
-                        'message': message.getSimpleContent(),
+                        'message': message.get_simple_content(),
                         'time': message.sent,
-                        'sender': user.getSimpleContent(),
-                        'media': media.getSimpleContent(),
+                        'sender': user.get_simple_content(),
+                        'media': media.get_simple_content(),
                         'status': 'done'},
                          room='conversation_' + str(message.conversation.id), namespace='/')
                     return SUCCESS()
@@ -179,22 +179,22 @@ class UploadMessageMedia(Resource):
 class DeviceUploadMessageMedia(Resource):
     def post(self, media_id):
         try:
-            device = getDeviceFromHeader(request)
+            device = get_device_from_header(request)
             media = db_session.query(Media).filter(Media.id == media_id).first()
             if media is None:
                 return FAILED("Media introuvable")
-            if media.CanBeUploadedByDevice(device):
+            if media.can_be_uploaded_by_device(device):
                 if 'file' in request.files:
                     message = media.message_link.message
-                    media.setContent(request.files['file'])
+                    media.set_content(request.files['file'])
                     media.upload(request.files['file'])
                     db_session.commit()
                     emit('message', {
                         'conversation_id': message.conversation.id,
-                        'message': message.getSimpleContent(),
+                        'message': message.get_simple_content(),
                         'time': message.sent,
-                        'sender': device.getSimpleContent(),
-                        'media': media.getSimpleContent(),
+                        'sender': device.get_simple_content(),
+                        'media': media.get_simple_content(),
                         'status': 'done'},
                          room='conversation_' + str(message.conversation.id), namespace='/')
                     return SUCCESS()
@@ -205,16 +205,16 @@ class DeviceUploadMessageMedia(Resource):
 
 
 class MediaRequest(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("media_id")
-            media = db_session.query(Media).filter(Media.id==content["media_id"]).first()
+            content_checker("media_id")
+            media = db_session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None or media.uploaded is False:
                 return FAILED("Media introuvable")
-            if media.CanBeAccessedByUser(user):
-                return send_from_directory(media.getDirectory(), media.getFullName())
+            if media.can_be_accessed_by_user(user):
+                return send_from_directory(media.get_directory(), media.get_full_name())
             else:
                 return FAILED("L'utilisateur ne peut pas acceder a ce media")
         except Exception as e:
@@ -222,16 +222,16 @@ class MediaRequest(Resource):
 
 
 class DeviceMediaRequest(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, device):
         try:
-            contentChecker("media_id")
-            media = db_session.query(Media).filter(Media.id==content["media_id"]).first()
+            content_checker("media_id")
+            media = db_session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None or media.uploaded is False:
                 return FAILED("Media introuvable")
-            if media.CanBeAccessedByDevice(device):
-                return send_from_directory(media.getDirectory(), media.getFullName())
+            if media.can_be_accessed_by_device(device):
+                return send_from_directory(media.get_directory(), media.get_full_name())
             else:
                 return FAILED("L'utilisateur ne peut pas acceder a ce media")
         except Exception as e:
