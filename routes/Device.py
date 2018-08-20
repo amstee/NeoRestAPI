@@ -2,7 +2,7 @@ from flask_restful import Resource
 from utils.decorators import check_content, secured_admin_route, secured_route
 from models.Device import Device
 from models.Circle import Circle
-from config.database import db_session
+from config.database import db
 from utils.apiUtils import *
 from utils.contentChecker import content_checker
 
@@ -13,10 +13,10 @@ class DeviceAdd(Resource):
     def post(self, content, admin):
         try:
             content_checker("circle_id", "name")
-            circle = db_session.query(Circle).filter(Circle.id == content["circle_id"]).first()
+            circle = db.session.query(Circle).filter(Circle.id == content["circle_id"]).first()
             new_device = Device(name=content["name"], username=content["username"] if "username" in content else None)
             new_device.circle = circle
-            db_session.commit()
+            db.session.commit()
             circle.notify_users('device created')
             resp = SUCCESS()
         except Exception as e:
@@ -32,7 +32,7 @@ class DeviceUpdate(Resource):
     def post(self, content, user):
         try:
             content_checker("device_id")
-            device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
+            device = db.session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is None:
                 return FAILED("Device introuvable")
             if not device.circle.has_admin(user):
@@ -50,7 +50,7 @@ class DeviceInfo(Resource):
     def post(self, content, user):
         try:
             content_checker("device_id")
-            device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
+            device = db.session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is not None:
                 if not device.circle.has_member(user):
                     return FAILED("Vous n'appartenez pas au cercle de ce device", 403)
@@ -77,10 +77,10 @@ class DeviceDelete(Resource):
     def post(self, content, admin):
         try:
             content_checker("device_id")
-            device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
+            device = db.session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is not None:
-                db_session.delete(device)
-                db_session.commit()
+                db.session.delete(device)
+                db.session.commit()
                 return SUCCESS()
             resp = FAILED("Le NEO avec identifiant id %s n'existe pas" % content["device_id"])
             resp.status_code = 401
@@ -95,7 +95,7 @@ class DeviceActivate(Resource):
     def post(self, content, admin):
         try:
             content_checker("device_id", "activation_key")
-            device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
+            device = db.session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is not None:
                 res = device.activate(content["activation_key"])
                 if res:
@@ -113,7 +113,7 @@ class DeviceLogin(Resource):
     def post(self, content):
         try:
             content_checker("device_username", "device_password")
-            device = db_session.query(Device).filter(Device.username == content["device_username"]).first()
+            device = db.session.query(Device).filter(Device.username == content["device_username"]).first()
             if device is not None:
                 res, data = device.authenticate(content["device_password"])
                 if res is True:
@@ -134,7 +134,7 @@ class ModifyDevicePassword(Resource):
     def post(self, content):
         try:
             content_checker("device_username", "previous_password", "new_password")
-            device = db_session.query(Device).filter(Device.username == content["device_username"]).first()
+            device = db.session.query(Device).filter(Device.username == content["device_username"]).first()
             if device is not None:
                 if device.check_password(content["previous_password"]):
                     device.update_password(content["new_password"])
@@ -175,7 +175,7 @@ class UsernameAvailability(Resource):
     def post(self, content):
         try:
             content_checker("device_username")
-            device = db_session.query(Device).filter(Device.username == content["device_username"]).first()
+            device = db.session.query(Device).filter(Device.username == content["device_username"]).first()
             if device is not None:
                 return FAILED("")
             else:
@@ -190,7 +190,7 @@ class DeviceCredentials(Resource):
     def post(self, content, admin):
         try:
             content_checker("device_id")
-            device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
+            device = db.session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is None:
                 return FAILED("Device Neo introuvable")
             return jsonify({"success": True, "content": {

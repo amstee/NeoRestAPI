@@ -1,24 +1,22 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
-from sqlalchemy.orm import relationship
-from config.database import Base, db_session
+from config.database import db
 from dateutil import parser as DateParser
 from flask_socketio import emit
 import datetime
 
 
-class Conversation(Base):
+class Conversation(db.Model):
     __tablename__ = "conversations"
-    id = Column(Integer, primary_key=True)
-    circle_id = Column(Integer, ForeignKey("circles.id"))
-    name = Column(String(120))
-    created = Column(DateTime)
-    updated = Column(DateTime)
-    device_access = Column(Boolean)
+    id = db.Column(db.Integer, primary_key=True)
+    circle_id = db.Column(db.Integer, db.ForeignKey("circles.id"))
+    name = db.Column(db.String(120))
+    created = db.Column(db.DateTime)
+    updated = db.Column(db.DateTime)
+    device_access = db.Column(db.Boolean)
 
-    circle = relationship("Circle", back_populates="conversations")
-    links = relationship("UserToConversation", back_populates="conversation")
-    messages = relationship("Message", back_populates="conversation", order_by="Message.id",
-                            cascade="save-update, delete")
+    circle = db.relationship("Circle", back_populates="conversations")
+    links = db.relationship("UserToConversation", back_populates="conversation")
+    messages = db.relationship("Message", back_populates="conversation", order_by="Message.id",
+                               cascade="save-update, delete")
 
     def __repr__(self):
         return "<Conversation(id='%d' name='%s' created='%s' updated='%s')>" % (self.id, self.name,
@@ -43,7 +41,7 @@ class Conversation(Base):
         if circle is not None:
             self.circle = circle
         self.device_access = device_access
-        db_session.add(self)
+        db.session.add(self)
 
     def has_members(self, *args):
         for member in args:
@@ -70,7 +68,7 @@ class Conversation(Base):
             self.name = name
         if device_access is not None:
             self.device_access = device_access
-        db_session.commit()
+        db.session.commit()
 
     def notify_users(self, p1='conversation', p2=None):
         if p2 is None:
@@ -86,8 +84,8 @@ class Conversation(Base):
     def check_validity(self):
         if (len(self.links) + (1 if self.device_access else 0)) <= 1:
             for link in self.links:
-                db_session.delete(link)
-            db_session.delete(self)
+                db.session.delete(link)
+            db.session.delete(self)
             return False
         return True
 

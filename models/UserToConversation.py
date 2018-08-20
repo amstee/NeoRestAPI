@@ -1,22 +1,20 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
-from config.database import Base, db_session
+from config.database import db
 from dateutil import parser as DateParser
 import datetime
 
 
-class UserToConversation(Base):
+class UserToConversation(db.Model):
     __tablename__ = "user_to_conversation"
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    conversation_id = Column(Integer, ForeignKey("conversations.id"))
-    privilege = Column(String(10))
-    created = Column(DateTime)
-    updated = Column(DateTime)
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    conversation_id = db.Column(db.Integer, db.ForeignKey("conversations.id"))
+    privilege = db.Column(db.String(10))
+    created = db.Column(db.DateTime)
+    updated = db.Column(db.DateTime)
 
-    messages = relationship("Message", back_populates="link", order_by="Message.sent")
-    conversation = relationship("Conversation", back_populates="links")
-    user = relationship("User", back_populates="conversation_links")
+    messages = db.relationship("Message", back_populates="link", order_by="Message.sent")
+    conversation = db.relationship("Conversation", back_populates="links")
+    user = db.relationship("User", back_populates="conversation_links")
 
     def __repr__(self):
         return "<UserToConversation(id='%d' user_id='%d' conversation_id='%d' privilege='%s')>" % (
@@ -42,7 +40,7 @@ class UserToConversation(Base):
             self.user = user
         if conversation is not None:
             self.conversation = conversation
-        db_session.add(self)
+        db.session.add(self)
 
     def update_content(self, created=None, updated=datetime.datetime.now(),
                        privilege=None):
@@ -58,7 +56,7 @@ class UserToConversation(Base):
                 self.updated = updated
         if privilege is not None and privilege != "":
             self.privilege = privilege
-        db_session.commit()
+        db.session.commit()
 
     def get_simple_content(self):
         return {

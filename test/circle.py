@@ -4,7 +4,7 @@ import json
 
 sys.path.insert(0,'..')
 from api import NeoAPI
-from config.database import db_session
+from config.database import db
 from models.User import User as UserModel
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
@@ -15,15 +15,15 @@ class TestCircleCreate(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcircle@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testcircle@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testcircle@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testcircle2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testcircle2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testcircle2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
-        db_session.commit()
+        db.session.commit()
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
 
@@ -45,17 +45,18 @@ class TestCircleCreate(unittest.TestCase):
         response = self.api.post('/circle/create', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert response_json['success'] is False
+
 
 class TestCircleDelete(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcircledelete@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testcircledelete@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testcircledelete@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testcircledelete2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testcircledelete2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testcircledelete2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -69,7 +70,7 @@ class TestCircleDelete(unittest.TestCase):
         self.link = UserToCircle()
         self.link.user = self.user1
         self.link.circle = self.circle
-        db_session.commit()
+        db.session.commit()
 
     def test_valid_deletion(self):
         id = self.circle.id
@@ -81,7 +82,7 @@ class TestCircleDelete(unittest.TestCase):
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success'] == True
-        c = db_session.query(Circle).filter(Circle.id==id).first()
+        c = db.session.query(Circle).filter(Circle.id==id).first()
         assert c == None
 
     def test_invalid_user(self):
@@ -118,11 +119,11 @@ class TestCircleUpdate(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcircleupdate@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testcircleupdate@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testcircleupdate@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testcircleupdate2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testcircleupdate2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testcircleupdate2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -136,7 +137,7 @@ class TestCircleUpdate(unittest.TestCase):
         self.link = UserToCircle()
         self.link.user = self.user1
         self.link.circle = self.circle
-        db_session.commit()
+        db.session.commit()
 
     def test_valid_update(self):
         json_data = {
@@ -186,11 +187,11 @@ class TestCircleInfo(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcircleinfo@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testcircleinfo@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testcircleinfo@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testcircleinfo2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testcircleinfo2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testcircleinfo2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -204,7 +205,7 @@ class TestCircleInfo(unittest.TestCase):
         self.link = UserToCircle()
         self.link.user = self.user1
         self.link.circle = self.circle
-        db_session.commit()
+        db.session.commit()
 
     def test_valid_info(self):
         json_data = {
@@ -240,11 +241,11 @@ class TestCircleList(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcirclelist@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testcirclelist@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testcirclelist@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testcirclelist2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testcirclelist2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testcirclelist2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -260,7 +261,7 @@ class TestCircleList(unittest.TestCase):
         self.link = UserToCircle()
         self.link.user = self.user1
         self.link.circle = self.circle
-        db_session.commit()
+        db.session.commit()
 
     def test_valid_list(self):
         json_data = {

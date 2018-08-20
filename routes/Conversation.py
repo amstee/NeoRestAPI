@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from config.database import db_session
+from config.database import db
 from models.Circle import Circle
 from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
@@ -14,12 +14,12 @@ class ConversationCreate(Resource):
     def post(self, content, admin):
         try:
             content_checker("conversation_name", "circle_id")
-            circle = db_session.query(Circle).filter(Circle.id == content["circle_id"]).first()
+            circle = db.session.query(Circle).filter(Circle.id == content["circle_id"]).first()
             if circle is None:
                 return FAILED("Cercle introuvable")
             conv = Conversation(name=content["conversation_name"])
             conv.circle = circle
-            db_session.commit()
+            db.session.commit()
             return jsonify({"success": True, "content": conv.get_simple_content()})
         except Exception as e:
             return FAILED(e)
@@ -31,11 +31,11 @@ class ConversationDelete(Resource):
     def post(self, content, admin):
         try:
             content_checker("conversation_id")
-            conv = db_session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
+            conv = db.session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
             if conv is None:
                 return FAILED("Conversation introuvable")
-            db_session.delete(conv)
-            db_session.commit()
+            db.session.delete(conv)
+            db.session.commit()
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
@@ -47,7 +47,7 @@ class ConversationInfo(Resource):
     def post(self, content, user):
         try:
             content_checker("conversation_id")
-            conv = db_session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
+            conv = db.session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
             if conv is None:
                 return FAILED("Conversation introuvable")
             if conv.has_members(user):
@@ -63,7 +63,7 @@ class ConversationDeviceInfo(Resource):
     def post(self, content, device):
         try:
             content_checker("conversation_id")
-            conv = db_session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
+            conv = db.session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
             if conv is None:
                 return FAILED("Conversation introuvable")
             if conv.device_access and conv.circle.device.id == device.id:
@@ -79,12 +79,12 @@ class ConversationList(Resource):
     def post(self, content, user):
         try:
             content_checker("circle_id")
-            circle = db_session.query(Circle).filter(Circle.id == content["circle_id"]).first()
+            circle = db.session.query(Circle).filter(Circle.id == content["circle_id"]).first()
             if circle is None:
                 return FAILED("Cercle introuvable")
             if not circle.has_member(user):
                 return FAILED("L'utilisateur n'appartient pas au cercle spécifié", 403)
-            convs = db_session.query(Conversation).join(UserToConversation).filter(
+            convs = db.session.query(Conversation).join(UserToConversation).filter(
                 Conversation.circle_id == circle.id,
                 UserToConversation.user_id == user.id
             ).all()
@@ -99,11 +99,11 @@ class ConversationDeviceList(Resource):
     def post(self, content, device):
         try:
             content_checker("circle_id")
-            circle = db_session.query(Circle).filter(Circle.id == content["circle_id"]).first()
+            circle = db.session.query(Circle).filter(Circle.id == content["circle_id"]).first()
             if circle is None:
                 return FAILED("Cercle introuvable")
             if circle.device.id == device.id:
-                convs = db_session.query(Conversation).filter(Conversation.device_access is True).all()
+                convs = db.session.query(Conversation).filter(Conversation.device_access is True).all()
                 return jsonify({"success": True, "content": [conv.get_simple_content() for conv in convs]})
             else:
                 return FAILED("Device n'a pas acces a ce cercle")
@@ -117,7 +117,7 @@ class ConversationUpdate(Resource):
     def post(self, content, user):
         try:
             content_checker("conversation_id")
-            link = db_session.query(UserToConversation).filter(UserToConversation.user_id == user.id,
+            link = db.session.query(UserToConversation).filter(UserToConversation.user_id == user.id,
                                                                UserToConversation.conversation_id ==
                                                                content["conversation_id"]).first()
             if link is None:

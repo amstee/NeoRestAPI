@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from config.database import db_session
+from config.database import db
 from models.Circle import Circle
 from utils.decorators import secured_route, check_content, secured_admin_route
 from utils.contentChecker import content_checker
@@ -17,7 +17,7 @@ class CircleCreate(Resource):
             link = UserToCircle(privilege="REGULAR")
             link.circle = circle
             link.user = user
-            db_session.commit()
+            db.session.commit()
             resp = jsonify({"success": True, "content": circle.get_simple_content()})
         except Exception as e:
             return FAILED(e)
@@ -30,10 +30,10 @@ class CircleDelete(Resource):
     def post(self, content, admin):
         try:
             content_checker("circle_id")
-            circle = db_session.query(Circle).filter_by(id=content["circle_id"]).first()
+            circle = db.session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:
-                db_session.delete(circle)
-                db_session.commit()
+                db.session.delete(circle)
+                db.session.commit()
                 circle.notify_users(p1='circle', p2={'event': 'delete'})
                 return SUCCESS()
             resp = FAILED("Le cercle est introuvable")
@@ -49,7 +49,7 @@ class CircleUpdate(Resource):
     def post(self, content, user):
         try:
             content_checker("circle_id")
-            circle = db_session.query(Circle).filter_by(id=content["circle_id"]).first()
+            circle = db.session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:
                 if not circle.has_member(user):
                     return FAILED("Cet utilisateur n'a pas access a ce cercle", 403)
@@ -70,7 +70,7 @@ class CircleInfo(Resource):
     def post(self, content, user):
         try:
             content_checker("circle_id")
-            circle = db_session.query(Circle).filter_by(id=content["circle_id"]).first()
+            circle = db.session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:
                 if not circle.has_member(user):
                     return FAILED("Cet utilisateur n'a pas access à ce cercle", 403)

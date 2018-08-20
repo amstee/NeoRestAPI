@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from config.database import db_session
+from config.database import db
 from models.UserToConversation import UserToConversation
 from models.User import User as UserModel
 from utils.decorators import secured_route, check_content
@@ -14,15 +14,15 @@ class ConversationInvite(Resource):
     def post(self, content, user):
         try:
             content_checker("conversation_id", "email")
-            link = db_session.query(UserToConversation).filter(UserToConversation.conversation_id ==
+            link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
                                                                content["conversation_id"],
                                                                UserToConversation.user_id == user.id).first()
             if link is None:
                 return FAILED("Lien vers la conversation introuvable")
-            dest = db_session.query(UserModel).filter(UserModel.email == content["email"]).first()
+            dest = db.session.query(UserModel).filter(UserModel.email == content["email"]).first()
             if dest is None:
                 return FAILED("Utilisateur spécifié introuvable")
-            temp = db_session.query(UserToConversation).filter(UserToConversation.conversation_id ==
+            temp = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
                                                                link.conversation_id,
                                                                UserToConversation.user_id == dest.id).first()
             if temp is not None:
@@ -33,7 +33,7 @@ class ConversationInvite(Resource):
                 new_link = UserToConversation(privilege="STANDARD")
                 new_link.user = dest
                 new_link.conversation = link.conversation
-                db_session.commit()
+                db.session.commit()
                 sockets.notify_user(client=dest, is_device=False, p1='conversation',
                                     p2={'event': 'invite', 'conversation_id': link.conversation_id})
             else:
@@ -49,15 +49,15 @@ class ConversationUserPromote(Resource):
     def post(self, content, user):
         try:
             content_checker("conversation_id", "email")
-            link = db_session.query(UserToConversation).filter(UserToConversation.conversation_id ==
+            link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
                                                                content["conversation_id"],
                                                                UserToConversation.user_id == user.id).first()
             if link is None:
                 return FAILED("Lien vers la conversation introuvable")
-            dest = db_session.query(UserModel).filter(UserModel.email == content["email"]).first()
+            dest = db.session.query(UserModel).filter(UserModel.email == content["email"]).first()
             if dest is None:
                 return FAILED("Utilisateur spécifié introuvable")
-            temp = db_session.query(UserToConversation).filter(UserToConversation.conversation_id ==
+            temp = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
                                                                link.conversation_id,
                                                                UserToConversation.user_id == dest.id).first()
             if temp is None:
@@ -81,22 +81,22 @@ class ConversationKick(Resource):
     def post(self, content, user):
         try:
             content_checker("conversation_id", "email")
-            link = db_session.query(UserToConversation).filter(UserToConversation.conversation_id ==
+            link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
                                                                content["conversation_id"],
                                                                UserToConversation.user_id == user.id).first()
             if link is None:
                 return FAILED("Lien vers la conversation introuvable")
-            dest = db_session.query(UserModel).filter(UserModel.email == content["email"]).first()
+            dest = db.session.query(UserModel).filter(UserModel.email == content["email"]).first()
             if dest is None:
                 return FAILED("Utilisateur spécifié introuvable")
-            temp = db_session.query(UserToConversation).filter(UserToConversation.conversation_id ==
+            temp = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
                                                                link.conversation_id,
                                                                UserToConversation.user_id == dest.id).first()
             if temp is None:
                 return FAILED("Utilisateur ne fait pas parti de la conversation")
             if link.privilege == "ADMIN":
-                db_session.delete(temp)
-                db_session.commit()
+                db.session.delete(temp)
+                db.session.commit()
                 link.conversation.check_validity()
                 link.conversation.notify_users(p2={'event': 'kick', 'user': dest.email, 'from': user.email})
             else:
@@ -112,7 +112,7 @@ class ConversationQuit(Resource):
     def post(self, content, user):
         try:
             content_checker("conversation_id")
-            link = db_session.query(UserToConversation).filter(UserToConversation.conversation_id ==
+            link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
                                                                content["conversation_id"],
                                                                UserToConversation.user_id == user.id).first()
             if link is None:
@@ -120,8 +120,8 @@ class ConversationQuit(Resource):
             conversation = link.conversation
             if link.user_id == user.id:
                 conversation.notify_users(p2={'event': 'quit', 'user': user.email})
-                db_session.delete(link)
-                db_session.commit()
+                db.session.delete(link)
+                db.session.commit()
             if conversation.check_validity():
                 conversation.set_other_admin()
             return SUCCESS()
@@ -135,7 +135,7 @@ class ConversationAddDevice(Resource):
     def post(self, content, user):
         try:
             content_checker("conversation_id")
-            link = db_session.query(UserToConversation).filter(UserToConversation.conversation_id ==
+            link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
                                                                content["conversation_id"],
                                                                UserToConversation.user_id == user.id).first()
             if link is None:
@@ -156,7 +156,7 @@ class ConversationRemoveDevice(Resource):
     def post(self, content, user):
         try:
             content_checker("conversation_id")
-            link = db_session.query(UserToConversation).filter(UserToConversation.conversation_id ==
+            link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
                                                                content["conversation_id"],
                                                                UserToConversation.user_id == user.id).first()
             if link is None:
