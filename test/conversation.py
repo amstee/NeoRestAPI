@@ -4,7 +4,7 @@ import json
 
 sys.path.insert(0,'..')
 from api import NeoAPI
-from config.database import db_session
+from config.database import db
 from models.User import User as UserModel
 from utils.testutils import authenticate_user
 from models.Circle import Circle
@@ -17,11 +17,11 @@ class TestConversationCreate(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testconversation@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testconversation@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testconversation@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testconversation2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testconversation2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testconversation2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -35,7 +35,7 @@ class TestConversationCreate(unittest.TestCase):
         self.link = UserToCircle()
         self.link.user = self.user1
         self.link.circle = self.circle
-        db_session.commit()
+        db.session.commit()
 
     def test_valid_creation(self):
         json_data = {
@@ -86,11 +86,11 @@ class TestConversationDelete(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testconversationdelete@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testconversationdelete@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testconversationdelete@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testconversationdelete2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testconversationdelete2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testconversationdelete2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -109,14 +109,14 @@ class TestConversationDelete(unittest.TestCase):
         self.utc2 = UTC()
         self.utc2.user = self.user2
         self.utc2.conversation = self.conv
-        db_session.commit()
+        db.session.commit()
 
     def create_circle(self):
         self.circle = Circle("TESTCONVDELETE")
         self.link = UserToCircle()
         self.link.user = self.user1
         self.link.circle = self.circle
-        db_session.commit()
+        db.session.commit()
 
     def test_valid_delete(self):
         id = self.conv.id
@@ -127,7 +127,7 @@ class TestConversationDelete(unittest.TestCase):
         response = self.api.post('/admin/conversation/delete', data=json.dumps(json_data),
                                  content_type='application/json')
         response_json = json.loads(response.data)
-        c = db_session.query(Conversation).filter(Conversation.id==id).first()
+        c = db.session.query(Conversation).filter(Conversation.id==id).first()
         assert response.status_code == 200
         assert response_json['success'] == True
         assert c == None
@@ -169,15 +169,15 @@ class TestConversationInfo(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testconversationinfo@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testconversationinfo@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testconversationinfo@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testconversationinfo2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testconversationinfo2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testconversationinfo2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
-        self.user3 = db_session.query(UserModel).filter(UserModel.email == "testconversationinfo3@test.com").first()
+        self.user3 = db.session.query(UserModel).filter(UserModel.email == "testconversationinfo3@test.com").first()
         if self.user3 is None:
             self.user3 = UserModel(email="testconversationinfo3@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -197,14 +197,14 @@ class TestConversationInfo(unittest.TestCase):
         self.utc2 = UTC()
         self.utc2.user = self.user2
         self.utc2.conversation = self.conv
-        db_session.commit()
+        db.session.commit()
 
     def create_circle(self):
         self.circle = Circle("TESTCONVDELETE")
         self.link = UserToCircle()
         self.link.user = self.user1
         self.link.circle = self.circle
-        db_session.commit()
+        db.session.commit()
 
     def test_valid_info(self):
         json_data = {
@@ -251,8 +251,8 @@ class TestConversationDeviceInfo(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        db_session.query(UserModel).delete()
-        db_session.commit()
+        db.session.query(UserModel).delete()
+        db.session.commit()
 
     def test_valid_info(self):
         assert True == True
@@ -261,15 +261,15 @@ class TestConversationList(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testconversationinfo@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testconversationinfo@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testconversationinfo@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testconversationinfo2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testconversationinfo2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testconversationinfo2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
-        self.user3 = db_session.query(UserModel).filter(UserModel.email == "testconversationinfo3@test.com").first()
+        self.user3 = db.session.query(UserModel).filter(UserModel.email == "testconversationinfo3@test.com").first()
         if self.user3 is None:
             self.user3 = UserModel(email="testconversationinfo3@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -295,7 +295,7 @@ class TestConversationList(unittest.TestCase):
         utc1.conversation = conv
         utc2.user = u2
         utc2.conversation = conv
-        db_session.commit()
+        db.session.commit()
 
     def create_circle(self):
         self.circle = Circle("TESTCONVLIST")
@@ -312,7 +312,7 @@ class TestConversationList(unittest.TestCase):
         self.link3.circle = self.circle2
         self.link4.user = self.user2
         self.link4.circle = self.circle2
-        db_session.commit()
+        db.session.commit()
 
     def test_valid_list(self):
         json_data = {
@@ -379,8 +379,8 @@ class TestConversationDeviceList(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        db_session.query(UserModel).delete()
-        db_session.commit()
+        db.session.query(UserModel).delete()
+        db.session.commit()
 
     def test_valid_list(self):
         assert True == True
@@ -389,15 +389,15 @@ class TestConversationUpdate(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testconversationinfo@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testconversationinfo@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testconversationinfo@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testconversationinfo2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testconversationinfo2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testconversationinfo2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
-        self.user3 = db_session.query(UserModel).filter(UserModel.email == "testconversationinfo3@test.com").first()
+        self.user3 = db.session.query(UserModel).filter(UserModel.email == "testconversationinfo3@test.com").first()
         if self.user3 is None:
             self.user3 = UserModel(email="testconversationinfo3@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -417,14 +417,14 @@ class TestConversationUpdate(unittest.TestCase):
         self.utc2 = UTC()
         self.utc2.user = self.user2
         self.utc2.conversation = self.conv
-        db_session.commit()
+        db.session.commit()
 
     def create_circle(self):
         self.circle = Circle("TESTCONVUPDATE")
         self.link = UserToCircle()
         self.link.user = self.user1
         self.link.circle = self.circle
-        db_session.commit()
+        db.session.commit()
 
     def test_valid_update(self):
         json_data = {

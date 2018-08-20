@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from config.database import db_session
+from config.database import db
 from models.Message import Message
 from models.Media import Media
 from utils.decorators import secured_route, check_content, secured_admin_route
@@ -14,7 +14,7 @@ class MediaInfo(Resource):
     def post(self, content, user):
         try:
             content_checker("media_id")
-            media = db_session.query(Media).filter(Media.id == content["media_id"]).first()
+            media = db.session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
             if user_has_access_to_message(media.message, user):
@@ -30,7 +30,7 @@ class DeviceMediaInfo(Resource):
     def post(self, content, device):
         try:
             content_checker("media_id")
-            media = db_session.query(Media).filter(Media.id == content["media_id"]).first()
+            media = db.session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
             if device_has_access_to_message(media.message, device):
@@ -46,7 +46,7 @@ class MediaInfoAdmin(Resource):
     def post(self, content, admin):
         try:
             content_checker("media_id")
-            media = db_session.query(Media).filter(Media.id == content["media_id"]).first()
+            media = db.session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
             return jsonify({"success": True, "content": media.get_content()})
@@ -60,11 +60,11 @@ class MediaDelete(Resource):
     def post(self, content, admin):
         try:
             content_checker("media_id")
-            media = db_session.query(Media).filter(Media.id == content["media_id"]).first()
+            media = db.session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
-            db_session.delete(media)
-            db_session.commit()
+            db.session.delete(media)
+            db.session.commit()
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
@@ -76,7 +76,7 @@ class MediaList(Resource):
     def post(self, content, user):
         try:
             content_checker("message_id")
-            message = db_session.query(Message).filter(Message.id == content["message_id"]).first()
+            message = db.session.query(Message).filter(Message.id == content["message_id"]).first()
             if message is None:
                 return FAILED("Message introuvable")
             if user_has_access_to_message(message, user):
@@ -92,7 +92,7 @@ class DeviceMediaList(Resource):
     def post(self, content, device):
         try:
             content_checker("message_id")
-            message = db_session.query(Message).filter(Message.id == content["message_id"]).first()
+            message = db.session.query(Message).filter(Message.id == content["message_id"]).first()
             if message is None:
                 return FAILED("Message introuvable")
             if device_has_access_to_message(message, device):
@@ -109,7 +109,7 @@ class MediaUpdate(Resource):
     def post(self, content, admin):
         try:
             content_checker("media_id")
-            media = db_session.query(Media).filter(Media.id == content["media_id"]).first()
+            media = db.session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None:
                 return FAILED("Media introuvable")
             filename = content["filename"] if "filename" in content else None

@@ -1,4 +1,4 @@
-from config.database import db_session
+from config.database import db
 from models.User import User
 from models.Conversation import Conversation
 from models.Circle import Circle
@@ -9,8 +9,8 @@ from models.UserToCircle import UserToCircle
 
 
 def initDefaultContent():
-    user = db_session.query(User).filter(User.email == "user1.beta@test.com").first()
-    user2 = db_session.query(User).filter(User.email == "user2.beta@test.cm").first()
+    user = db.session.query(User).filter(User.email == "user1.beta@test.com").first()
+    user2 = db.session.query(User).filter(User.email == "user2.beta@test.cm").first()
     if user is None and user2 is None:
         user = User(email="user1.beta@test.com", password="test", first_name="user1",
                     last_name="beta", birthday="2019-09-05")
@@ -19,7 +19,7 @@ def initDefaultContent():
         circle = Circle("Cercle Beta 1")
         UserToCircle(user=user, circle=circle, privilege="ADMIN")
         UserToCircle(user=user2, circle=circle)
-        device = db_session.query(Device).filter(Device.username == "device1").first()
+        device = db.session.query(Device).filter(Device.username == "device1").first()
         if device is None:
             device = Device(name="Device beta 1")
             device.circle = circle
@@ -42,4 +42,4 @@ def initDefaultContent():
                 cl4 = UserToConversation(user=user2, conversation=conversation2)
                 Message(content="Message conversation sans device from user1", link=cl3, conversation=conversation2)
                 Message(content="Message conversation sans device from user2", link=cl4, conversation=conversation2)
-        db_session.commit()
+        db.session.commit()

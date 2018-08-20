@@ -2,8 +2,8 @@ import unittest
 import sys
 from flask_socketio import SocketIOTestClient
 sys.path.insert(0, '..')
-from api import NeoAPI
-from config.database import db_session
+from api import NeoAPI, socketio, sockets
+from config.database import db
 from utils.testutils import authenticate_user
 from utils.testutils import authenticate_device
 from models.User import User as UserModel
@@ -19,17 +19,17 @@ class SocketioMessageEvents(unittest.TestCase):
     def setUp(self):
         self.neo = NeoAPI()
         self.api = self.neo.activate_testing()
-        self.client = SocketIOTestClient(self.neo.app, self.neo.socketio)
-        self.client2 = SocketIOTestClient(self.neo.app, self.neo.socketio)
-        self.deviceClient = SocketIOTestClient(self.neo.app, self.neo.socketio)
+        self.client = SocketIOTestClient(self.neo.app, socketio)
+        self.client2 = SocketIOTestClient(self.neo.app, socketio)
+        self.deviceClient = SocketIOTestClient(self.neo.app, socketio)
         self.client.disconnect()
         self.client2.disconnect()
         self.deviceClient.disconnect()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "te@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "te@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="te@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "tea@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "tea@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="tea@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
@@ -45,7 +45,9 @@ class SocketioMessageEvents(unittest.TestCase):
         self.device.circle = self.circle
         self.device_password = self.device.get_pre_activation_password()
         self.device.activate(self.device.key)
-        db_session.commit()
+        db.session.commit()
+        self.circle_id = self.circle.id
+        self.conversation_id = self.conversation.id
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.device_token = authenticate_device(self.api, self.device, self.device_password)
@@ -60,7 +62,7 @@ class SocketioMessageEvents(unittest.TestCase):
         data = {
             'token': self.token1
         }
-        assert len(self.neo.sockets) == 0
+        assert len(sockets) == 0
         self.client.connect()
         self.client2.connect()
         self.deviceClient.connect()
@@ -77,11 +79,11 @@ class SocketioMessageEvents(unittest.TestCase):
         assert len(res3) == 1
         assert res3[0]['name'] == 'success'
         self.client.emit('join_conversation',
-                         {'conversation_id': self.conversation.id}, json=True)
+                         {'conversation_id': self.conversation_id}, json=True)
         self.client2.emit('join_conversation',
-                         {'conversation_id': self.conversation.id}, json=True)
+                         {'conversation_id': self.conversation_id}, json=True)
         self.deviceClient.emit('join_conversation',
-                         {'conversation_id': self.conversation.id}, json=True)
+                         {'conversation_id': self.conversation_id}, json=True)
         res1 = self.client.get_received()
         res2 = self.client2.get_received()
         res3 = self.deviceClient.get_received()
@@ -92,7 +94,7 @@ class SocketioMessageEvents(unittest.TestCase):
         assert len(res3) == 1
         assert res3[0]['name'] == 'success'
         sock = {
-            'conversation_id': self.conversation.id,
+            'conversation_id': self.conversation_id,
             'text_message': 'test web socket'
         }
         self.client.emit('message', sock, json=True)
@@ -110,7 +112,7 @@ class SocketioMessageEvents(unittest.TestCase):
         data = {
             'token': self.token1
         }
-        assert len(self.neo.sockets) == 0
+        assert len(sockets) == 0
         self.client.connect()
         self.client2.connect()
         self.deviceClient.connect()
@@ -127,11 +129,11 @@ class SocketioMessageEvents(unittest.TestCase):
         assert len(res3) == 1
         assert res3[0]['name'] == 'success'
         self.client.emit('join_conversation',
-                         {'conversation_id': self.conversation.id}, json=True)
+                         {'conversation_id': self.conversation_id}, json=True)
         self.client2.emit('join_conversation',
-                         {'conversation_id': self.conversation.id}, json=True)
+                         {'conversation_id': self.conversation_id}, json=True)
         self.deviceClient.emit('join_conversation',
-                         {'conversation_id': self.conversation.id}, json=True)
+                         {'conversation_id': self.conversation_id}, json=True)
         res1 = self.client.get_received()
         res2 = self.client2.get_received()
         res3 = self.deviceClient.get_received()
@@ -142,7 +144,7 @@ class SocketioMessageEvents(unittest.TestCase):
         assert len(res3) == 1
         assert res3[0]['name'] == 'success'
         sock = {
-            'conversation_id': self.conversation.id,
+            'conversation_id': self.conversation_id,
             'text_message': 'test web socket'
         }
         self.deviceClient.emit('message', sock, json=True)
@@ -157,7 +159,7 @@ class SocketioMessageEvents(unittest.TestCase):
         data = {
             'token': self.token1
         }
-        assert len(self.neo.sockets) == 0
+        assert len(sockets) == 0
         self.client.connect()
         self.client2.connect()
         self.deviceClient.connect()
@@ -174,11 +176,11 @@ class SocketioMessageEvents(unittest.TestCase):
         assert len(res3) == 1
         assert res3[0]['name'] == 'success'
         self.client.emit('join_conversation',
-                         {'conversation_id': self.conversation.id}, json=True)
+                         {'conversation_id': self.conversation_id}, json=True)
         self.client2.emit('join_conversation',
-                         {'conversation_id': self.conversation.id}, json=True)
+                         {'conversation_id': self.conversation_id}, json=True)
         self.deviceClient.emit('join_conversation',
-                         {'conversation_id': self.conversation.id}, json=True)
+                         {'conversation_id': self.conversation_id}, json=True)
         res1 = self.client.get_received()
         res2 = self.client2.get_received()
         res3 = self.deviceClient.get_received()
@@ -190,7 +192,7 @@ class SocketioMessageEvents(unittest.TestCase):
         assert res3[0]['name'] == 'success'
         json_data = {
             'token': self.token1,
-            'conversation_id': self.conversation.id,
+            'conversation_id': self.conversation_id,
             'text_message': 'test web socket'
         }
         response = self.api.post('/message/send', data=json.dumps(json_data), content_type='application/json')

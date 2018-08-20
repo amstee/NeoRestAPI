@@ -1,7 +1,7 @@
 from gevent import monkey
 monkey.patch_all()
 
-from config import create_app, socketio, NeoAPI
+from config import create_app, socketio, NeoAPI, sockets
 
 if __name__ == '__main__':
     app = create_app()

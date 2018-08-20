@@ -1,11 +1,10 @@
 import unittest
 import sys
 import json
-from datetime import datetime
 
 sys.path.insert(0, '..')
 from api import NeoAPI
-from config.database import db_session
+from config.database import db
 from models.User import User as UserModel
 from utils.testutils import authenticate_user
 
@@ -14,8 +13,8 @@ class AccountCreate(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        db_session.query(UserModel).delete()
-        db_session.commit()
+        db.session.query(UserModel).delete()
+        db.session.commit()
 
     def test_valid_request(self):
         json_data = {
@@ -118,8 +117,8 @@ class AccountCreate(unittest.TestCase):
             last_name="last_name",
             birthday="1999-02-02"
             )
-        db_session.add(new_user)
-        db_session.commit()
+        db.session.add(new_user)
+        db.session.commit()
         json_data = {
             "email": "clone@gmail.com",
             "last_name": "Last Name",
@@ -137,8 +136,8 @@ class AccountLogin(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        db_session.query(UserModel).delete()
-        db_session.commit()
+        db.session.query(UserModel).delete()
+        db.session.commit()
 
         new_user = UserModel(
             email="clone2@gmail.com",
@@ -147,8 +146,8 @@ class AccountLogin(unittest.TestCase):
             last_name="last_name",
             birthday="1999-02-02"
             )
-        db_session.add(new_user)
-        db_session.commit()
+        db.session.add(new_user)
+        db.session.commit()
 
     def test_valid_request(self):
         json_data = {
@@ -207,11 +206,11 @@ class AccountApiToken(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcircle@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testcircle@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testcircle@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        db_session.commit()
+        db.session.commit()
         self.token1 = authenticate_user(self.api, self.user1, "test")
 
     def test_valid_token(self):

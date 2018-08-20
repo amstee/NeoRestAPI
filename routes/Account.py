@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource
-from config.database import db_session
+from config.database import db
 from models.User import User as UserModel
 from utils.decorators import secured_route, check_content, secured_admin_route
 from utils.contentChecker import content_checker
@@ -11,7 +11,7 @@ class AccountCreate(Resource):
     def get(self):
         try:
             content = request.args.get('email')
-            user = db_session.query(UserModel).filter(UserModel.email == content)
+            user = db.session.query(UserModel).filter(UserModel.email == content)
             resp = jsonify({"success": True, "content": user.get_simple_content()})
             resp.status_code = 200
             return resp
@@ -24,7 +24,7 @@ class AccountCreate(Resource):
             content_checker("email", "password", "first_name", "last_name", "birthday")
             UserModel(email=content['email'], password=content['password'], first_name=content['first_name'],
                       last_name=content['last_name'], birthday=content["birthday"])
-            db_session.commit()
+            db.session.commit()
             resp = jsonify({"success": True})
             resp.status_code = 201
         except Exception as e:
@@ -38,7 +38,7 @@ class AccountLogin(Resource):
     def post(self, content):
         try:
             content_checker("email", "password")
-            user = db_session.query(UserModel).filter_by(email=content["email"]).first()
+            user = db.session.query(UserModel).filter_by(email=content["email"]).first()
             if user is not None:
                 res, data = user.authenticate(content["password"])
                 if res is True:
@@ -66,7 +66,7 @@ class ModifyPassword(Resource):
             email = content["email"]
             prev = content["previous_password"]
             new = content["new_password"]
-            user = db_session.query(UserModel).filter_by(email=email).first()
+            user = db.session.query(UserModel).filter_by(email=email).first()
             if user is not None:
                 if user.check_password(prev):
                     user.update_password(new)
@@ -130,7 +130,7 @@ class DeviceAccountInfo(Resource):
     @secured_route
     def post(self, content, device):
         try:
-            user = db_session.query(UserModel).filter(UserModel.id == content["user_id"]).first()
+            user = db.session.query(UserModel).filter(UserModel.id == content["user_id"]).first()
             if user is None:
                 return FAILED("Utilisateur introuvable")
             if device.circle.has_member(user):
@@ -165,7 +165,7 @@ class MailAvailability(Resource):
     def post(self, content):
         try:
             content_checker("email")
-            user = db_session.query(UserModel).filter(UserModel.email == content['email']).first()
+            user = db.session.query(UserModel).filter(UserModel.email == content['email']).first()
             if user is not None:
                 resp = jsonify({"success": False})
             else:
@@ -182,7 +182,7 @@ class PromoteAdmin(Resource):
     def post(self, content, admin):
         try:
             content_checker("user_id")
-            user = db_session.query(UserModel).filter(UserModel.id == content["user_id"]).first()
+            user = db.session.query(UserModel).filter(UserModel.id == content["user_id"]).first()
             if user is not None:
                 user.promote_admin()
                 return SUCCESS()
