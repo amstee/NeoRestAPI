@@ -2,15 +2,15 @@ import unittest
 import sys
 from flask_socketio import SocketIOTestClient
 sys.path.insert(0, '..')
-from api import neoapi
+from api import NeoAPI
 from config.database import db_session
-from utils.testutils import AuthenticateUser
+from utils.testutils import authenticate_user
 from models.User import User as UserModel
 
 
 class SocketioAuthenticate(unittest.TestCase):
     def setUp(self):
-        self.neo = neoapi()
+        self.neo = NeoAPI()
         self.api = self.neo.activate_testing()
         self.client = SocketIOTestClient(self.neo.app, self.neo.socketio)
         self.client2 = SocketIOTestClient(self.neo.app, self.neo.socketio)
@@ -20,7 +20,7 @@ class SocketioAuthenticate(unittest.TestCase):
         if self.user1 is None:
             self.user1 = UserModel(email="te@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
 
     def tearDown(self):
         self.client.disconnect()
@@ -41,6 +41,7 @@ class SocketioAuthenticate(unittest.TestCase):
         self.client.connect()
         self.client.emit('authenticate', data, json=True)
         res = self.client.get_received()
+        print(res)
         assert len(res) == 1
         assert res[0]['name'] == 'success'
 

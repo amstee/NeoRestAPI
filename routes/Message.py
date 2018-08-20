@@ -1,25 +1,24 @@
-from flask import request
 from flask_restful import Resource
 from config.database import db_session
 from models.UserToConversation import UserToConversation
 from models.Conversation import Conversation
 from models.Media import Media
 from models.Message import Message
-from utils.decorators import securedRoute, checkContent, securedAdminRoute
-from utils.contentChecker import contentChecker
+from utils.decorators import secured_route, check_content, secured_admin_route
+from utils.contentChecker import content_checker
 from utils.apiUtils import *
-from utils.security import userHasAccessToMessage, userIsOwnerOfMessage
-from .Facebook import MessengerConversationModelSend
+from utils.security import user_has_access_to_message, user_is_owner_of_message
+from bot.facebook import messenger_conversation_model_send
 from flask_socketio import emit
 
 
 class MessageCreate(Resource):
-    @checkContent
-    @securedAdminRoute
+    @check_content
+    @secured_admin_route
     def post(self, content, admin):
         try:
-            contentChecker("files", "link_id", "text", "directory_name")
-            link = db_session.query(UserToConversation).filter(UserToConversation.id==content["link_id"]).first()
+            content_checker("files", "link_id", "text", "directory_name")
+            link = db_session.query(UserToConversation).filter(UserToConversation.id == content["link_id"]).first()
             if link is None:
                 return FAILED("Lien entre utilisateur et conversation introuvable")
             message = Message(content=content["text"])
@@ -32,24 +31,25 @@ class MessageCreate(Resource):
                     media.identifier = file
                     media.message = message
                     db_session.commit()
-                    media_list.append(media.getSimpleContent())
+                    media_list.append(media.get_simple_content())
             db_session.commit()
             if not media_list:
                 emit('message', {
                     'conversation_id': link.conversation_id,
-                    'message': message.getSimpleJSONCompliantContent(),
+                    'message': message.get_simple_json_compliant_content(),
                     'time': message.sent.isoformat(),
                     'sender': {'email': 'ADMIN'},
                     'media_list': media_list,
                     'status': 'done'},
                      room='conversation_' + str(link.conversation_id), namespace='/')
             else:
-                emit('message', {'conversation_id': link.conversation_id, 'message': message.getSimpleJSONCompliantContent(),
-                                 'status': 'pending'}, room='conversation_' + str(link.conversation_id), namespace='/')
+                emit('message', {'conversation_id': link.conversation_id, 'message':
+                     message.get_simple_json_compliant_content(),
+                     'status': 'pending'}, room='conversation_' + str(link.conversation_id), namespace='/')
             conversation = db_session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
             info_sender = "[" + link.conversation.name + "] " + admin.first_name + " : "
             try:
-                MessengerConversationModelSend(link.user_id, conversation, info_sender + message.text_content)
+                messenger_conversation_model_send(link.user_id, conversation, info_sender + message.text_content)
             except Exception:
                 pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
@@ -60,77 +60,78 @@ class MessageCreate(Resource):
 
 
 class MessageDelete(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("message_id")
-            message = db_session.query(Message).filter(Message.id==content["message_id"]).first()
+            content_checker("message_id")
+            message = db_session.query(Message).filter(Message.id == content["message_id"]).first()
             if message is None:
                 return FAILED("Message spécifié introuvable")
-            if not userIsOwnerOfMessage(message, user):
+            if not user_is_owner_of_message(message, user):
                 return FAILED("Cet utilisateur ne peut pas supprimer ce message", 403)
-            id = message.id
+            id_message = message.id
             conv_id = message.conversation_id
             db_session.delete(message)
             db_session.commit()
-            emit('message', {"conversation_id": conv_id, "message_id": id, "event": 'delete'}
-                 , room="conversation_" + str(conv_id), namespace='/')
+            emit('message', {"conversation_id": conv_id, "message_id": id_message, "event": 'delete'},
+                 room="conversation_" + str(conv_id), namespace='/')
             return SUCCESS()
         except Exception as e:
             return FAILED(e)
 
 
 class MessageInfo(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("message_id")
-            message = db_session.query(Message).filter(Message.id==content["message_id"]).first()
+            content_checker("message_id")
+            message = db_session.query(Message).filter(Message.id == content["message_id"]).first()
             if message is None:
                 return FAILED("Message spécifié introuvable")
-            if userHasAccessToMessage(message, user):
-                return jsonify({"success": True, "content": message.getContent()})
+            if user_has_access_to_message(message, user):
+                return jsonify({"success": True, "content": message.get_content()})
             return FAILED("Cer utilisateur ne peut pas voir ce message", 403)
         except Exception as e:
             return FAILED(e)
 
 
 class MessageList(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("conversation_id", "quantity")
+            content_checker("conversation_id", "quantity")
             if content["quantity"] <= 0:
                 return FAILED("Parameter Quantity invalid")
-            conversation = db_session.query(Conversation).filter(Conversation.id==content["conversation_id"]).first()
-            if not conversation.hasMembers(user):
+            conversation = db_session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
+            if not conversation.has_members(user):
                 return FAILED("Cet utilisateur ne peut pas acceder a cette conversation", 403)
-            messages = db_session.query(Message).filter(Message.conversation_id==conversation.id).limit(content["quantity"]).all()
+            messages = db_session.query(Message).filter(Message.conversation_id == conversation.id).\
+                limit(content["quantity"]).all()
             conv_content = []
             for message in messages:
-                conv_content.append(message.getContent())
+                conv_content.append(message.get_content())
             return jsonify({"success": True, "content": conv_content})
         except Exception as e:
             return FAILED(e)
 
 
 class MessageUpdate(Resource):
-    @checkContent
-    @securedRoute
+    @check_content
+    @secured_route
     def post(self, content, user):
         try:
-            contentChecker("message_id", "text_content")
-            message = db_session.query(Message).filter(Message.id==content["message_id"]).first()
+            content_checker("message_id", "text_content")
+            message = db_session.query(Message).filter(Message.id == content["message_id"]).first()
             if message is None:
                 return FAILED("Message spécifié introuvable")
-            if not userIsOwnerOfMessage(message, user):
+            if not user_is_owner_of_message(message, user):
                 return FAILED("Cet utilisateur ne peut pas modifier ce message", 403)
-            message.updateContent(content=content["text_content"])
-            emit('message', {"conversation_id": message.conversation_id, "message_id": message.id, "event": 'update'}
-                 , room="conversation_" + str(message.conversation_id), namespace='/')
+            message.update_content(content=content["text_content"])
+            emit('message', {"conversation_id": message.conversation_id, "message_id": message.id, "event": 'update'},
+                 room="conversation_" + str(message.conversation_id), namespace='/')
             return SUCCESS()
         except Exception as e:
             return FAILED(e)

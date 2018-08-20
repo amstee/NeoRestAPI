@@ -3,18 +3,19 @@ import sys
 import json
 
 sys.path.insert(0,'..')
-from api import neoapi
+from api import NeoAPI
 from config.database import db_session
 from models.User import User as UserModel
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
 from models.Device import Device
-from utils.testutils import AuthenticateUser
-from utils.testutils import AuthenticateDevice
+from utils.testutils import authenticate_user
+from utils.testutils import authenticate_device
+
 
 class TestDeviceAdd(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -28,9 +29,9 @@ class TestDeviceAdd(unittest.TestCase):
         self.linkCircle = UserToCircle(user=self.user1, circle=self.circle)
         self.linkCircle2 = UserToCircle(user=self.user2, circle=self.circle)
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_device_add(self):
         json_data = {
@@ -67,7 +68,7 @@ class TestDeviceAdd(unittest.TestCase):
 
 class TestDeviceUpdate(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -83,9 +84,9 @@ class TestDeviceUpdate(unittest.TestCase):
         self.device = Device(name="Papie")
         self.device.circle = self.circle
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_device_update(self):
         json_data = {
@@ -134,7 +135,7 @@ class TestDeviceUpdate(unittest.TestCase):
 
 class TestDeviceInfo(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -150,9 +151,9 @@ class TestDeviceInfo(unittest.TestCase):
         self.device = Device(name="Papie")
         self.device.circle = self.circle
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_device_info(self):
         json_data = {
@@ -196,7 +197,7 @@ class TestDeviceInfo(unittest.TestCase):
 
 class TestDeviceDelete(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -212,9 +213,9 @@ class TestDeviceDelete(unittest.TestCase):
         self.device = Device(name="Papie")
         self.device.circle = self.circle
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_delete(self):
         json_data = {
@@ -260,7 +261,7 @@ class TestDeviceDelete(unittest.TestCase):
 
 class TestDeviceActivate(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -276,9 +277,9 @@ class TestDeviceActivate(unittest.TestCase):
         self.device = Device(name="Papie")
         self.device.circle = self.circle
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_activation(self):
         password = self.device.password
@@ -328,7 +329,7 @@ class TestDeviceActivate(unittest.TestCase):
 
 class TestDeviceLogin(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -343,12 +344,12 @@ class TestDeviceLogin(unittest.TestCase):
         self.linkCircle2 = UserToCircle(user=self.user2, circle=self.circle)
         self.device = Device(name="Papie")
         self.device.circle = self.circle
-        self.device_password = self.device.getPreActivationPassword()
+        self.device_password = self.device.get_pre_activation_password()
         self.device.activate(self.device.key)
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_login(self):
         json_data = {
@@ -391,7 +392,7 @@ class TestDeviceLogin(unittest.TestCase):
 
 class TestModifyDevicePassword(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -406,12 +407,12 @@ class TestModifyDevicePassword(unittest.TestCase):
         self.linkCircle2 = UserToCircle(user=self.user2, circle=self.circle)
         self.device = Device(name="Papie")
         self.device.circle = self.circle
-        self.device_password = self.device.getPreActivationPassword()
+        self.device_password = self.device.get_pre_activation_password()
         self.device.activate(self.device.key)
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_modify(self):
         json_data = {
@@ -458,7 +459,7 @@ class TestModifyDevicePassword(unittest.TestCase):
 
 class TestDeviceLogout(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -473,13 +474,13 @@ class TestDeviceLogout(unittest.TestCase):
         self.linkCircle2 = UserToCircle(user=self.user2, circle=self.circle)
         self.device = Device(name="Papie")
         self.device.circle = self.circle
-        self.device_password = self.device.getPreActivationPassword()
+        self.device_password = self.device.get_pre_activation_password()
         self.device.activate(self.device.key)
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.device_token = AuthenticateDevice(self.api, self.device, self.device_password)
-        self.tokenAdmin = AuthenticateUser(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.device_token = authenticate_device(self.api, self.device, self.device_password)
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def test_valid_logout(self):
         json_data = {

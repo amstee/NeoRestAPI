@@ -3,18 +3,19 @@ import sys
 import json
 
 sys.path.insert(0,'..')
-from api import neoapi
+from api import NeoAPI
 from config.database import db_session
 from models.User import User as UserModel
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
 from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
-from utils.testutils import AuthenticateUser
+from utils.testutils import authenticate_user
+
 
 class TestConversationInvite(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcirclelogic@test.com").first()
         if self.user1 is None:
@@ -41,9 +42,9 @@ class TestConversationInvite(unittest.TestCase):
         self.utc1.user = self.user1
         self.utc1.conversation = self.conv
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.token3 = AuthenticateUser(self.api, self.user3, "test")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.token3 = authenticate_user(self.api, self.user3, "test")
 
     def tearDown(self):
         db_session.delete(self.user1)
@@ -137,7 +138,7 @@ class TestConversationInvite(unittest.TestCase):
 
 class TestConversationUserPromote(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcirclelogic@test.com").first()
         if self.user1 is None:
@@ -167,9 +168,9 @@ class TestConversationUserPromote(unittest.TestCase):
         self.utc2.user = self.user2
         self.utc2.conversation = self.conv
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.token3 = AuthenticateUser(self.api, self.user3, "test")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.token3 = authenticate_user(self.api, self.user3, "test")
 
     def tearDown(self):
         db_session.delete(self.user1)
@@ -259,7 +260,7 @@ class TestConversationUserPromote(unittest.TestCase):
 
 class TestConversationKick(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcirclelogic@test.com").first()
         if self.user1 is None:
@@ -289,9 +290,9 @@ class TestConversationKick(unittest.TestCase):
         self.utc2.user = self.user2
         self.utc2.conversation = self.conv
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.token3 = AuthenticateUser(self.api, self.user3, "test")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.token3 = authenticate_user(self.api, self.user3, "test")
 
     def tearDown(self):
         db_session.delete(self.user1)
@@ -380,7 +381,7 @@ class TestConversationKick(unittest.TestCase):
 
 class TestConversationQuit(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcirclelogic@test.com").first()
         if self.user1 is None:
@@ -410,9 +411,9 @@ class TestConversationQuit(unittest.TestCase):
         self.utc2.user = self.user2
         self.utc2.conversation = self.conv
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.token3 = AuthenticateUser(self.api, self.user3, "test")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.token3 = authenticate_user(self.api, self.user3, "test")
 
     def tearDown(self):
         db_session.delete(self.user1)
@@ -443,8 +444,11 @@ class TestConversationQuit(unittest.TestCase):
         }
         response = self.api.post('/conversation/quit', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
+        c = db_session.query(UserToConversation).filter(UserToConversation.conversation_id == self.conv.id).filter(
+            UserToConversation.user_id == self.user2.id).first()
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success'] is True
+        assert c is None
         assert len(self.conv.links) == 1
 
     def test_invalid_user(self):
@@ -494,7 +498,7 @@ class TestConversationQuit(unittest.TestCase):
 
 class TestConversationAddDevice(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcirclelogic@test.com").first()
         if self.user1 is None:
@@ -524,9 +528,9 @@ class TestConversationAddDevice(unittest.TestCase):
         self.utc2.user = self.user2
         self.utc2.conversation = self.conv
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.token3 = AuthenticateUser(self.api, self.user3, "test")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.token3 = authenticate_user(self.api, self.user3, "test")
 
     def tearDown(self):
         db_session.delete(self.user1)
@@ -569,7 +573,7 @@ class TestConversationAddDevice(unittest.TestCase):
 
 class TestConversationRemoveDevice(unittest.TestCase):
     def setUp(self):
-        neo = neoapi()
+        neo = NeoAPI()
         self.api = neo.activate_testing()
         self.user1 = db_session.query(UserModel).filter(UserModel.email == "testcirclelogic@test.com").first()
         if self.user1 is None:
@@ -599,9 +603,9 @@ class TestConversationRemoveDevice(unittest.TestCase):
         self.utc2.user = self.user2
         self.utc2.conversation = self.conv
         db_session.commit()
-        self.token1 = AuthenticateUser(self.api, self.user1, "test")
-        self.token2 = AuthenticateUser(self.api, self.user2, "test")
-        self.token3 = AuthenticateUser(self.api, self.user3, "test")
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.token3 = authenticate_user(self.api, self.user3, "test")
 
     def tearDown(self):
         db_session.delete(self.user1)

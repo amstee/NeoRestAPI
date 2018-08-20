@@ -1,7 +1,7 @@
 import json
 
 
-def AuthenticateUser(api, user, password):
+def authenticate_user(api, user, password):
     if type(user) is str:
         varia = user
     else:
@@ -15,7 +15,7 @@ def AuthenticateUser(api, user, password):
     return response_json['token']
 
 
-def AuthenticateDevice(api, device, password):
+def authenticate_device(api, device, password):
     if type(device) is str:
         varia = device
     else:

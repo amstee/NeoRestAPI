@@ -25,7 +25,7 @@ class SocketUser:
         return '<SocketUser(' + str(self.sid) + " Connected : " + \
                str(self.connected) + " Authenticated : " + str(self.authenticated) + ')>'
 
-    def genereateCredentials(self):
+    def generate_credentials(self):
         validity = time.time() + EXPIRY
         self.webrtc_username = str(validity) + ':' + str(self.client.id) + str(self.is_device)
         digest_maker = hmac.new(SECRET_KEY, '', hashlib.sha1)
@@ -38,18 +38,18 @@ class SocketUser:
         try:
             if self.authenticated is True:
                 return False, "Already authenticated"
-            b, client = User.decodeAuthToken(jwt_token)
+            b, client = User.decode_auth_token(jwt_token)
             if not b:
-                b, client = Device.decodeAuthToken(jwt_token)
+                b, client = Device.decode_auth_token(jwt_token)
                 if b:
                     self.is_device = True
             if not b or client is None:
                 return False, 'User not found'
-            if client.jsonToken != jwt_token:
+            if client.json_token != jwt_token:
                 return False, 'Invalid token'
             self.token = jwt_token
             self.client = client
-            self.client.updateContent(is_online=True)
+            self.client.update_content(is_online=True)
             self.authenticated = True
             return True, 'User authenticated'
         except Exception as e:
@@ -62,13 +62,13 @@ class SocketUser:
 
     def disconnect(self):
         if self.authenticated:
-            self.client.updateContent(is_online=False)
+            self.client.update_content(is_online=False)
 
-    def getContent(self):
+    def get_content(self):
         return {
             'sid': self.sid,
             'authenticated': self.authenticated,
-            'client': self.client.getSimpleContent(),
+            'client': self.client.get_simple_content(),
             'connected': self.connected,
             'is_device': self.is_device
         }
