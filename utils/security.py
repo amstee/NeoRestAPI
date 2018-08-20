@@ -1,4 +1,4 @@
-from config.database import db_session
+from config.database import db
 from models.User import User
 from models.Device import Device
 from models.UserToConversation import UserToConversation
@@ -27,7 +27,7 @@ def get_device_from_header(request):
 def user_has_access_to_message(message, user):
     if message.link is not None and message.link.user_id == user.id:
         return True
-    link = db_session.query(UserToConversation).filter(UserToConversation.conversation_id == message.conversation_id,
+    link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id == message.conversation_id,
                                                        UserToConversation.user_id == user.id).first()
     if link is None:
         return False

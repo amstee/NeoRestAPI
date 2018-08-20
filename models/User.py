@@ -1,7 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, BigInteger, Boolean
-from sqlalchemy.orm import relationship
-from config.database import Base
-from config.database import db_session
+from config.database import db
 from dateutil import parser as DateParser
 import hashlib
 import jwt
@@ -10,36 +7,36 @@ import datetime
 SECRET_KEY = "defaultusersecretkey"
 
 
-class User(Base):
+class User(db.Model):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    email = Column(String(120), unique=True)
-    password = Column(String(2048))
-    first_name = Column(String(50))
-    last_name = Column(String(50))
-    birthday = Column(DateTime)
-    created = Column(DateTime)
-    updated = Column(DateTime)
-    json_token = Column(String(4096))
-    facebook_psid = Column(BigInteger)
-    hangout_space = Column(String(255))
-    type = Column(String(10))
-    is_online = Column(Boolean)
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True)
+    password = db.Column(db.String(2048))
+    first_name = db.Column(db.String(50))
+    last_name = db.Column(db.String(50))
+    birthday = db.Column(db.DateTime)
+    created = db.Column(db.DateTime)
+    updated = db.Column(db.DateTime)
+    json_token = db.Column(db.String(4096))
+    facebook_psid = db.Column(db.BigInteger)
+    hangout_space = db.Column(db.String(255))
+    type = db.Column(db.String(10))
+    is_online = db.Column(db.Boolean)
 
     # RELATIONS
-    circle_link = relationship("UserToCircle", back_populates="user", order_by="UserToCircle.id",
-                               cascade="save-update, delete")
-    conversation_links = relationship("UserToConversation", back_populates="user", order_by="UserToConversation.id",
-                                      cascade="save-update, delete")
-    circle_invite = relationship("CircleInvite", back_populates="user", order_by="CircleInvite.id",
-                                 cascade="save-update, delete")
-    media_links = relationship("UserToMedia", back_populates="user", order_by="UserToMedia.id",
-                               cascade="save-update, delete")
+    circle_link = db.relationship("UserToCircle", back_populates="user", order_by="UserToCircle.id",
+                                  cascade="save-update, delete")
+    conversation_links = db.relationship("UserToConversation", back_populates="user", order_by="UserToConversation.id",
+                                         cascade="save-update, delete")
+    circle_invite = db.relationship("CircleInvite", back_populates="user", order_by="CircleInvite.id",
+                                    cascade="save-update, delete")
+    media_links = db.relationship("UserToMedia", back_populates="user", order_by="UserToMedia.id",
+                                  cascade="save-update, delete")
 
     def __init__(self, email=None, password=None, first_name=None, last_name=None,
                  birthday=None, is_online=False, created=datetime.datetime.now(),
                  updated=datetime.datetime.now()):
-        user = db_session.query(User).filter_by(email=email).first()
+        user = db.session.query(User).filter_by(email=email).first()
         if user is not None:
             raise Exception("L'utilisateur existe déja, réessayer avec une nouvelle adresse email")
         if email is None or email == "" or password is None or password == "" or first_name is None \
@@ -67,7 +64,7 @@ class User(Base):
         self.is_online = is_online
         self.type = "DEFAULT"
         self.facebook_psid = -1
-        db_session.add(self)
+        db.session.add(self)
 
     def __repr__(self):
         return '<User %r %r>' % (self.first_name, self.last_name)
@@ -75,7 +72,7 @@ class User(Base):
     def disconnect(self):
         try:
             self.json_token = ""
-            db_session.commit()
+            db.session.commit()
             return True, None
         except Exception as e:
             return False, str(e)
@@ -104,7 +101,7 @@ class User(Base):
         try:
             payload = jwt.decode(auth_token, SECRET_KEY)
             try:
-                user = db_session.query(User).filter(User.id == payload['sub']).first()
+                user = db.session.query(User).filter(User.id == payload['sub']).first()
                 if user is not None:
                     if user.json_token == "" or user.json_token is None:
                         return False, 'Utilisateur non authentifié'
@@ -131,7 +128,7 @@ class User(Base):
             }
             token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
             self.json_token = token.decode()
-            db_session.commit()
+            db.session.commit()
             return token.decode()
         except Exception as e:
             print(e)
@@ -177,7 +174,7 @@ class User(Base):
     def update_password(self, password=None):
         if password is not None and password != "":
             self.password = hashlib.sha512(password.encode('utf-8')).hexdigest()
-            db_session.commit()
+            db.session.commit()
 
     def update_content(self, email=None, first_name=None, last_name=None, birthday=None,
                        facebook_psid=None, hangout_space=None, is_online=None, created=None,
@@ -204,15 +201,15 @@ class User(Base):
             self.facebook_psid = facebook_psid
         if is_online is not None:
             self.is_online = is_online
-        db_session.commit()
+        db.session.commit()
 
     def promote_admin(self):
         self.type = "ADMIN"
-        db_session.commit()
+        db.session.commit()
 
     @staticmethod
     def CreateNeoAdmin():
-        admin = db_session.query(User).filter(User.email == "contact.projetneo@gmail.com").first()
+        admin = db.session.query(User).filter(User.email == "contact.projetneo@gmail.com").first()
         if admin is None:
             user = User(email="contact.projetneo@gmail.com", password="PapieNeo2019",
                         first_name="Neo", last_name="Admin", birthday=datetime.datetime.now())

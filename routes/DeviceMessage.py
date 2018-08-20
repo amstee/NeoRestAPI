@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from config.database import db_session
+from config.database import db
 from models.MessageToMedia import MessageToMedia
 from models.Media import Media
 from models.Device import Device
@@ -19,10 +19,10 @@ class DeviceMessageCreate(Resource):
     def post(self, content, admin):
         try:
             content_checker("files", "device_id", "conversation_id", "text", "directory_name")
-            device = db_session.query(Device).filter(Device.id == content["device_id"]).first()
+            device = db.session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is None:
                 return FAILED("Le device spécifié est introuvable")
-            conversation = db_session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
+            conversation = db.session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
             if conversation is None:
                 return FAILED("La conversation spécifié est introuvable")
             message = Message(content=content["text"], is_user=False)
@@ -34,9 +34,9 @@ class DeviceMessageCreate(Resource):
                     media = Media()
                     media.identifier = file
                     MessageToMedia(message=message, media=media)
-                    db_session.commit()
+                    db.session.commit()
                     media_list.append(media.get_simple_content())
-            db_session.commit()
+            db.session.commit()
             if not media_list:
                 emit('message', {
                     'conversation_id': conversation.id,
@@ -68,15 +68,15 @@ class DeviceMessageDelete(Resource):
     def post(self, content, device):
         try:
             content_checker("message_id")
-            message = db_session.query(Message).filter(Message.id == content["message_id"]).first()
+            message = db.session.query(Message).filter(Message.id == content["message_id"]).first()
             if message is None:
                 return FAILED("Message spécifié introuvable")
             if message.is_user or message.device_id != device.id:
                 return FAILED("Ce message n'appartient pas a ce device", 403)
             id_message = message.id
             conv_id = message.conversation_id
-            db_session.delete(message)
-            db_session.commit()
+            db.session.delete(message)
+            db.session.commit()
             emit('message', {"conversation_id": conv_id, "message_id": id_message, "event": 'delete'},
                  room="conversation_" + str(conv_id), namespace='/')
             return SUCCESS()
@@ -90,7 +90,7 @@ class DeviceMessageInfo(Resource):
     def post(self, content, device):
         try:
             content_checker("message_id")
-            message = db_session.query(Message).filter(Message.id == content["message_id"]).first()
+            message = db.session.query(Message).filter(Message.id == content["message_id"]).first()
             if message is None:
                 return FAILED("Message spécifié introuvable")
             if not device_has_access_to_message(message, device):
@@ -106,10 +106,10 @@ class DeviceMessageList(Resource):
     def post(self, content, device):
         try:
             content_checker("conversation_id", "quantity")
-            conv = db_session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
+            conv = db.session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
             if conv.device_access is False or conv.circle.device.id != device.id:
                 return FAILED("Ce device ne peut pas voir cette conversation", 403)
-            messages = db_session.query(Message).filter(Message.conversation_id == conv.id).\
+            messages = db.session.query(Message).filter(Message.conversation_id == conv.id).\
                 limit(content["quantity"]).all()
             return jsonify({"success": True, "content": [message.get_content() for message in messages]})
         except Exception as e:
@@ -122,7 +122,7 @@ class DeviceMessageUpdate(Resource):
     def post(self, content, device):
         try:
             content_checker("message_id")
-            message = db_session.query(Message).filter(Message.id == content["message_id"]).first()
+            message = db.session.query(Message).filter(Message.id == content["message_id"]).first()
             if message is None:
                 return FAILED("Message spécifié introuvable")
             if not device_has_access_to_message(message, device):

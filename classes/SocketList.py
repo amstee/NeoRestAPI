@@ -31,19 +31,17 @@ class SocketList:
         try:
             if client is None:
                 return False
-            if 'socket' in session and session['socket'] is not None:
-                socket = session['socket']
-                if socket.sid in self.socket_dic:
+            if 'sid' in session and session['sid'] is not None:
+                socket = self.find_socket(session['sid'])
+                if socket is not None:
                     return socket
                 else:
-                    session.pop('socket')
                     if 'sid' in session:
                         session.pop('sid')
                     return None
             for key, value in self.socket_dic.items():
-                if value.client is not None:
-                    if value.client.id == client.id and value.is_device == is_device:
-                        session['socket'] = value
+                if value.client_id is not None:
+                    if value.client_id == client.id and value.is_device == is_device:
                         session['sid'] = key
                         return value
             return None

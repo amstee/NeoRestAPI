@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource
-from config.database import db_session
+from config.database import db
 from models.UserToConversation import UserToConversation
 from models.Conversation import Conversation
 from models.Media import Media
@@ -22,7 +22,7 @@ class FirstMessageToDeviceSend(Resource):
     def post(self, content, user):
         try:
             content_checker("circle_id")
-            circle = db_session.query(Circle).filter(Circle.id == content["circle_id"]).first()
+            circle = db.session.query(Circle).filter(Circle.id == content["circle_id"]).first()
             if circle is None:
                 return FAILED("Cercle spécifié introuvable")
             if not circle.has_member(user):
@@ -42,9 +42,9 @@ class FirstMessageToDeviceSend(Resource):
                     media = Media()
                     media.identifier = file
                     MessageToMedia(message=message, media=media)
-                    db_session.commit()
+                    db.session.commit()
                     media_list.append(media.get_simple_content())
-            db_session.commit()
+            db.session.commit()
             sockets.notify_user(circle.device, True, 'conversation',
                                 {"conversation_id": conversation.id,
                                  "event": 'invite'})
@@ -66,8 +66,8 @@ class FirstMessageSend(Resource):
     def post(self, content, user):
         try:
             content_checker("email", "circle_id")
-            dest = db_session.query(UserModel).filter(UserModel.email == content["email"]).first()
-            circle = db_session.query(Circle).filter(Circle.id == content["circle_id"]).first()
+            dest = db.session.query(UserModel).filter(UserModel.email == content["email"]).first()
+            circle = db.session.query(Circle).filter(Circle.id == content["circle_id"]).first()
             if dest is None:
                 return FAILED("Destinataire introuvable")
             if circle is None:
@@ -88,9 +88,9 @@ class FirstMessageSend(Resource):
                     media = Media()
                     media.identifier = file
                     MessageToMedia(message=message, media=media)
-                    db_session.commit()
+                    db.session.commit()
                     media_list.append(media.get_simple_content())
-            db_session.commit()
+            db.session.commit()
             sockets.notify_user(dest, False, 'conversation',
                                 {"conversation_id": conversation.id,
                                  "event": 'invite'})
@@ -113,7 +113,7 @@ class MessageSend(Resource):
     def post(self, content, user):
         try:
             content_checker("conversation_id")
-            link = db_session.query(UserToConversation).filter(UserToConversation.conversation_id ==
+            link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
                                                                content["conversation_id"],
                                                                UserToConversation.user_id == user.id).first()
             if link is None:
@@ -127,9 +127,9 @@ class MessageSend(Resource):
                     media = Media()
                     media.identifier = file
                     MessageToMedia(message=message, media=media)
-                    db_session.commit()
+                    db.session.commit()
                     media_list.append(media.get_simple_content())
-            db_session.commit()
+            db.session.commit()
             if not media_list:
                 print(message.conversation_id)
                 emit('message', {
@@ -145,7 +145,7 @@ class MessageSend(Resource):
                                  'message': message.get_simple_json_compliant_content(),
                                  'status': 'pending'}, room='conversation_' + str(message.conversation_id),
                      namespace='/')
-            conversation = db_session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
+            conversation = db.session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
             info_sender = "[" + link.conversation.name + "] " + user.first_name + " : "
             try:
                 messenger_conversation_model_send(link.user_id, conversation, info_sender + message.text_content)

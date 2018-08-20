@@ -1,28 +1,25 @@
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.orm import relationship
-from config.database import Base
-from config.database import db_session
+from config.database import db
 from dateutil import parser as DateParser
 from flask_socketio import emit
 import datetime
 
 
-class Circle(Base):
+class Circle(db.Model):
     __tablename__ = "circles"
-    id = Column(Integer, primary_key=True)
-    name = Column(String(120))
-    created = Column(DateTime)
-    updated = Column(DateTime)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120))
+    created = db.Column(db.DateTime)
+    updated = db.Column(db.DateTime)
 
-    device = relationship("Device", uselist=False, back_populates="circle", cascade="save-update")
-    user_link = relationship("UserToCircle", back_populates="circle", order_by="UserToCircle.id",
-                             cascade="save-update, delete")
-    circle_invite = relationship("CircleInvite", back_populates="circle", order_by="CircleInvite.id",
-                                 cascade="save-update, delete")
-    conversations = relationship("Conversation", back_populates="circle", order_by="Conversation.id",
-                                 cascade="save-update, delete")
-    media_links = relationship("CircleToMedia", back_populates="circle", order_by="CircleToMedia.id",
-                               cascade="save-update, delete")
+    device = db.relationship("Device", uselist=False, back_populates="circle", cascade="save-update")
+    user_link = db.relationship("UserToCircle", back_populates="circle", order_by="UserToCircle.id",
+                                cascade="save-update, delete")
+    circle_invite = db.relationship("CircleInvite", back_populates="circle", order_by="CircleInvite.id",
+                                    cascade="save-update, delete")
+    conversations = db.relationship("Conversation", back_populates="circle", order_by="Conversation.id",
+                                    cascade="save-update, delete")
+    media_links = db.relationship("CircleToMedia", back_populates="circle", order_by="CircleToMedia.id",
+                                  cascade="save-update, delete")
 
     def __repr__(self):
         return "<Circle(id='%d' device_id='%d' users='%s')>" % (self.id, self.device.id, str(self.user_link))
@@ -43,7 +40,7 @@ class Circle(Base):
                 self.updated = DateParser.parse(updated)
             else:
                 self.updated = updated
-        db_session.add(self)
+        db.session.add(self)
 
     def has_member(self, member):
         for link in self.user_link:
@@ -65,8 +62,8 @@ class Circle(Base):
 
     def check_validity(self):
         if len(self.user_link) == 0:
-            db_session.delete(self)
-            db_session.commit()
+            db.session.delete(self)
+            db.session.commit()
 
     def notify_users(self, p1='circle', p2=None):
         if p2 is None:
@@ -87,13 +84,13 @@ class Circle(Base):
                 self.updated = DateParser.parse(updated)
             else:
                 self.updated = updated
-        db_session.commit()
+        db.session.commit()
 
     def remove_user(self, user):
         for user_link in self.user_link:
             if user_link.user_id == user.id:
-                db_session.delete(user_link)
-                db_session.commit()
+                db.session.delete(user_link)
+                db.session.commit()
                 return True
         return False
 

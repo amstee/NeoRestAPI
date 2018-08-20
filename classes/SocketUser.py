@@ -3,6 +3,7 @@ from models.User import User
 from models.Device import Device
 import time
 from config.webrtc import EXPIRY, SECRET_KEY
+from config.database import db
 import hashlib
 import hmac
 
@@ -12,7 +13,7 @@ class SocketUser:
     connected = True
     authenticated = False
     token = None
-    client = None
+    client_id = None
     is_device = False
     webrtc_username = ""
     webrtc_password = ""
@@ -27,12 +28,21 @@ class SocketUser:
 
     def generate_credentials(self):
         validity = time.time() + EXPIRY
-        self.webrtc_username = str(validity) + ':' + str(self.client.id) + str(self.is_device)
+        self.webrtc_username = str(validity) + ':' + str(self.client_id) + str(self.is_device)
         digest_maker = hmac.new(SECRET_KEY, '', hashlib.sha1)
         digest_maker.update(self.webrtc_username)
         self.webrtc_password = digest_maker.digest()
         self.webrtc_credentials_valididity = validity
         return self.webrtc_username, self.webrtc_password
+
+    def get_client(self):
+        client = None
+        if self.client_id is not None:
+            if self.is_device:
+                client = db.session.query(Device).filter(Device.id == self.client_id).first()
+            else:
+                client = db.session.query(User).filter(User.id == self.client_id).first()
+        return client
 
     def authenticate(self, jwt_token):
         try:
@@ -48,8 +58,8 @@ class SocketUser:
             if client.json_token != jwt_token:
                 return False, 'Invalid token'
             self.token = jwt_token
-            self.client = client
-            self.client.update_content(is_online=True)
+            self.client_id = client.id
+            client.update_content(is_online=True)
             self.authenticated = True
             return True, 'User authenticated'
         except Exception as e:
@@ -62,13 +72,15 @@ class SocketUser:
 
     def disconnect(self):
         if self.authenticated:
-            self.client.update_content(is_online=False)
+            client = self.get_client()
+            if client is not None:
+                client.update_content(is_online=False)
 
     def get_content(self):
         return {
             'sid': self.sid,
             'authenticated': self.authenticated,
-            'client': self.client.get_simple_content(),
+            'client': self.client_id,
             'connected': self.connected,
             'is_device': self.is_device
         }

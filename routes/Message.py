@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from config.database import db_session
+from config.database import db
 from models.UserToConversation import UserToConversation
 from models.Conversation import Conversation
 from models.Media import Media
@@ -18,7 +18,7 @@ class MessageCreate(Resource):
     def post(self, content, admin):
         try:
             content_checker("files", "link_id", "text", "directory_name")
-            link = db_session.query(UserToConversation).filter(UserToConversation.id == content["link_id"]).first()
+            link = db.session.query(UserToConversation).filter(UserToConversation.id == content["link_id"]).first()
             if link is None:
                 return FAILED("Lien entre utilisateur et conversation introuvable")
             message = Message(content=content["text"])
@@ -30,9 +30,9 @@ class MessageCreate(Resource):
                     media = Media()
                     media.identifier = file
                     media.message = message
-                    db_session.commit()
+                    db.session.commit()
                     media_list.append(media.get_simple_content())
-            db_session.commit()
+            db.session.commit()
             if not media_list:
                 emit('message', {
                     'conversation_id': link.conversation_id,
@@ -46,7 +46,7 @@ class MessageCreate(Resource):
                 emit('message', {'conversation_id': link.conversation_id, 'message':
                      message.get_simple_json_compliant_content(),
                      'status': 'pending'}, room='conversation_' + str(link.conversation_id), namespace='/')
-            conversation = db_session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
+            conversation = db.session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
             info_sender = "[" + link.conversation.name + "] " + admin.first_name + " : "
             try:
                 messenger_conversation_model_send(link.user_id, conversation, info_sender + message.text_content)
@@ -65,15 +65,15 @@ class MessageDelete(Resource):
     def post(self, content, user):
         try:
             content_checker("message_id")
-            message = db_session.query(Message).filter(Message.id == content["message_id"]).first()
+            message = db.session.query(Message).filter(Message.id == content["message_id"]).first()
             if message is None:
                 return FAILED("Message spécifié introuvable")
             if not user_is_owner_of_message(message, user):
                 return FAILED("Cet utilisateur ne peut pas supprimer ce message", 403)
             id_message = message.id
             conv_id = message.conversation_id
-            db_session.delete(message)
-            db_session.commit()
+            db.session.delete(message)
+            db.session.commit()
             emit('message', {"conversation_id": conv_id, "message_id": id_message, "event": 'delete'},
                  room="conversation_" + str(conv_id), namespace='/')
             return SUCCESS()
@@ -87,7 +87,7 @@ class MessageInfo(Resource):
     def post(self, content, user):
         try:
             content_checker("message_id")
-            message = db_session.query(Message).filter(Message.id == content["message_id"]).first()
+            message = db.session.query(Message).filter(Message.id == content["message_id"]).first()
             if message is None:
                 return FAILED("Message spécifié introuvable")
             if user_has_access_to_message(message, user):
@@ -105,10 +105,10 @@ class MessageList(Resource):
             content_checker("conversation_id", "quantity")
             if content["quantity"] <= 0:
                 return FAILED("Parameter Quantity invalid")
-            conversation = db_session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
+            conversation = db.session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
             if not conversation.has_members(user):
                 return FAILED("Cet utilisateur ne peut pas acceder a cette conversation", 403)
-            messages = db_session.query(Message).filter(Message.conversation_id == conversation.id).\
+            messages = db.session.query(Message).filter(Message.conversation_id == conversation.id).\
                 limit(content["quantity"]).all()
             conv_content = []
             for message in messages:
@@ -124,7 +124,7 @@ class MessageUpdate(Resource):
     def post(self, content, user):
         try:
             content_checker("message_id", "text_content")
-            message = db_session.query(Message).filter(Message.id == content["message_id"]).first()
+            message = db.session.query(Message).filter(Message.id == content["message_id"]).first()
             if message is None:
                 return FAILED("Message spécifié introuvable")
             if not user_is_owner_of_message(message, user):

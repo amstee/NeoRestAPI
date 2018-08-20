@@ -1,21 +1,19 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
-from config.database import Base, db_session
+from config.database import db
 from dateutil import parser as DateParser
 import datetime
 
 
-class UserToCircle(Base):
+class UserToCircle(db.Model):
     __tablename__ = "user_to_circle"
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    circle_id = Column(Integer, ForeignKey("circles.id"))
-    created = Column(DateTime)
-    updated = Column(DateTime)
-    privilege = Column(String(10))
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    circle_id = db.Column(db.Integer, db.ForeignKey("circles.id"))
+    created = db.Column(db.DateTime)
+    updated = db.Column(db.DateTime)
+    privilege = db.Column(db.String(10))
 
-    user = relationship("User", back_populates="circle_link")
-    circle = relationship("Circle", back_populates="user_link")
+    user = db.relationship("User", back_populates="circle_link")
+    circle = db.relationship("Circle", back_populates="user_link")
 
     def __repr__(self):
         return "<UserToCircle(id='%d' user_id='%d' circle_id='%d' created='%s' updated='%s' privilege='%s')>"\
@@ -39,7 +37,7 @@ class UserToCircle(Base):
             self.user = user
         if circle is not None:
             self.circle = circle
-        db_session.add(self)
+        db.session.add(self)
 
     def update_content(self, created=None, updated=datetime.datetime.now(), privilege=None):
         if created is not None:
@@ -54,7 +52,7 @@ class UserToCircle(Base):
                 self.updated = updated
         if privilege is not None and privilege != "":
             self.privilege = privilege
-        db_session.commit()
+        db.session.commit()
 
     def get_content(self, user=True):
         if user:

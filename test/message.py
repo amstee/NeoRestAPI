@@ -4,7 +4,7 @@ import json
 
 sys.path.insert(0,'..')
 from api import NeoAPI
-from config.database import db_session
+from config.database import db
 from models.User import User as UserModel
 from models.UserToCircle import UserToCircle
 from models.Conversation import Conversation
@@ -13,15 +13,16 @@ from models.UserToConversation import UserToConversation
 from models.Message import Message
 from utils.testutils import authenticate_user
 
+
 class TestMessageCreate(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testmessage@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testmessage2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -31,7 +32,7 @@ class TestMessageCreate(unittest.TestCase):
         self.conversation = Conversation(circle=self.circle, name="TestMessageCreate")
         self.linkConversation = UserToConversation(user=self.user1, conversation=self.conversation, privilege="ADMIN")
         self.linkConversation2 = UserToConversation(user=self.user2, conversation=self.conversation)
-        db_session.commit()
+        db.session.commit()
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
@@ -93,11 +94,11 @@ class TestMessageDelete(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testmessage@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testmessage2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -113,7 +114,7 @@ class TestMessageDelete(unittest.TestCase):
                                content="2")
         self.message3 = Message(link=self.linkConversation2, conversation=self.conversation,
                                content="3")
-        db_session.commit()
+        db.session.commit()
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
@@ -164,11 +165,11 @@ class TestMessageInfo(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testmessage@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testmessage2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -184,7 +185,7 @@ class TestMessageInfo(unittest.TestCase):
                                content="2")
         self.message3 = Message(link=self.linkConversation2, conversation=self.conversation,
                                content="3")
-        db_session.commit()
+        db.session.commit()
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
@@ -244,11 +245,11 @@ class TestMessageList(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testmessage@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testmessage2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -264,7 +265,7 @@ class TestMessageList(unittest.TestCase):
                                content="2")
         self.message3 = Message(link=self.linkConversation2, conversation=self.conversation,
                                content="3")
-        db_session.commit()
+        db.session.commit()
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
@@ -346,11 +347,11 @@ class TestMessageUpdate(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testmessage@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testmessage2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -366,7 +367,7 @@ class TestMessageUpdate(unittest.TestCase):
                                content="2")
         self.message3 = Message(link=self.linkConversation2, conversation=self.conversation,
                                content="3")
-        db_session.commit()
+        db.session.commit()
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
