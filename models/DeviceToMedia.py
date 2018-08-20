@@ -34,7 +34,7 @@ class DeviceToMedia(Base):
             self.purpose = purpose
         db_session.add(self)
 
-    def updateContent(self, device=None, media=None, upload_time=None, purpose=None):
+    def update_content(self, device=None, media=None, upload_time=None, purpose=None):
         if device is not None:
             self.device = device
         if media is not None:
@@ -48,16 +48,16 @@ class DeviceToMedia(Base):
             self.purpose = purpose
         db_session.commit()
 
-    def getContent(self):
+    def get_content(self):
         return {
             "id": self.id,
-            "device": self.device.getSimpleContent(),
-            "media": self.media.getSimpleContent(),
+            "device": self.device.get_simple_content(),
+            "media": self.media.get_simple_content(),
             "upload_time": self.upload_time,
             "purpose": self.purpose
         }
 
-    def getSimpleContent(self):
+    def get_simple_content(self):
         return {
             "id": self.id,
             "device_id": self.device_id,

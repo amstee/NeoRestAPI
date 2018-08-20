@@ -3,8 +3,8 @@ from sqlalchemy.orm import relationship
 from config.database import Base, db_session
 from dateutil import parser as DateParser
 from flask_socketio import emit
-from config.sockets import sockets
 import datetime
+
 
 class Conversation(Base):
     __tablename__ = "conversations"
@@ -21,7 +21,8 @@ class Conversation(Base):
                             cascade="save-update, delete")
 
     def __repr__(self):
-        return "<Conversation(id='%d' name='%s' created='%s' updated='%s')>"%(self.id, self.name, str(self.created), str(self.updated))
+        return "<Conversation(id='%d' name='%s' created='%s' updated='%s')>" % (self.id, self.name,
+                                                                                str(self.created), str(self.updated))
 
     def __init__(self, name=None, created=datetime.datetime.now(), updated=datetime.datetime.now(),
                  device_access=False, circle=None):
@@ -44,7 +45,7 @@ class Conversation(Base):
         self.device_access = device_access
         db_session.add(self)
 
-    def hasMembers(self, *args):
+    def has_members(self, *args):
         for member in args:
             tf = False
             for link in self.links:
@@ -54,7 +55,7 @@ class Conversation(Base):
                 return False
         return True
 
-    def updateContent(self, created=None, updated=datetime.datetime.now(), name=None, device_access=None):
+    def update_content(self, created=None, updated=datetime.datetime.now(), name=None, device_access=None):
         if created is not None:
             if type(created) is str:
                 self.created = DateParser.parse(created)
@@ -77,12 +78,12 @@ class Conversation(Base):
         p2['conversation_id'] = self.id
         emit(p1, p2, room='conversation_' + str(self.id), namespace='/')
 
-    def setOtherAdmin(self):
+    def set_other_admin(self):
         for link in self.links:
-            link.updateContent(privilege="ADMIN")
+            link.update_content(privilege="ADMIN")
             return True
 
-    def checkValidity(self):
+    def check_validity(self):
         if (len(self.links) + (1 if self.device_access else 0)) <= 1:
             for link in self.links:
                 db_session.delete(link)
@@ -90,19 +91,19 @@ class Conversation(Base):
             return False
         return True
 
-    def getContent(self):
+    def get_content(self):
         return {
             "id": self.id,
             "name": self.name,
             "created": self.created,
             "updated": self.updated,
-            "circle": self.circle.getSimpleContent(),
-            "links": [link.getContent() for link in self.links],
-            "messages": [message.getSimpleContent() for message in self.messages],
+            "circle": self.circle.get_simple_content(),
+            "links": [link.get_content() for link in self.links],
+            "messages": [message.get_simple_content() for message in self.messages],
             "device_access": self.device_access
         }
 
-    def getSimpleContent(self):
+    def get_simple_content(self):
         return {
             "id": self.id,
             "name": self.name,
