@@ -34,7 +34,7 @@ def is_writing(json):
                          room='conversation_'+str(json['conversation_id']), namespace='/')
         except Exception as e:
             socket.emit('error', str(e))
-    db.session.remove()
+    db.session.close()
 
 
 @socketio.on('message')
@@ -104,4 +104,4 @@ def message_send(content):
                                          'status': 'pending'}, room='conversation_' + str(conv.id), namespace='/')
         except Exception as e:
             socket.emit("error", str(e), namespace='/')
-    db.session.remove()
+    db.session.close()
