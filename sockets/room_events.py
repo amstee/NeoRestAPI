@@ -33,7 +33,7 @@ def join_conversation_event(json):
                 socket.emit("error", "Vous ne faite pas partie de cette conversation")
         except Exception as e:
             socket.emit("error", str(e))
-    db.session.remove()
+    db.session.close()
 
 
 @socketio.on('join_circle')
@@ -62,7 +62,7 @@ def join_circle_event(json):
                     socket.emit("error", "Vous n'appartenez pas a ce cercle")
     except Exception as e:
         emit('error', str(e), room=sid, namespace='/')
-    db.session.remove()
+    db.session.close()
 
 
 @socketio.on('leave_circle')
@@ -78,7 +78,7 @@ def leave_circle_event(json):
             socket.emit('success', "Vous avez quitte le cercle")
     except Exception as e:
         emit('error', str(e), room=sid, namespace='/')
-    db.session.remove()
+    db.session.close()
 
 
 @socketio.on('leave_conversation')
@@ -94,4 +94,4 @@ def leave_conversation_event(json):
             socket.emit('success', "Vous avez quitte la conversation")
         except Exception as e:
             socket.emit("error", str(e))
-    db.session.remove()
+    db.session.close()
