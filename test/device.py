@@ -2,7 +2,8 @@ import unittest
 import sys
 import json
 
-sys.path.insert(0,'..')
+sys.path.insert(0, '..')
+from config.loader import neo_config
 from api import NeoAPI
 from config.database import db
 from models.User import User as UserModel
@@ -15,7 +16,9 @@ from utils.testutils import authenticate_device
 
 class TestDeviceAdd(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -66,9 +69,12 @@ class TestDeviceAdd(unittest.TestCase):
         assert response.status_code != 200
         assert response_json['success'] == False
 
+
 class TestDeviceUpdate(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -135,7 +141,9 @@ class TestDeviceUpdate(unittest.TestCase):
 
 class TestDeviceInfo(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -195,9 +203,12 @@ class TestDeviceInfo(unittest.TestCase):
         assert response.status_code == 403
         assert response_json['success'] == False
 
+
 class TestDeviceDelete(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -261,7 +272,9 @@ class TestDeviceDelete(unittest.TestCase):
 
 class TestDeviceActivate(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -327,9 +340,12 @@ class TestDeviceActivate(unittest.TestCase):
         assert response.status_code != 200
         assert response_json['success'] == False
 
+
 class TestDeviceLogin(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -390,9 +406,12 @@ class TestDeviceLogin(unittest.TestCase):
         assert response.status_code != 200
         assert response_json['success'] == False
 
+
 class TestModifyDevicePassword(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -457,9 +476,12 @@ class TestModifyDevicePassword(unittest.TestCase):
         assert response.status_code != 200
         assert response_json['success'] == False
 
+
 class TestDeviceLogout(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:

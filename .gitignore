@@ -15,3 +15,8 @@ venv.bak/instance/
 .vscode/
 flask_session/
 user_files/
+*.log
+*.db
+config.json
+gitlab.ci.yml
+Dockerfile

@@ -3,6 +3,7 @@ import sys
 import json
 
 sys.path.insert(0,'..')
+from config.loader import neo_config
 from api import NeoAPI
 from bot.hangout import send_to_space
 
@@ -29,7 +30,9 @@ class Messaging(unittest.TestCase):
 
 class TokenLink(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
 
     def test_invalid_token(self):

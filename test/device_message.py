@@ -2,7 +2,8 @@ import unittest
 import sys
 import json
 
-sys.path.insert(0,'..')
+sys.path.insert(0, '..')
+from config.loader import neo_config
 from api import NeoAPI
 from config.database import db
 from models.User import User as UserModel
@@ -14,9 +15,12 @@ from utils.testutils import authenticate_user
 from utils.testutils import authenticate_device
 from models.Message import Message
 
+
 class TestDeviceMessageCreate(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -100,7 +104,9 @@ class TestDeviceMessageCreate(unittest.TestCase):
 
 class TestDeviceMessageDelete(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -178,7 +184,6 @@ class TestDeviceMessageDelete(unittest.TestCase):
         assert response.status_code != 200
         assert response_json['success'] == False
 
-
     def test_invalid_device(self):
         json_data = {
             "device_token": self.device2_token,
@@ -193,7 +198,9 @@ class TestDeviceMessageDelete(unittest.TestCase):
 
 class TestDeviceMessageInfo(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -271,9 +278,12 @@ class TestDeviceMessageInfo(unittest.TestCase):
         assert response.status_code != 200
         assert response_json['success'] == False
 
+
 class TestDeviceMessageList(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -339,7 +349,9 @@ class TestDeviceMessageList(unittest.TestCase):
 
 class TestDeviceMessageUpdate(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:

@@ -8,7 +8,7 @@ import hashlib
 import datetime
 import base64
 
-SECRET_KEY = "defaultdevicesecretkey"
+SECRET_KEY = ""
 logger = logger_set(__name__)
 
 

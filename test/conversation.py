@@ -2,7 +2,8 @@ import unittest
 import sys
 import json
 
-sys.path.insert(0,'..')
+sys.path.insert(0, '..')
+from config.loader import neo_config
 from api import NeoAPI
 from config.database import db
 from models.User import User as UserModel
@@ -15,7 +16,9 @@ from models.UserToConversation import UserToConversation as UTC
 
 class TestConversationCreate(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testconversation@test.com").first()
         if self.user1 is None:
@@ -84,7 +87,9 @@ class TestConversationCreate(unittest.TestCase):
 
 class TestConversationDelete(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testconversationdelete@test.com").first()
         if self.user1 is None:
@@ -167,7 +172,9 @@ class TestConversationDelete(unittest.TestCase):
 
 class TestConversationInfo(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testconversationinfo@test.com").first()
         if self.user1 is None:
@@ -249,7 +256,9 @@ class TestConversationInfo(unittest.TestCase):
 
 class TestConversationDeviceInfo(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         db.session.query(UserModel).delete()
         db.session.commit()
@@ -257,9 +266,12 @@ class TestConversationDeviceInfo(unittest.TestCase):
     def test_valid_info(self):
         assert True == True
 
+
 class TestConversationList(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testconversationinfo@test.com").first()
         if self.user1 is None:
@@ -375,9 +387,12 @@ class TestConversationList(unittest.TestCase):
         assert response.status_code != 200
         assert response_json['success'] == False
 
+
 class TestConversationDeviceList(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         db.session.query(UserModel).delete()
         db.session.commit()
@@ -385,9 +400,12 @@ class TestConversationDeviceList(unittest.TestCase):
     def test_valid_list(self):
         assert True == True
 
+
 class TestConversationUpdate(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testconversationinfo@test.com").first()
         if self.user1 is None:
