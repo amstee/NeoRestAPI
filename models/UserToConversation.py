@@ -1,6 +1,9 @@
 from config.database import db
 from dateutil import parser as DateParser
+from config.log import logger_set
 import datetime
+
+logger = logger_set(__name__)
 
 
 class UserToConversation(db.Model):
@@ -41,6 +44,14 @@ class UserToConversation(db.Model):
         if conversation is not None:
             self.conversation = conversation
         db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: user_to_conversation%s", {"id": self.id,
+                                                              "privilege": self.privilege,
+                                                              "user_id": self.user_id,
+                                                              "conversation_id": None if self.conversation is None
+                                                              else self.conversation.id,
+                                                              "circle_id": None if self.conversation is None
+                                                              else self.conversation.circle_id})
 
     def update_content(self, created=None, updated=datetime.datetime.now(),
                        privilege=None):
@@ -66,7 +77,7 @@ class UserToConversation(db.Model):
             "privilege": self.privilege,
             "user_id": self.user_id,
             "conversation_id": self.conversation_id,
-            "circle_id": self.conversation.circle_id
+            "circle_id": None if self.conversation is None else self.conversation.circle_id
         }
 
     def get_content(self):
@@ -77,7 +88,7 @@ class UserToConversation(db.Model):
             "privilege": self.privilege,
             "user_id": self.user.get_simple_content(),
             "conversation_id": self.conversation.get_simple_content(),
-            "circle_id": self.conversation.circle_id,
+            "circle_id": None if self.conversation is None else self.conversation.circle_id,
             "messages": [message.get_simple_content() for message in self.messages]
         }
 

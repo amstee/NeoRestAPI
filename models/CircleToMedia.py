@@ -1,6 +1,9 @@
 from dateutil import parser as DateParser
 from config.database import db
 import datetime
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
 class CircleToMedia(db.Model):
@@ -30,6 +33,11 @@ class CircleToMedia(db.Model):
         if purpose is not None:
             self.purpose = purpose
         db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: circle_to_media%s", {"id": self.id,
+                                                         "circle_id": self.circle_id,
+                                                         "media_id": self.media_id,
+                                                         "purpose": self.purpose})
 
     def update_content(self, circle=None, media=None, upload_time=None, purpose=None):
         if circle is not None:

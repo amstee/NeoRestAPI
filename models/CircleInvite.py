@@ -2,6 +2,9 @@ from config.database import db
 from dateutil import parser as DateParser
 from config.sockets import sockets
 import datetime
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
 class CircleInvite(db.Model):
@@ -34,6 +37,10 @@ class CircleInvite(db.Model):
             else:
                 self.updated = updated
         db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: circle_invites%s", {"id": self.id,
+                                                        "circle_id": self.circle_id,
+                                                        "user_id": self.user_id})
 
     def update_content(self, created=None, updated=datetime.datetime.now()):
         if created is not None:
@@ -53,6 +60,15 @@ class CircleInvite(db.Model):
             p2 = {}
         p2['circle_invite_id'] = self.id
         sockets.notify_user(self.user, False, p1, p2)
+
+    def get_simple_content(self):
+        return {
+            "id": self.id,
+            "circle_id": self.circle_id,
+            "user_id": self.user_id,
+            "created": self.created,
+            "updated": self.updated
+        }
 
     def get_content(self, user=True):
         if user:
