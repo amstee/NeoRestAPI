@@ -65,6 +65,8 @@ class Message(db.Model):
         if is_user is not None:
             self.is_user = is_user
         db.session.commit()
+        db.session.flush()
+        logger.debug("Database update: messages%s", self.get_simple_content())
 
     def get_content(self):
         if self.is_user:

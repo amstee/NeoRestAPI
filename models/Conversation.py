@@ -77,6 +77,11 @@ class Conversation(db.Model):
         if device_access is not None:
             self.device_access = device_access
         db.session.commit()
+        db.session.flush()
+        logger.debug("Database update: conversations%s", {"id": self.id,
+                                                          "name": self.name,
+                                                          "circle_id": self.circle_id,
+                                                          "device_access": self.device_access})
 
     def notify_users(self, p1='conversation', p2=None):
         if p2 is None:

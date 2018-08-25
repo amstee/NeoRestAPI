@@ -92,6 +92,10 @@ class Circle(db.Model):
             else:
                 self.updated = updated
         db.session.commit()
+        db.session.flush()
+        logger.debug("Database update: circles%s", {"id": self.id,
+                                                    "name": self.name,
+                                                    "device": self.device.id if self.device is not None else -1})
 
     def remove_user(self, user):
         for user_link in self.user_link:

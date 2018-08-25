@@ -145,6 +145,11 @@ class Media(db.Model):
         if identifier is not None and identifier != "":
             self.identifier = identifier
         db.session.commit()
+        logger.debug("Database update: medias%s", {"id": self.id,
+                                                   "filename": self.filename,
+                                                   "extension": self.extension,
+                                                   "identifier": self.identifier,
+                                                   "uploaded": self.uploaded})
 
     def get_link_type(self):
         if self.message_link is not None:

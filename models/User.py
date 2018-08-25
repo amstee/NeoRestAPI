@@ -206,6 +206,8 @@ class User(db.Model):
         if is_online is not None:
             self.is_online = is_online
         db.session.commit()
+        db.session.flush()
+        logger.debug("Database update: users%s", self.get_simple_content())
 
     def promote_admin(self):
         self.type = "ADMIN"

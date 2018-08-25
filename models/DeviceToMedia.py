@@ -33,6 +33,11 @@ class DeviceToMedia(db.Model):
         if purpose is not None:
             self.purpose = purpose
         db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: device_to_media%s", {"id": self.id,
+                                                         "device_id": self.device_id,
+                                                         "media_id": self.media_id,
+                                                         "purpose": self.purpose})
 
     def update_content(self, device=None, media=None, upload_time=None, purpose=None):
         if device is not None:
@@ -48,10 +53,10 @@ class DeviceToMedia(db.Model):
             self.purpose = purpose
         db.session.commit()
         db.session.flush()
-        logger.debug("Database add: device_to_media%s", {"id": self.id,
-                                                         "device_id": self.device_id,
-                                                         "media_id": self.media_id,
-                                                         "purpose": self.purpose})
+        logger.debug("Database update: device_to_media%s", {"id": self.id,
+                                                            "device_id": self.device_id,
+                                                            "media_id": self.media_id,
+                                                            "purpose": self.purpose})
 
     def get_content(self):
         return {
