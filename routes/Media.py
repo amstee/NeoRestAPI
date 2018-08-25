@@ -1,4 +1,5 @@
 from flask_restful import Resource
+from flask import request
 from config.database import db
 from models.Message import Message
 from models.Media import Media
@@ -6,12 +7,17 @@ from utils.decorators import secured_route, check_content, secured_admin_route
 from utils.apiUtils import *
 from utils.contentChecker import content_checker
 from utils.security import user_has_access_to_message, device_has_access_to_message
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
 class MediaInfo(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("media_id")
             media = db.session.query(Media).filter(Media.id == content["media_id"]).first()
@@ -28,6 +34,8 @@ class DeviceMediaInfo(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("media_id")
             media = db.session.query(Media).filter(Media.id == content["media_id"]).first()
@@ -44,6 +52,8 @@ class MediaInfoAdmin(Resource):
     @check_content
     @secured_admin_route
     def post(self, content, admin):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("media_id")
             media = db.session.query(Media).filter(Media.id == content["media_id"]).first()
@@ -58,6 +68,8 @@ class MediaDelete(Resource):
     @check_content
     @secured_admin_route
     def post(self, content, admin):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("media_id")
             media = db.session.query(Media).filter(Media.id == content["media_id"]).first()
@@ -74,6 +86,8 @@ class MediaList(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("message_id")
             message = db.session.query(Message).filter(Message.id == content["message_id"]).first()
@@ -90,6 +104,8 @@ class DeviceMediaList(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("message_id")
             message = db.session.query(Message).filter(Message.id == content["message_id"]).first()
@@ -107,6 +123,8 @@ class MediaUpdate(Resource):
     @check_content
     @secured_admin_route
     def post(self, content, admin):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("media_id")
             media = db.session.query(Media).filter(Media.id == content["media_id"]).first()

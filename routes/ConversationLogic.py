@@ -1,4 +1,5 @@
 from flask_restful import Resource
+from flask import request
 from config.database import db
 from models.UserToConversation import UserToConversation
 from models.User import User as UserModel
@@ -6,12 +7,17 @@ from utils.decorators import secured_route, check_content
 from utils.contentChecker import content_checker
 from config.sockets import sockets
 from utils.apiUtils import *
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
 class ConversationInvite(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("conversation_id", "email")
             link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
@@ -47,6 +53,8 @@ class ConversationUserPromote(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("conversation_id", "email")
             link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
@@ -79,6 +87,8 @@ class ConversationKick(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("conversation_id", "email")
             link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
@@ -110,6 +120,8 @@ class ConversationQuit(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("conversation_id")
             link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
@@ -133,6 +145,8 @@ class ConversationAddDevice(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("conversation_id")
             link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
@@ -154,6 +168,8 @@ class ConversationRemoveDevice(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("conversation_id")
             link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==

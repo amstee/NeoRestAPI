@@ -1,16 +1,22 @@
 from flask_restful import Resource
+from flask import request
 from config.database import db
 from models.Circle import Circle
 from utils.decorators import secured_route, check_content, secured_admin_route
 from utils.contentChecker import content_checker
 from models.UserToCircle import UserToCircle
 from utils.apiUtils import *
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
 class CircleCreate(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("name")
             circle = Circle(content["name"])
@@ -28,6 +34,8 @@ class CircleDelete(Resource):
     @check_content
     @secured_admin_route
     def post(self, content, admin):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("circle_id")
             circle = db.session.query(Circle).filter_by(id=content["circle_id"]).first()
@@ -47,6 +55,8 @@ class CircleUpdate(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("circle_id")
             circle = db.session.query(Circle).filter_by(id=content["circle_id"]).first()
@@ -68,6 +78,8 @@ class CircleInfo(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("circle_id")
             circle = db.session.query(Circle).filter_by(id=content["circle_id"]).first()
@@ -85,6 +97,8 @@ class CircleInfo(Resource):
 class CircleDeviceInfo(Resource):
     @secured_route
     def post(self, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             return jsonify({"success": True, "content": device.circle.get_content()})
         except Exception as e:
@@ -94,6 +108,8 @@ class CircleDeviceInfo(Resource):
 class CircleList(Resource):
     @secured_route
     def post(self, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             circle_list = []
             for link in user.circle_link:

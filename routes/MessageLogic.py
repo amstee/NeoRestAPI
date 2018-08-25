@@ -14,12 +14,17 @@ from utils.apiUtils import *
 from config.sockets import sockets
 from flask_socketio import emit
 from bot.facebook import messenger_circle_model_send, messenger_conversation_model_send
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
 class FirstMessageToDeviceSend(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("circle_id")
             circle = db.session.query(Circle).filter(Circle.id == content["circle_id"]).first()
@@ -64,6 +69,8 @@ class FirstMessageSend(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("email", "circle_id")
             dest = db.session.query(UserModel).filter(UserModel.email == content["email"]).first()
@@ -111,6 +118,8 @@ class MessageSend(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("conversation_id")
             link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
