@@ -4,8 +4,8 @@ certifi==2018.4.16
 cffi==1.11.5
 chardet==3.0.4
 click==6.7
-cryptography==2.2.2
-Flask==0.12.2
+cryptography==2.2.3
+Flask==0.12.3
 Flask-Cors==3.0.3
 Flask-HTTPAuth==3.2.3
 Flask-Jsonpify==1.5.0

@@ -11,7 +11,7 @@ URI_POSTGRES = 'postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRE
 URI_SQLITE = 'sqlite:///database.sqlt'
 URI_TESTING = 'sqlite:///:memory:'
 
-URI_USED = URI_TESTING
+URI_USED = URI_SQLITE
 
 db = SQLAlchemy()
 
