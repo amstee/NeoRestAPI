@@ -1,7 +1,10 @@
 from config.database import db
 from dateutil import parser as DateParser
 from flask_socketio import emit
+from config.log import logger_set
 import datetime
+
+logger = logger_set(__name__)
 
 
 class Conversation(db.Model):
@@ -42,6 +45,11 @@ class Conversation(db.Model):
             self.circle = circle
         self.device_access = device_access
         db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: conversations%s", {"id": self.id,
+                                                       "name": self.name,
+                                                       "circle_id": self.circle_id,
+                                                       "device_access": self.device_access})
 
     def has_members(self, *args):
         for member in args:

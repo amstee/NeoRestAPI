@@ -1,6 +1,9 @@
 from config.database import db
 from dateutil import parser as DateParser
+from config.log import logger_set
 import datetime
+
+logger = logger_set(__name__)
 
 
 class Message(db.Model):
@@ -43,6 +46,8 @@ class Message(db.Model):
             self.conversation = conversation
         self.is_user = is_user
         db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: messages%s", self.get_simple_content())
 
     def update_content(self, sent=None, read=datetime.datetime.now(), content=None, is_user=None):
         if sent is not None:
