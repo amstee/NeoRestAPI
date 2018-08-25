@@ -91,6 +91,7 @@ class TestFirstDeviceMessageSend(unittest.TestCase):
         assert response.status_code != 200
         assert response_json['success'] == False
 
+
 class TestDeviceMessageSend(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
@@ -138,10 +139,9 @@ class TestDeviceMessageSend(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success'] is True
         assert len(self.circle.conversations[0].messages) == 2
         assert self.circle.conversations[0].messages[1].text_content == "yo"
-
 
     def test_invalid_conversation(self):
         json_data = {
