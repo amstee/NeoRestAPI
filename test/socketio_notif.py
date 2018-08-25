@@ -3,8 +3,8 @@ import sys
 from flask_socketio import SocketIOTestClient
 import json
 sys.path.insert(0, '..')
-from api import NeoAPI
-from config.database import db_session
+from api import NeoAPI, sockets, socketio
+from config.database import db
 from utils.testutils import authenticate_user
 from utils.testutils import authenticate_device
 from models.User import User as UserModel
@@ -19,17 +19,17 @@ class SocketioConversation(unittest.TestCase):
     def setUp(self):
         self.neo = NeoAPI()
         self.api = self.neo.activate_testing()
-        self.client = SocketIOTestClient(self.neo.app, self.neo.socketio)
-        self.client2 = SocketIOTestClient(self.neo.app, self.neo.socketio)
-        self.deviceClient = SocketIOTestClient(self.neo.app, self.neo.socketio)
+        self.client = SocketIOTestClient(self.neo.app, socketio)
+        self.client2 = SocketIOTestClient(self.neo.app, socketio)
+        self.deviceClient = SocketIOTestClient(self.neo.app, socketio)
         self.client.disconnect()
         self.client2.disconnect()
         self.deviceClient.disconnect()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "te@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "te@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="te@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "tea@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "tea@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="tea@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
@@ -44,7 +44,10 @@ class SocketioConversation(unittest.TestCase):
         self.device.circle = self.circle
         self.device_password = self.device.get_pre_activation_password()
         self.device.activate(self.device.key)
-        db_session.commit()
+        db.session.commit()
+        self.conversation_id = self.conversation.id
+        self.circle_id = self.circle.id
+        self.user2_email = self.user2.email
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.device_token = authenticate_device(self.api, self.device, self.device_password)
@@ -59,7 +62,7 @@ class SocketioConversation(unittest.TestCase):
         data = {
             'token': self.token1
         }
-        assert len(self.neo.sockets) == 0
+        assert len(sockets) == 0
         self.client.connect()
         self.client2.connect()
         self.deviceClient.connect()
@@ -77,8 +80,8 @@ class SocketioConversation(unittest.TestCase):
         assert res3[0]['name'] == 'success'
         json_data = {
             "token": self.token1,
-            "conversation_id": self.conversation.id,
-            "email": self.user2.email,
+            "conversation_id": self.conversation_id,
+            "email": self.user2_email,
         }
         response = self.api.post('/conversation/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
@@ -89,7 +92,7 @@ class SocketioConversation(unittest.TestCase):
         assert len(res3) == 0
 
     def test_conversation_user_quit(self):
-        assert len(self.neo.sockets) == 0
+        assert len(sockets) == 0
         self.client.connect()
         self.client2.connect()
         self.deviceClient.connect()
@@ -105,18 +108,20 @@ class SocketioConversation(unittest.TestCase):
         assert res2[0]['name'] == 'success'
         assert len(res3) == 1
         assert res3[0]['name'] == 'success'
-        self.client.emit("join_conversation", {"conversation_id": self.conversation.id}, json=True)
-        self.deviceClient.emit("join_conversation", {"conversation_id": self.conversation.id}, json=True)
+        self.client.emit("join_conversation", {"conversation_id": self.conversation_id}, json=True)
+        self.deviceClient.emit("join_conversation", {"conversation_id": self.conversation_id}, json=True)
         res1 = self.client.get_received()
         res2 = self.deviceClient.get_received()
         assert len(res1) == 1
         assert res1[0]['name'] == 'success'
         assert len(res2) == 1
         assert res2[0]['name'] == 'success'
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == self.user2_email).first()
+        self.conversation = db.session.query(Conversation).filter(Conversation.id == self.conversation_id).first()
         UserToConversation(user=self.user2, conversation=self.conversation)
-        db_session.commit()
+        db.session.commit()
         response = self.api.post('/conversation/quit', data=json.dumps({"token": self.token2,
-                                                                        "conversation_id": self.conversation.id}),
+                                                                        "conversation_id": self.conversation_id}),
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response_json['success'] is True
@@ -126,7 +131,7 @@ class SocketioConversation(unittest.TestCase):
         assert len(res3) == 1
 
     def test_conversation_add_and_remove_device(self):
-        assert len(self.neo.sockets) == 0
+        assert len(sockets) == 0
         self.client.connect()
         self.client2.connect()
         self.deviceClient.connect()
@@ -142,8 +147,8 @@ class SocketioConversation(unittest.TestCase):
         assert res2[0]['name'] == 'success'
         assert len(res3) == 1
         assert res3[0]['name'] == 'success'
-        self.client.emit("join_conversation", {"conversation_id": self.conversation.id}, json=True)
-        self.deviceClient.emit("join_conversation", {"conversation_id": self.conversation.id}, json=True)
+        self.client.emit("join_conversation", {"conversation_id": self.conversation_id}, json=True)
+        self.deviceClient.emit("join_conversation", {"conversation_id": self.conversation_id}, json=True)
         res1 = self.client.get_received()
         res2 = self.deviceClient.get_received()
         assert len(res1) == 1
@@ -152,7 +157,7 @@ class SocketioConversation(unittest.TestCase):
         assert res2[0]['name'] == 'success'
         json_data = {
             "token": self.token1,
-            "conversation_id": self.conversation.id
+            "conversation_id": self.conversation_id
         }
         response = self.api.post('/conversation/device/add', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
@@ -174,21 +179,21 @@ class SocketioCircle(unittest.TestCase):
     def setUp(self):
         self.neo = NeoAPI()
         self.api = self.neo.activate_testing()
-        self.client = SocketIOTestClient(self.neo.app, self.neo.socketio)
-        self.client2 = SocketIOTestClient(self.neo.app, self.neo.socketio)
-        self.deviceClient = SocketIOTestClient(self.neo.app, self.neo.socketio)
+        self.client = SocketIOTestClient(self.neo.app, socketio)
+        self.client2 = SocketIOTestClient(self.neo.app, socketio)
+        self.deviceClient = SocketIOTestClient(self.neo.app, socketio)
         self.client.disconnect()
         self.client2.disconnect()
         self.deviceClient.disconnect()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "te@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "te@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="te@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "tea@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "tea@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="tea@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user3 = db_session.query(UserModel).filter(UserModel.email == "tet@test.com").first()
+        self.user3 = db.session.query(UserModel).filter(UserModel.email == "tet@test.com").first()
         if self.user3 is None:
             self.user3 = UserModel(email="tet@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
@@ -203,7 +208,11 @@ class SocketioCircle(unittest.TestCase):
         self.device.circle = self.circle
         self.device_password = self.device.get_pre_activation_password()
         self.device.activate(self.device.key)
-        db_session.commit()
+        db.session.commit()
+        self.circle_id = self.circle.id
+        self.conversation_id = self.conversation.id
+        self.user2_email = self.user2.email
+        self.user3_email = self.user3.email
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.device_token = authenticate_device(self.api, self.device, self.device_password)
@@ -218,7 +227,7 @@ class SocketioCircle(unittest.TestCase):
         data = {
             'token': self.token1
         }
-        assert len(self.neo.sockets) == 0
+        assert len(sockets) == 0
         self.client.connect()
         self.client2.connect()
         self.deviceClient.connect()
@@ -236,8 +245,8 @@ class SocketioCircle(unittest.TestCase):
         assert res3[0]['name'] == 'success'
         json_data = {
             "token": self.token1,
-            "circle_id": self.circle.id,
-            "email": self.user2.email,
+            "circle_id": self.circle_id,
+            "email": self.user2_email,
         }
         response = self.api.post('/circle/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
@@ -249,11 +258,11 @@ class SocketioCircle(unittest.TestCase):
 
     def test_valid_circle_quit(self):
         link = UserToCircle(user=self.user2, circle=self.circle)
-        db_session.commit()
+        db.session.commit()
         data = {
             'token': self.token1
         }
-        assert len(self.neo.sockets) == 0
+        assert len(sockets) == 0
         self.client.connect()
         self.client2.connect()
         self.deviceClient.connect()
@@ -269,8 +278,8 @@ class SocketioCircle(unittest.TestCase):
         assert res2[0]['name'] == 'success'
         assert len(res3) == 1
         assert res3[0]['name'] == 'success'
-        self.client2.emit("join_circle", {"circle_id": self.circle.id}, json=True)
-        self.deviceClient.emit("join_circle", {"circle_id": self.circle.id}, json=True)
+        self.client2.emit("join_circle", {"circle_id": self.circle_id}, json=True)
+        self.deviceClient.emit("join_circle", {"circle_id": self.circle_id}, json=True)
         res1 = self.client2.get_received()
         res2 = self.deviceClient.get_received()
         assert len(res1) == 1
@@ -279,7 +288,7 @@ class SocketioCircle(unittest.TestCase):
         assert res2[0]['name'] == 'success'
         json_data = {
             "token": self.token1,
-            "circle_id": self.circle.id,
+            "circle_id": self.circle_id,
         }
         response = self.api.post('/circle/quit', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
@@ -291,11 +300,11 @@ class SocketioCircle(unittest.TestCase):
 
     def test_valid_circle_kick(self):
         link = UserToCircle(user=self.user2, circle=self.circle)
-        db_session.commit()
+        db.session.commit()
         data = {
             'token': self.token1
         }
-        assert len(self.neo.sockets) == 0
+        assert len(sockets) == 0
         self.client.connect()
         self.client2.connect()
         self.deviceClient.connect()
@@ -311,9 +320,9 @@ class SocketioCircle(unittest.TestCase):
         assert res2[0]['name'] == 'success'
         assert len(res3) == 1
         assert res3[0]['name'] == 'success'
-        self.client.emit("join_circle", {"circle_id": self.circle.id}, json=True)
-        self.client2.emit("join_circle", {"circle_id": self.circle.id}, json=True)
-        self.deviceClient.emit("join_circle", {"circle_id": self.circle.id}, json=True)
+        self.client.emit("join_circle", {"circle_id": self.circle_id}, json=True)
+        self.client2.emit("join_circle", {"circle_id": self.circle_id}, json=True)
+        self.deviceClient.emit("join_circle", {"circle_id": self.circle_id}, json=True)
         res1 = self.client2.get_received()
         res2 = self.deviceClient.get_received()
         res3 = self.client.get_received()
@@ -325,8 +334,8 @@ class SocketioCircle(unittest.TestCase):
         assert res2[0]['name'] == 'success'
         json_data = {
             "token": self.token1,
-            "circle_id": self.circle.id,
-            "email": self.user2.email
+            "circle_id": self.circle_id,
+            "email": self.user2_email
         }
         response = self.api.post('/circle/kick', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
@@ -340,11 +349,11 @@ class SocketioCircle(unittest.TestCase):
 
     def test_circle_connection(self):
         link = UserToCircle(user=self.user2, circle=self.circle)
-        db_session.commit()
+        db.session.commit()
         data = {
             'token': self.token1
         }
-        assert len(self.neo.sockets) == 0
+        assert len(sockets) == 0
         self.client.connect()
         self.client2.connect()
         self.deviceClient.connect()
@@ -360,9 +369,9 @@ class SocketioCircle(unittest.TestCase):
         assert res2[0]['name'] == 'success'
         assert len(res3) == 1
         assert res3[0]['name'] == 'success'
-        self.client.emit("join_circle", {"circle_id": self.circle.id}, json=True)
-        self.client2.emit("join_circle", {"circle_id": self.circle.id}, json=True)
-        self.deviceClient.emit("join_circle", {"circle_id": self.circle.id}, json=True)
+        self.client.emit("join_circle", {"circle_id": self.circle_id}, json=True)
+        self.client2.emit("join_circle", {"circle_id": self.circle_id}, json=True)
+        self.deviceClient.emit("join_circle", {"circle_id": self.circle_id}, json=True)
         res1 = self.client2.get_received()
         res2 = self.deviceClient.get_received()
         res3 = self.client.get_received()
@@ -372,6 +381,7 @@ class SocketioCircle(unittest.TestCase):
         assert res2[0]['name'] == 'success'
         assert len(res3) == 1
         assert res2[0]['name'] == 'success'
+        self.user3 = db.session.query(UserModel).filter(UserModel.email == self.user3_email).first()
         self.token3 = authenticate_user(self.api, self.user3, "test")
         res = self.client2.get_received()
         assert len(res) == 1

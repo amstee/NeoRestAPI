@@ -4,7 +4,7 @@ import json
 
 sys.path.insert(0,'..')
 from api import NeoAPI
-from config.database import db_session
+from config.database import db
 from models.User import User as UserModel
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
@@ -20,11 +20,11 @@ class TestMediaInfo(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testmessage@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testmessage2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -38,7 +38,7 @@ class TestMediaInfo(unittest.TestCase):
         self.message.link = self.linkConversation
         self.media = Media('test', '.txt', 'test.txt')
         self.media.message = self.message
-        db_session.commit()
+        db.session.commit()
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
@@ -68,11 +68,11 @@ class TestMediaInfoAdmin(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testmessage@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testmessage2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -86,7 +86,7 @@ class TestMediaInfoAdmin(unittest.TestCase):
         self.message.conversation = self.conversation
         self.media = Media('test', '.txt', 'test.txt')
         self.media.message = self.message
-        db_session.commit()
+        db.session.commit()
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
@@ -117,11 +117,11 @@ class TestMediaDelete(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testmessage@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testmessage2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -136,7 +136,7 @@ class TestMediaDelete(unittest.TestCase):
         self.message.link = self.linkConversation
         self.media = Media('test', '.txt', 'test.txt')
         self.media.message = self.message
-        db_session.commit()
+        db.session.commit()
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
@@ -151,7 +151,7 @@ class TestMediaDelete(unittest.TestCase):
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success'] is True
-        temp = db_session.query(Media).filter(Media.id == data).first()
+        temp = db.session.query(Media).filter(Media.id == data).first()
         assert temp is None
 
 
@@ -159,11 +159,11 @@ class TestMediaList(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testmessage@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testmessage2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -177,7 +177,7 @@ class TestMediaList(unittest.TestCase):
         self.message.link = self.linkConversation
         self.media = Media('test', '.txt', 'test.txt')
         self.media.message = self.message
-        db_session.commit()
+        db.session.commit()
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
@@ -207,11 +207,11 @@ class TestMediaUpdate(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testmessage@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testmessage2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -226,7 +226,7 @@ class TestMediaUpdate(unittest.TestCase):
         self.message.conversation = self.conversation
         self.media = Media('test', '.txt', 'test.txt')
         self.media.message = self.message
-        db_session.commit()
+        db.session.commit()
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
@@ -259,11 +259,11 @@ class TestDeviceMediaList(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testmessage@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testmessage2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -281,7 +281,7 @@ class TestDeviceMediaList(unittest.TestCase):
         self.device.circle = self.circle
         self.device_password = self.device.get_pre_activation_password()
         self.device.activate(self.device.key)
-        db_session.commit()
+        db.session.commit()
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
@@ -312,11 +312,11 @@ class TestDeviceMediaInfo(unittest.TestCase):
     def setUp(self):
         neo = NeoAPI()
         self.api = neo.activate_testing()
-        self.user1 = db_session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
             self.user1 = UserModel(email="testmessage@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
-        self.user2 = db_session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
         if self.user2 is None:
             self.user2 = UserModel(email="testmessage2@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1111-11-11")
@@ -334,7 +334,7 @@ class TestDeviceMediaInfo(unittest.TestCase):
         self.device.circle = self.circle
         self.device_password = self.device.get_pre_activation_password()
         self.device.activate(self.device.key)
-        db_session.commit()
+        db.session.commit()
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")

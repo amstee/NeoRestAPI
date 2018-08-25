@@ -1,20 +1,20 @@
-from sqlalchemy import Column, Integer, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
-from config.database import Base
 from dateutil import parser as DateParser
-from config.database import db_session
+from config.database import db
+from config.log import logger_set
 import datetime
 
+logger = logger_set(__name__)
 
-class MessageToMedia(Base):
+
+class MessageToMedia(db.Model):
     __tablename__ = "message_to_media"
-    id = Column(Integer, primary_key=True)
-    message_id = Column(Integer, ForeignKey('messages.id'))
-    media_id = Column(Integer, ForeignKey('medias.id'))
-    upload_time = Column(DateTime)
+    id = db.Column(db.Integer, primary_key=True)
+    message_id = db.Column(db.Integer, db.ForeignKey('messages.id'))
+    media_id = db.Column(db.Integer, db.ForeignKey('medias.id'))
+    upload_time = db.Column(db.DateTime)
 
-    message = relationship("Message", back_populates="media_links")
-    media = relationship("Media", back_populates="message_link")
+    message = db.relationship("Message", back_populates="media_links")
+    media = db.relationship("Media", back_populates="message_link")
 
     def __repr__(self):
         return "<MessageToMedia(id=%d, message_id=%d, media_id=%d)>" % (self.id, self.message_id, self.media_id)
@@ -29,7 +29,11 @@ class MessageToMedia(Base):
                 self.upload_time = DateParser.parse(upload_time)
             else:
                 self.upload_time = upload_time
-        db_session.add(self)
+        db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: message_to_media%s", {"id": self.id,
+                                                          "message_id": self.message_id,
+                                                          "media_id": self.media_id,})
 
     def update_content(self, message=None, media=None, upload_time=None):
         if message is not None:
@@ -41,7 +45,11 @@ class MessageToMedia(Base):
                 self.upload_time = DateParser.parse(upload_time)
             else:
                 self.upload_time = upload_time
-        db_session.commit()
+        db.session.commit()
+        db.session.flush()
+        logger.debug("Database update: message_to_media%s", {"id": self.id,
+                                                             "message_id": self.message_id,
+                                                             "media_id": self.media_id,})
 
     def get_content(self):
         return {
