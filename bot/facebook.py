@@ -1,4 +1,4 @@
-from config.database import db_session
+from config.database import db
 from models.User import User
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
@@ -34,12 +34,12 @@ def handle_conversation_payload(message_payload):
     try:
         payload = jwt.decode(message_payload, SECRET_KEY)
         try:
-            link = db_session.query(UserToConversation).filter(UserToConversation.id == payload["link_id"] and
+            link = db.session.query(UserToConversation).filter(UserToConversation.id == payload["link_id"] and
                                                                UserToConversation.user_id == payload["user_id"]).first()
             message = Message(content=payload["message_text"])
             message.link = link
             message.conversation = link.conversation
-            db_session.commit()
+            db.session.commit()
         except Exception as e:
             print("Une erreur est survenue : " + str(e), file=sys.stderr)
             return "Une erreur est survenue : " + str(e)
@@ -70,9 +70,9 @@ def send_message(recipient_id, message_text):
 
 def message_choice(sender_id, message_text):
     quick_replies = []
-    user = db_session.query(User).filter(User.facebook_psid == sender_id).first()
+    user = db.session.query(User).filter(User.facebook_psid == sender_id).first()
     for user_to_conv in user.conversationLinks:
-        conv = db_session.query(Conversation).filter(Conversation.id == user_to_conv.conversation_id).first()
+        conv = db.session.query(Conversation).filter(Conversation.id == user_to_conv.conversation_id).first()
         payload = encode_post_back_payload(sender_id, message_text, user_to_conv)
         quick_replies.append({"content_type": "text", "title": conv.name, "payload": payload})
     return quick_replies
@@ -106,20 +106,20 @@ def messenger_user_model_send(user_target, text_message):
 
 
 def messenger_circle_model_send(sender_id, circle, text_message):
-    circle_targets = db_session.query(UserToCircle).filter(UserToCircle.circle_id == circle.id)
+    circle_targets = db.session.query(UserToCircle).filter(UserToCircle.circle_id == circle.id)
     for targetUser in circle_targets:
-        targer_user_data = db_session.query(User).filter(targetUser.user_id == User.id).first()
+        targer_user_data = db.session.query(User).filter(targetUser.user_id == User.id).first()
         if sender_id != targer_user_data.id and targer_user_data.facebook_psid != -1:
             send_message(targer_user_data.facebook_psid, text_message)
 
 
 def messenger_conversation_model_send(sender_id, conversation, text_message):
-    circle = db_session.query(Circle).filter(Circle.id == conversation.circle_id).first()
+    circle = db.session.query(Circle).filter(Circle.id == conversation.circle_id).first()
     messenger_circle_model_send(sender_id, circle, text_message)
 
 
 def is_user_linked(facebook_psid):
-    user = db_session.query(User).filter(User.facebook_psid == facebook_psid).first()
+    user = db.session.query(User).filter(User.facebook_psid == facebook_psid).first()
     if user is not None:
         return True
     return False
@@ -129,7 +129,7 @@ def link_user_to_facebook(api_token, psid):
         try:
             payload = jwt.decode(api_token, SECRET_KEY)
             try:
-                user = db_session.query(User).filter(User.id == payload['sub']).first()
+                user = db.session.query(User).filter(User.id == payload['sub']).first()
                 if user is not None:
                     user.update_content(facebook_psid=psid)
                     return "Bienvenue sur NEO, " + payload['first_name'] + " " + payload['last_name'] + " !"

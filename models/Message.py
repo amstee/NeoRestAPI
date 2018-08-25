@@ -1,26 +1,27 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
-from sqlalchemy.orm import relationship
-from config.database import Base, db_session
+from config.database import db
 from dateutil import parser as DateParser
+from config.log import logger_set
 import datetime
 
+logger = logger_set(__name__)
 
-class Message(Base):
+
+class Message(db.Model):
     __tablename__ = "messages"
-    id = Column(Integer, primary_key=True)
-    conversation_id = Column(Integer, ForeignKey("conversations.id"))
-    link_id = Column(Integer, ForeignKey("user_to_conversation.id"), nullable=True)
-    device_id = Column(Integer, ForeignKey("devices.id"), nullable=True)
-    sent = Column(DateTime)
-    read = Column(DateTime)
-    text_content = Column(String(8192))
-    is_user = Column(Boolean)
+    id = db.Column(db.Integer, primary_key=True)
+    conversation_id = db.Column(db.Integer, db.ForeignKey("conversations.id"))
+    link_id = db.Column(db.Integer, db.ForeignKey("user_to_conversation.id"), nullable=True)
+    device_id = db.Column(db.Integer, db.ForeignKey("devices.id"), nullable=True)
+    sent = db.Column(db.DateTime)
+    read = db.Column(db.DateTime)
+    text_content = db.Column(db.String(8192))
+    is_user = db.Column(db.Boolean)
 
-    link = relationship("UserToConversation", back_populates="messages")
-    conversation = relationship("Conversation", back_populates="messages")
-    media_links = relationship("MessageToMedia", back_populates="message", order_by="MessageToMedia.id",
-                               cascade="save-update, delete")
-    device = relationship("Device", back_populates="messages")
+    link = db.relationship("UserToConversation", back_populates="messages")
+    conversation = db.relationship("Conversation", back_populates="messages")
+    media_links = db.relationship("MessageToMedia", back_populates="message", order_by="MessageToMedia.id",
+                                  cascade="save-update, delete")
+    device = db.relationship("Device", back_populates="messages")
 
     def __repr__(self):
         return "<NeoMessage(id='%d' sent='%s' read='%s')>" % (self.id, str(self.sent), str(self.read))
@@ -44,7 +45,9 @@ class Message(Base):
         if conversation is not None:
             self.conversation = conversation
         self.is_user = is_user
-        db_session.add(self)
+        db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: messages%s", self.get_simple_content())
 
     def update_content(self, sent=None, read=datetime.datetime.now(), content=None, is_user=None):
         if sent is not None:
@@ -61,7 +64,9 @@ class Message(Base):
             self.text_content = content
         if is_user is not None:
             self.is_user = is_user
-        db_session.commit()
+        db.session.commit()
+        db.session.flush()
+        logger.debug("Database update: messages%s", self.get_simple_content())
 
     def get_content(self):
         if self.is_user:

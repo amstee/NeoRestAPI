@@ -1,8 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
-from sqlalchemy.orm import relationship
-from config.database import Base
 from dateutil import parser as DateParser
-from config.database import db_session
+from config.database import db
+from config.log import logger_set
 import random
 import string
 import jwt
@@ -11,27 +9,28 @@ import datetime
 import base64
 
 SECRET_KEY = "defaultdevicesecretkey"
+logger = logger_set(__name__)
 
 
-class Device(Base):
+class Device(db.Model):
     __tablename__ = "devices"
-    id = Column(Integer, primary_key=True)
-    circle_id = Column(Integer, ForeignKey('circles.id'))
-    key = Column(String(20))
-    activated = Column(Boolean)
-    username = Column(String(120), unique=True)
-    password = Column(String(2048))
-    json_token = Column(String(2048))
-    name = Column(String(120))
-    created = Column(DateTime)
-    updated = Column(DateTime)
-    is_online = Column(Boolean)
+    id = db.Column(db.Integer, primary_key=True)
+    circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'))
+    key = db.Column(db.String(20))
+    activated = db.Column(db.Boolean)
+    username = db.Column(db.String(120), unique=True)
+    password = db.Column(db.String(2048))
+    json_token = db.Column(db.String(2048))
+    name = db.Column(db.String(120))
+    created = db.Column(db.DateTime)
+    updated = db.Column(db.DateTime)
+    is_online = db.Column(db.Boolean)
 
     # RELATIONS
-    circle = relationship("Circle", back_populates="device")
-    messages = relationship("Message", back_populates="device")
-    media_links = relationship("DeviceToMedia", back_populates="device", order_by="DeviceToMedia.id",
-                               cascade="save-update, delete")
+    circle = db.relationship("Circle", back_populates="device")
+    messages = db.relationship("Message", back_populates="device")
+    media_links = db.relationship("DeviceToMedia", back_populates="device", order_by="DeviceToMedia.id",
+                                  cascade="save-update, delete")
 
     def __init__(self, created=datetime.datetime.now(), updated=datetime.datetime.now(),
                  username=None, name=None, activated=False, is_online=None):
@@ -61,13 +60,20 @@ class Device(Base):
             c = True
             while c:
                 username = ''.join(random.choice(string.ascii_uppercase) for _ in range(12))
-                if db_session.query(Device).filter(Device.username == username).first() is None:
+                if db.session.query(Device).filter(Device.username == username).first() is None:
                     c = False
             self.username = username
         password = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
         self.password = base64.b64encode(str.encode(password)).decode('utf-8')
         self.key = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
-        db_session.add(self)
+        db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: devices%s", {"id": self.id,
+                                                 "name": self.name,
+                                                 "circle_id": self.circle.id if self.circle is not None else -1,
+                                                 "activated": self.activated,
+                                                 "username": self.username,
+                                                 "is_online": self.is_online})
 
     def set_password(self, password):
         self.password = base64.b64encode(str.encode(password)).decode('utf-8')
@@ -91,17 +97,24 @@ class Device(Base):
             self.activated = activated
         if is_online is not None:
             self.is_online = is_online
-        db_session.commit()
+        db.session.commit()
+        db.session.flush()
+        logger.debug("Database update: devices%s", {"id": self.id,
+                                                    "name": self.name,
+                                                    "circle_id": self.circle.id if self.circle is not None else -1,
+                                                    "activated": self.activated,
+                                                    "username": self.username,
+                                                    "is_online": self.is_online})
 
     def disconnect(self):
         self.json_token = ""
-        db_session.commit()
+        db.session.commit()
 
     @staticmethod
     def decode_auth_token(auth_token):
         try:
             payload = jwt.decode(auth_token, SECRET_KEY)
-            device = db_session.query(Device).filter(Device.id == payload['sub']).first()
+            device = db.session.query(Device).filter(Device.id == payload['sub']).first()
             if device is not None:
                 if device.json_token == "" or device.json_token is None:
                     return False, "Device non authentifié"
@@ -126,7 +139,7 @@ class Device(Base):
             }
             token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
             self.json_token = token.decode()
-            db_session.commit()
+            db.session.commit()
             return token.decode()
         except Exception as e:
             print(e)
@@ -154,14 +167,14 @@ class Device(Base):
     def update_password(self, password=None):
         if password is not None and password != "":
             self.password = hashlib.sha512(password.encode('utf-8')).hexdigest()
-            db_session.commit()
+            db.session.commit()
 
     def activate(self, activation_key):
         if self.key == activation_key:
             self.activated = True
             pw = base64.b64decode(str.encode(self.password))
             self.password = hashlib.sha512(pw).hexdigest()
-            db_session.commit()
+            db.session.commit()
         return self.activated
 
     def get_pre_activation_password(self):
