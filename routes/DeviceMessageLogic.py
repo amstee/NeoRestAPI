@@ -1,5 +1,6 @@
 from flask_restful import Resource
-from config.database import db_session
+from flask import request
+from config.database import db
 from models.Media import Media
 from models.UserToConversation import UserToConversation
 from models.Message import Message
@@ -12,15 +13,20 @@ from flask_socketio import emit
 from config.sockets import sockets
 from models.MessageToMedia import MessageToMedia
 from bot.facebook import messenger_conversation_model_send, messenger_user_model_send
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
 class FirstDeviceMessageSend(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("email")
-            user = db_session.query(UserModel).filter(UserModel.email == content["email"]).first()
+            user = db.session.query(UserModel).filter(UserModel.email == content["email"]).first()
             if user is None:
                 return FAILED("Utilisateur spécifié introuvable")
             if not device.circle.has_member(user):
@@ -40,9 +46,9 @@ class FirstDeviceMessageSend(Resource):
                     media = Media()
                     media.identifier = file
                     MessageToMedia(message=message, media=media)
-                    db_session.commit()
+                    db.session.commit()
                     media_list.append(media.get_simple_content())
-            db_session.commit()
+            db.session.commit()
             sockets.notify_user(user, False, 'conversation',
                                 {"conversation_id": conversation.id,
                                  "event": 'invite'})
@@ -62,9 +68,11 @@ class DeviceMessageSend(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("conversation_id")
-            conv = db_session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
+            conv = db.session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
             if conv is None:
                 return FAILED("Conversation introuvable")
             if conv.device_access is False or conv.circle.id != device.circle.id:
@@ -78,9 +86,9 @@ class DeviceMessageSend(Resource):
                     media = Media()
                     media.identifier = file
                     MessageToMedia(message=message, media=media)
-                    db_session.commit()
+                    db.session.commit()
                     media_list.append(media.get_simple_content())
-            db_session.commit()
+            db.session.commit()
             if not media_list:
                 emit('message', {
                     'conversation_id': message.conversation_id,

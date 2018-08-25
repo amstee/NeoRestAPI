@@ -1,29 +1,30 @@
-from sqlalchemy import Column, Integer, String, event, Boolean
-from sqlalchemy.orm import relationship
-from config.database import Base
-from config.database import db_session
+from sqlalchemy import event
+from config.database import db
 from config.files import *
 from werkzeug.utils import secure_filename
+from config.log import logger_set
 import os
 
+logger = logger_set(__name__)
 
-class Media(Base):
+
+class Media(db.Model):
     __tablename__ = "medias"
-    id = Column(Integer, primary_key=True)
-    filename = Column(String(120))
-    extension = Column(String(10))
-    directory = Column(String(1024))
-    identifier = Column(String(10))
-    uploaded = Boolean()
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(120))
+    extension = db.Column(db.String(10))
+    directory = db.Column(db.String(1024))
+    identifier = db.Column(db.String(10))
+    uploaded = db.Boolean()
 
-    message_link = relationship("MessageToMedia", back_populates="media", uselist=False,
+    message_link = db.relationship("MessageToMedia", back_populates="media", uselist=False,
+                                   cascade="save-update, delete")
+    user_link = db.relationship("UserToMedia", back_populates="media", uselist=False,
                                 cascade="save-update, delete")
-    user_link = relationship("UserToMedia", back_populates="media", uselist=False,
-                             cascade="save-update, delete")
-    device_link = relationship("DeviceToMedia", back_populates="media", uselist=False,
-                               cascade="save-update, delete")
-    circle_link = relationship("CircleToMedia", back_populates="media", uselist=False,
-                               cascade="save-update, delete")
+    device_link = db.relationship("DeviceToMedia", back_populates="media", uselist=False,
+                                  cascade="save-update, delete")
+    circle_link = db.relationship("CircleToMedia", back_populates="media", uselist=False,
+                                  cascade="save-update, delete")
 
     def __repr__(self):
         return "<Media(id='%d' filename='%s' extension='%s' directory='%s')>" % (
@@ -104,7 +105,13 @@ class Media(Base):
             self.identifier = identifier
         self.directory = directory
         self.uploaded = False
-        db_session.add(self)
+        db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: medias%s", {"id": self.id,
+                                                "filename": self.filename,
+                                                "extension": self.extension,
+                                                "identifier": self.identifier,
+                                                "uploaded": self.uploaded})
 
     def set_content(self, file):
         file_name = secure_filename(file.filename)
@@ -137,7 +144,12 @@ class Media(Base):
             self.directory = directory
         if identifier is not None and identifier != "":
             self.identifier = identifier
-        db_session.commit()
+        db.session.commit()
+        logger.debug("Database update: medias%s", {"id": self.id,
+                                                   "filename": self.filename,
+                                                   "extension": self.extension,
+                                                   "identifier": self.identifier,
+                                                   "uploaded": self.uploaded})
 
     def get_link_type(self):
         if self.message_link is not None:

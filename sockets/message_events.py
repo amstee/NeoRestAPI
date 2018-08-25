@@ -1,5 +1,5 @@
 from models.UserToConversation import UserToConversation
-from config.database import db_session
+from config.database import db
 from config import socketio, sockets
 from flask import request
 from flask_socketio import emit
@@ -18,6 +18,7 @@ def is_writing(json):
     if socket is None or socket.authenticated is False:
         emit('error', 'Socket user introuvable', room=sid, namespace='/')
     else:
+        client = socket.get_client()
         try:
             b, s = check_json('conversation_id', 'is_writing')
             if not b:
@@ -29,10 +30,11 @@ def is_writing(json):
                          room='conversation_' + str(json['conversation_id']), namespace='/')
                 else:
                     emit('writing', {'conversation_id': json['conversation_id'], 'device': False,
-                                     'user': socket.client.email, 'is_writing': json['is_writing']},
+                                     'user': client.email, 'is_writing': json['is_writing']},
                          room='conversation_'+str(json['conversation_id']), namespace='/')
         except Exception as e:
             socket.emit('error', str(e))
+    db.session.close()
 
 
 @socketio.on('message')
@@ -42,12 +44,13 @@ def message_send(content):
     if socket is None or socket.authenticated is False:
         emit('error', 'Socket user introuvable', room=sid, namespace='/')
     else:
+        client = socket.get_client()
         try:
             b, s = check_json(content, 'conversation_id')
             if not b:
                 emit('error', 'Param conversation_id introuvable', room=sid, namespace='/')
             else:
-                conv = db_session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
+                conv = db.session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
                 if conv is None:
                     emit('error', 'Conversation introuvable', room=sid, namespace='/')
                 else:
@@ -55,10 +58,10 @@ def message_send(content):
                         message = Message(content=content["text_message"] if "text_message" in content else "",
                                           is_user=False)
                         message.conversation = conv
-                        message.device = socket.client
+                        message.device = client
                     else:
-                        link = db_session.query(UserToConversation).\
-                            filter(UserToConversation.user_id == socket.client.id,
+                        link = db.session.query(UserToConversation).\
+                            filter(UserToConversation.user_id == socket.client_id,
                                    UserToConversation.conversation_id == conv.id).first()
                         if link is None:
                             emit('error', "Vous ne faites pas partie de cette conversation", room=sid, namespace='/')
@@ -67,13 +70,13 @@ def message_send(content):
                             message = Message(content=content['text_message'] if 'text_message' in content else '')
                             message.conversation = conv
                             message.link = link
-                    db_session.commit()
+                    db.session.commit()
                     try:
-                        messenger_conversation_model_send(socket.client.id, conv, content["text_message"])
+                        messenger_conversation_model_send(socket.client_id, conv, content["text_message"])
                     except Exception:
                         pass
                     try:
-                        hangout_conversation_model_send(socket.client.id, conv, content["text_message"])
+                        hangout_conversation_model_send(socket.client_id, conv, content["text_message"])
                     except Exception:
                         pass
                     media_list = []
@@ -82,7 +85,7 @@ def message_send(content):
                             media = Media()
                             media.identifier = file
                             media.message = message
-                            db_session.commit()
+                            db.session.commit()
                             media_list.append(media.get_simple_content())
                         socket.emit('media', {'media_list': media_list, 'message_id': message.id})
                     socket.emit('success', {'received': True, 'message_id': message.id})
@@ -91,7 +94,7 @@ def message_send(content):
                             'conversation_id': conv.id,
                             'message': message.get_simple_json_compliant_content(),
                             'time': message.sent.isoformat(),
-                            'sender': socket.client.get_simple_json_compliant_content(),
+                            'sender': client.get_simple_json_compliant_content(),
                             'media_list': media_list,
                             'status': 'done'},
                              room='conversation_' + str(conv.id), namespace='/')
@@ -101,3 +104,4 @@ def message_send(content):
                                          'status': 'pending'}, room='conversation_' + str(conv.id), namespace='/')
         except Exception as e:
             socket.emit("error", str(e), namespace='/')
+    db.session.close()

@@ -10,10 +10,6 @@ TESTING_SPACE="spaces/v4YQNAAAAAE"
 
 
 class Messaging(unittest.TestCase):
-    def setUp(self):
-        neo = NeoAPI()
-        self.api = neo.activate_testing()
-
     def test_message_valid_space(self):
         response = send_to_space(TESTING_SPACE, "unitary test")
         assert response['text'] == "unitary test"

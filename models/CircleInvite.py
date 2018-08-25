@@ -1,22 +1,22 @@
-from sqlalchemy import Column, Integer, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
-from config.database import Base
-from config.database import db_session
+from config.database import db
 from dateutil import parser as DateParser
 from config.sockets import sockets
 import datetime
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
-class CircleInvite(Base):
+class CircleInvite(db.Model):
     __tablename__ = "circle_invites"
-    id = Column(Integer, primary_key=True)
-    circle_id = Column(Integer, ForeignKey("circles.id"))
-    user_id = Column(Integer, ForeignKey("users.id"))
-    created = Column(DateTime)
-    updated = Column(DateTime)
+    id = db.Column(db.Integer, primary_key=True)
+    circle_id = db.Column(db.Integer, db.ForeignKey("circles.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    created = db.Column(db.DateTime)
+    updated = db.Column(db.DateTime)
 
-    user = relationship("User", back_populates="circle_invite")
-    circle = relationship("Circle", back_populates="circle_invite")
+    user = db.relationship("User", back_populates="circle_invite")
+    circle = db.relationship("Circle", back_populates="circle_invite")
 
     def __repr__(self):
         return "<CircleInvite(id='%d' circle_id='%d' user_id='%d' created='%s' updated='%s')>" % (self.id,
@@ -36,7 +36,11 @@ class CircleInvite(Base):
                 self.updated = DateParser.parse(updated)
             else:
                 self.updated = updated
-        db_session.add(self)
+        db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: circle_invites%s", {"id": self.id,
+                                                        "circle_id": self.circle_id,
+                                                        "user_id": self.user_id})
 
     def update_content(self, created=None, updated=datetime.datetime.now()):
         if created is not None:
@@ -49,13 +53,26 @@ class CircleInvite(Base):
                 self.updated = DateParser.parse(updated)
             else:
                 self.updated = updated
-        db_session.commit()
+        db.session.commit()
+        db.session.flush()
+        logger.debug("Database update: circle_invites%s", {"id": self.id,
+                                                           "circle_id": self.circle_id,
+                                                           "user_id": self.user_id})
 
     def notify_user(self, p1='circle_invite', p2=None):
         if p2 is None:
             p2 = {}
         p2['circle_invite_id'] = self.id
         sockets.notify_user(self.user, False, p1, p2)
+
+    def get_simple_content(self):
+        return {
+            "id": self.id,
+            "circle_id": self.circle_id,
+            "user_id": self.user_id,
+            "created": self.created,
+            "updated": self.updated
+        }
 
     def get_content(self, user=True):
         if user:

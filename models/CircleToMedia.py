@@ -1,21 +1,21 @@
-from sqlalchemy import Column, Integer, ForeignKey, DateTime, String
-from sqlalchemy.orm import relationship
-from config.database import Base
 from dateutil import parser as DateParser
-from config.database import db_session
+from config.database import db
 import datetime
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
-class CircleToMedia(Base):
+class CircleToMedia(db.Model):
     __tablename__ = "circle_to_media"
-    id = Column(Integer, primary_key=True)
-    circle_id = Column(Integer, ForeignKey('circles.id'))
-    media_id = Column(Integer, ForeignKey('medias.id'))
-    upload_time = Column(DateTime)
-    purpose = Column(String(16))
+    id = db.Column(db.Integer, primary_key=True)
+    circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'))
+    media_id = db.Column(db.Integer, db.ForeignKey('medias.id'))
+    upload_time = db.Column(db.DateTime)
+    purpose = db.Column(db.String(16))
 
-    circle = relationship("Circle", back_populates="media_links")
-    media = relationship("Media", back_populates="circle_link")
+    circle = db.relationship("Circle", back_populates="media_links")
+    media = db.relationship("Media", back_populates="circle_link")
 
     def __repr__(self):
         return "<CircleToMedia(id=%d, circle_id=%d, media_id=%d)>" % (self.id, self.circle_id, self.media_id)
@@ -32,7 +32,12 @@ class CircleToMedia(Base):
                 self.upload_time = upload_time
         if purpose is not None:
             self.purpose = purpose
-        db_session.add(self)
+        db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: circle_to_media%s", {"id": self.id,
+                                                         "circle_id": self.circle_id,
+                                                         "media_id": self.media_id,
+                                                         "purpose": self.purpose})
 
     def update_content(self, circle=None, media=None, upload_time=None, purpose=None):
         if circle is not None:
@@ -46,7 +51,12 @@ class CircleToMedia(Base):
                 self.upload_time = upload_time
         if purpose is not None:
             self.purpose = purpose
-        db_session.commit()
+        db.session.commit()
+        db.session.flush()
+        logger.debug("Database update: circle_to_media%s", {"id": self.id,
+                                                            "circle_id": self.circle_id,
+                                                            "media_id": self.media_id,
+                                                            "purpose": self.purpose})
 
     def get_content(self):
         return {
