@@ -18,5 +18,5 @@ user_files/
 *.log
 *.db
 config.json
-gitlab.ci.yml
+.gitlab.ci.yml
 Dockerfile
