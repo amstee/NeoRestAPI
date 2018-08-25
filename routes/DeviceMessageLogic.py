@@ -1,4 +1,5 @@
 from flask_restful import Resource
+from flask import request
 from config.database import db
 from models.Media import Media
 from models.UserToConversation import UserToConversation
@@ -12,12 +13,17 @@ from flask_socketio import emit
 from config.sockets import sockets
 from models.MessageToMedia import MessageToMedia
 from bot.facebook import messenger_conversation_model_send, messenger_user_model_send
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
 class FirstDeviceMessageSend(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("email")
             user = db.session.query(UserModel).filter(UserModel.email == content["email"]).first()
@@ -62,6 +68,8 @@ class DeviceMessageSend(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("conversation_id")
             conv = db.session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()

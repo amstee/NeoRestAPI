@@ -12,12 +12,17 @@ from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from utils.security import get_user_from_header, get_device_from_header
 from flask_socketio import emit
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
 class CreateMedia(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("medias")
             for media in content["medias"]:
@@ -47,6 +52,8 @@ class DeviceCreateMedia(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("medias")
             for media in content["medias"]:
@@ -74,6 +81,8 @@ class DeviceFindMedia(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("purpose")
             if "circle_id" in content:
@@ -94,6 +103,8 @@ class FindMedia(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("purpose")
             if "circle_id" in content:
@@ -112,6 +123,8 @@ class FindMedia(Resource):
 
 class DeviceUploadMedia(Resource):
     def post(self, media_id):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             device = get_device_from_header(request)
             media = db.session.query(Media).filter(Media.id == media_id).first()
@@ -131,6 +144,8 @@ class DeviceUploadMedia(Resource):
 
 class UploadMedia(Resource):
     def post(self, media_id):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             user = get_user_from_header(request)
             media = db.session.query(Media).filter(Media.id == media_id).first()
@@ -150,6 +165,8 @@ class UploadMedia(Resource):
 
 class UploadMessageMedia(Resource):
     def post(self, media_id):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             user = get_user_from_header(request)
             media = db.session.query(Media).filter(Media.id == media_id).first()
@@ -178,6 +195,8 @@ class UploadMessageMedia(Resource):
 
 class DeviceUploadMessageMedia(Resource):
     def post(self, media_id):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             device = get_device_from_header(request)
             media = db.session.query(Media).filter(Media.id == media_id).first()
@@ -208,6 +227,8 @@ class MediaRequest(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("media_id")
             media = db.session.query(Media).filter(Media.id == content["media_id"]).first()
@@ -225,6 +246,8 @@ class DeviceMediaRequest(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("media_id")
             media = db.session.query(Media).filter(Media.id == content["media_id"]).first()

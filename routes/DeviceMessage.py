@@ -1,4 +1,5 @@
 from flask_restful import Resource
+from flask import request
 from config.database import db
 from models.MessageToMedia import MessageToMedia
 from models.Media import Media
@@ -11,12 +12,17 @@ from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from bot.facebook import messenger_conversation_model_send
 from flask_socketio import emit
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
 class DeviceMessageCreate(Resource):
     @check_content
     @secured_admin_route
     def post(self, content, admin):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("files", "device_id", "conversation_id", "text", "directory_name")
             device = db.session.query(Device).filter(Device.id == content["device_id"]).first()
@@ -66,6 +72,8 @@ class DeviceMessageDelete(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("message_id")
             message = db.session.query(Message).filter(Message.id == content["message_id"]).first()
@@ -88,6 +96,8 @@ class DeviceMessageInfo(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("message_id")
             message = db.session.query(Message).filter(Message.id == content["message_id"]).first()
@@ -104,6 +114,8 @@ class DeviceMessageList(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("conversation_id", "quantity")
             conv = db.session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
@@ -120,6 +132,8 @@ class DeviceMessageUpdate(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("message_id")
             message = db.session.query(Message).filter(Message.id == content["message_id"]).first()
