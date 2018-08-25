@@ -42,7 +42,10 @@ class UserToCircle(db.Model):
             self.circle = circle
         db.session.add(self)
         db.session.flush()
-        logger.debug("Database add: user_to_circle%s", {"id": self.id, "user_id": self.user_id, "circle_id": self.circle_id, "privilege": self.privilege})
+        logger.debug("Database add: user_to_circle%s", {"id": self.id,
+                                                        "user_id": self.user_id,
+                                                        "circle_id": self.circle_id,
+                                                        "privilege": self.privilege})
 
     def update_content(self, created=None, updated=datetime.datetime.now(), privilege=None):
         if created is not None:
@@ -58,6 +61,11 @@ class UserToCircle(db.Model):
         if privilege is not None and privilege != "":
             self.privilege = privilege
         db.session.commit()
+        db.session.flush()
+        logger.debug("Database update: user_to_circle%s", {"id": self.id,
+                                                           "user_id": self.user_id,
+                                                           "circle_id": self.circle_id,
+                                                           "privilege": self.privilege})
 
     def get_content(self, user=True):
         if user:

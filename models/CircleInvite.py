@@ -54,6 +54,10 @@ class CircleInvite(db.Model):
             else:
                 self.updated = updated
         db.session.commit()
+        db.session.flush()
+        logger.debug("Database update: circle_invites%s", {"id": self.id,
+                                                           "circle_id": self.circle_id,
+                                                           "user_id": self.user_id})
 
     def notify_user(self, p1='circle_invite', p2=None):
         if p2 is None:

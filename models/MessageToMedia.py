@@ -46,6 +46,10 @@ class MessageToMedia(db.Model):
             else:
                 self.upload_time = upload_time
         db.session.commit()
+        db.session.flush()
+        logger.debug("Database update: message_to_media%s", {"id": self.id,
+                                                             "message_id": self.message_id,
+                                                             "media_id": self.media_id,})
 
     def get_content(self):
         return {

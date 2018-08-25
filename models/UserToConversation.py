@@ -68,6 +68,14 @@ class UserToConversation(db.Model):
         if privilege is not None and privilege != "":
             self.privilege = privilege
         db.session.commit()
+        db.session.flush()
+        logger.debug("Database update: user_to_conversation%s", {"id": self.id,
+                                                                 "privilege": self.privilege,
+                                                                 "user_id": self.user_id,
+                                                                 "conversation_id": None if self.conversation is None
+                                                                 else self.conversation.id,
+                                                                 "circle_id": None if self.conversation is None
+                                                                 else self.conversation.circle_id})
 
     def get_simple_content(self):
         return {
