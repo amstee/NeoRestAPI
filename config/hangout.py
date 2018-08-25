@@ -1,0 +1,3 @@
+SECRET_KEY = ""
+TOKEN = ""
+KEY_FILE = None
