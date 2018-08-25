@@ -8,13 +8,13 @@ from models.UserToConversation import UserToConversation
 from models.UserToCircle import UserToCircle
 
 
-def initDefaultContent():
+def init_default_content(p1, p2):
     user = db.session.query(User).filter(User.email == "user1.beta@test.com").first()
     user2 = db.session.query(User).filter(User.email == "user2.beta@test.cm").first()
     if user is None and user2 is None:
-        user = User(email="user1.beta@test.com", password="test", first_name="user1",
+        user = User(email="user1.beta@test.com", password=p1, first_name="user1",
                     last_name="beta", birthday="2019-09-05")
-        user2 = User(email="user2.beta@test.com", password="test", first_name="user2",
+        user2 = User(email="user2.beta@test.com", password=p2, first_name="user2",
                      last_name="beta", birthday="2019-09-05")
         circle = Circle("Cercle Beta 1")
         UserToCircle(user=user, circle=circle, privilege="ADMIN")

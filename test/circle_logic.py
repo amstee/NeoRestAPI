@@ -2,7 +2,8 @@ import unittest
 import sys
 import json
 
-sys.path.insert(0,'..')
+sys.path.insert(0, '..')
+from config.loader import neo_config
 from api import NeoAPI
 from config.database import db
 from models.User import User as UserModel
@@ -14,7 +15,9 @@ from utils.testutils import authenticate_user
 
 class TestCircleInvite(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testcirclelogic@test.com").first()
         if self.user1 is None:
@@ -121,9 +124,12 @@ class TestCircleInvite(unittest.TestCase):
         assert response.status_code != 200
         assert response_json['success'] == False
 
+
 class TestCircleJoin(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testcirclejoin@test.com").first()
         if self.user1 is None:
@@ -189,9 +195,12 @@ class TestCircleJoin(unittest.TestCase):
         assert response.status_code == 403
         assert response_json['success'] == False
 
+
 class TestCircleReject(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testcirclereject@test.com").first()
         if self.user1 is None:
@@ -259,9 +268,12 @@ class TestCircleReject(unittest.TestCase):
         assert response.status_code != 200
         assert response_json['success'] == False
 
+
 class TestCircleQuit(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testcirclequit@test.com").first()
         if self.user1 is None:
@@ -341,15 +353,18 @@ class TestCircleQuit(unittest.TestCase):
         response2 = self.api.post('/circle/quit', data=json.dumps(json_data_2), content_type='application/json')
         response_json2 = json.loads(response2.data)
         assert response1.status_code == 200
-        assert response_json2['success'] == True
+        assert response_json2['success'] is True
         assert response1.status_code == 200
-        assert response_json1['success'] == True
-        c = db.session.query(Circle).filter(Circle.id==id).first()
-        assert  c == None
+        assert response_json1['success'] is True
+        c = db.session.query(Circle).filter(Circle.id == id).first()
+        assert c is None
+
 
 class TestCircleKick(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testcirclequit@test.com").first()
         if self.user1 is None:
@@ -394,4 +409,4 @@ class TestCircleKick(unittest.TestCase):
         response = self.api.post('/circle/kick', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success'] is True

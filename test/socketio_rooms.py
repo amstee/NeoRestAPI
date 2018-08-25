@@ -1,6 +1,7 @@
 import unittest
 import sys
 sys.path.insert(0, '..')
+from config.loader import neo_config
 from flask_socketio import SocketIOTestClient
 from api import NeoAPI, socketio, sockets
 from config.database import db
@@ -16,7 +17,9 @@ from utils.testutils import authenticate_device
 
 class SocketioRoomConversation(unittest.TestCase):
     def setUp(self):
-        self.neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        self.neo = NeoAPI(neo_config)
         self.api = self.neo.activate_testing()
         self.client = SocketIOTestClient(self.neo.app, socketio)
         self.client.disconnect()
@@ -166,7 +169,9 @@ class SocketioRoomConversation(unittest.TestCase):
 
 class SocketioRoomCircle(unittest.TestCase):
     def setUp(self):
-        self.neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        self.neo = NeoAPI(neo_config)
         self.api = self.neo.activate_testing()
         self.client = SocketIOTestClient(self.neo.app, socketio)
         self.client2 = SocketIOTestClient(self.neo.app, socketio)
@@ -298,4 +303,3 @@ class SocketioRoomCircle(unittest.TestCase):
         res = self.client.get_received()
         assert len(res) == 1
         assert res[0]['name'] == 'success'
-

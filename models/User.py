@@ -5,7 +5,7 @@ import hashlib
 import jwt
 import datetime
 
-SECRET_KEY = "defaultusersecretkey"
+SECRET_KEY = ""
 logger = logger_set(__name__)
 
 
@@ -214,10 +214,10 @@ class User(db.Model):
         db.session.commit()
 
     @staticmethod
-    def CreateNeoAdmin():
+    def CreateNeoAdmin(password):
         admin = db.session.query(User).filter(User.email == "contact.projetneo@gmail.com").first()
         if admin is None:
-            user = User(email="contact.projetneo@gmail.com", password="PapieNeo2019",
+            user = User(email="contact.projetneo@gmail.com", password=password,
                         first_name="Neo", last_name="Admin", birthday=datetime.datetime.now())
             user.promote_admin()
 
