@@ -98,6 +98,13 @@ class Device(db.Model):
         if is_online is not None:
             self.is_online = is_online
         db.session.commit()
+        db.session.flush()
+        logger.debug("Database update: devices%s", {"id": self.id,
+                                                    "name": self.name,
+                                                    "circle_id": self.circle.id if self.circle is not None else -1,
+                                                    "activated": self.activated,
+                                                    "username": self.username,
+                                                    "is_online": self.is_online})
 
     def disconnect(self):
         self.json_token = ""

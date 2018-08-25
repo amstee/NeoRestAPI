@@ -52,6 +52,11 @@ class UserToMedia(db.Model):
         if purpose is not None:
             self.purpose = purpose
         db.session.commit()
+        db.session.flush()
+        logger.debug("Database update: user_to_media%s", {"id": self.id,
+                                                          "user_id": self.user_id,
+                                                          "media_id": self.media_id,
+                                                          "purpose": self.purpose})
 
     def get_content(self):
         return {
