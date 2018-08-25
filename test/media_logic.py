@@ -3,6 +3,7 @@ import sys
 import json
 
 sys.path.insert(0,'..')
+from config.loader import neo_config
 from api import NeoAPI
 from config.database import db
 from models.User import User as UserModel
@@ -21,7 +22,9 @@ from models.Device import Device
 
 class TestMediaRequest(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -83,7 +86,9 @@ class TestMediaRequest(unittest.TestCase):
 
 class TestDeviceMediaRequest(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -150,7 +155,9 @@ class TestDeviceMediaRequest(unittest.TestCase):
 
 class TestMediaUpload(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -204,7 +211,9 @@ class TestMediaUpload(unittest.TestCase):
 
 class TestDeviceMediaUpload(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:

@@ -3,6 +3,7 @@ import sys
 import json
 
 sys.path.insert(0,'..')
+from config.loader import neo_config
 from api import NeoAPI
 from config.database import db
 from models.User import User as UserModel
@@ -15,7 +16,9 @@ from utils.testutils import authenticate_user
 
 class TestFirstMessageToDeviceSend(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -83,7 +86,9 @@ class TestFirstMessageToDeviceSend(unittest.TestCase):
 
 class TestFirstMessageSend(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -163,9 +168,12 @@ class TestFirstMessageSend(unittest.TestCase):
         assert response.status_code == 403
         assert response_json['success'] == False
 
+
 class TestMessageSend(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:

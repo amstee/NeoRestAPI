@@ -3,6 +3,7 @@ import sys
 from flask_socketio import SocketIOTestClient
 import json
 sys.path.insert(0, '..')
+from config.loader import neo_config
 from api import NeoAPI, sockets, socketio
 from config.database import db
 from utils.testutils import authenticate_user
@@ -17,7 +18,9 @@ from models.Device import Device
 
 class SocketioConversation(unittest.TestCase):
     def setUp(self):
-        self.neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        self.neo = NeoAPI(neo_config)
         self.api = self.neo.activate_testing()
         self.client = SocketIOTestClient(self.neo.app, socketio)
         self.client2 = SocketIOTestClient(self.neo.app, socketio)
@@ -177,7 +180,9 @@ class SocketioConversation(unittest.TestCase):
 
 class SocketioCircle(unittest.TestCase):
     def setUp(self):
-        self.neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        self.neo = NeoAPI(neo_config)
         self.api = self.neo.activate_testing()
         self.client = SocketIOTestClient(self.neo.app, socketio)
         self.client2 = SocketIOTestClient(self.neo.app, socketio)

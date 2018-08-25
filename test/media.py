@@ -3,6 +3,7 @@ import sys
 import json
 
 sys.path.insert(0,'..')
+from config.loader import neo_config
 from api import NeoAPI
 from config.database import db
 from models.User import User as UserModel
@@ -18,7 +19,9 @@ from models.Device import Device
 
 class TestMediaInfo(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -66,7 +69,9 @@ class TestMediaInfo(unittest.TestCase):
 
 class TestMediaInfoAdmin(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -115,7 +120,9 @@ class TestMediaInfoAdmin(unittest.TestCase):
 
 class TestMediaDelete(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -157,7 +164,9 @@ class TestMediaDelete(unittest.TestCase):
 
 class TestMediaList(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -205,7 +214,9 @@ class TestMediaList(unittest.TestCase):
 
 class TestMediaUpdate(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -257,7 +268,9 @@ class TestMediaUpdate(unittest.TestCase):
 
 class TestDeviceMediaList(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:
@@ -310,7 +323,9 @@ class TestDeviceMediaList(unittest.TestCase):
 
 class TestDeviceMediaInfo(unittest.TestCase):
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
         if self.user1 is None:

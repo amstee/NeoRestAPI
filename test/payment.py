@@ -4,11 +4,13 @@ import json
 
 sys.path.insert(0,'..')
 from api import NeoAPI
+from config.loader import neo_config
 from config.database import db
 from utils.testutils import authenticate_user
 from models.User import User as UserModel
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
+
 
 class TestFakePayment(unittest.TestCase):
     user1 = None
@@ -18,7 +20,9 @@ class TestFakePayment(unittest.TestCase):
     token2 = None
 
     def setUp(self):
-        neo = NeoAPI()
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testpayment@test.com").first()
         if self.user1 is None:
