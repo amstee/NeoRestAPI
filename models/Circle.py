@@ -2,6 +2,9 @@ from config.database import db
 from dateutil import parser as DateParser
 from flask_socketio import emit
 import datetime
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
 class Circle(db.Model):
@@ -41,6 +44,10 @@ class Circle(db.Model):
             else:
                 self.updated = updated
         db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: circles%s", {"id": self.id,
+                                                 "name": self.name,
+                                                 "device": self.device.id if self.device is not None else -1})
 
     def has_member(self, member):
         for link in self.user_link:

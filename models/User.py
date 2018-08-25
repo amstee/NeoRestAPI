@@ -1,10 +1,12 @@
 from config.database import db
 from dateutil import parser as DateParser
+from config.log import logger_set
 import hashlib
 import jwt
 import datetime
 
 SECRET_KEY = "defaultusersecretkey"
+logger = logger_set(__name__)
 
 
 class User(db.Model):
@@ -65,6 +67,8 @@ class User(db.Model):
         self.type = "DEFAULT"
         self.facebook_psid = -1
         db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: users%s", self.get_simple_content())
 
     def __repr__(self):
         return '<User %r %r>' % (self.first_name, self.last_name)

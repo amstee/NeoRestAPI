@@ -2,7 +2,10 @@ from sqlalchemy import event
 from config.database import db
 from config.files import *
 from werkzeug.utils import secure_filename
+from config.log import logger_set
 import os
+
+logger = logger_set(__name__)
 
 
 class Media(db.Model):
@@ -103,6 +106,12 @@ class Media(db.Model):
         self.directory = directory
         self.uploaded = False
         db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: medias%s", {"id": self.id,
+                                                "filename": self.filename,
+                                                "extension": self.extension,
+                                                "identifier": self.identifier,
+                                                "uploaded": self.uploaded})
 
     def set_content(self, file):
         file_name = secure_filename(file.filename)

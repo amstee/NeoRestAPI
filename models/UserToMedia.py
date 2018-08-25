@@ -1,6 +1,9 @@
 from dateutil import parser as DateParser
 from config.database import db
+from config.log import logger_set
 import datetime
+
+logger = logger_set(__name__)
 
 
 class UserToMedia(db.Model):
@@ -30,6 +33,11 @@ class UserToMedia(db.Model):
         if purpose is not None:
             self.purpose = purpose
         db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: user_to_media%s", {"id": self.id,
+                                                       "user_id": self.user_id,
+                                                       "media_id": self.media_id,
+                                                       "purpose": self.purpose})
 
     def update_content(self, user=None, media=None, upload_time=None, purpose=None):
         if user is not None:

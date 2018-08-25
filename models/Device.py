@@ -1,5 +1,6 @@
 from dateutil import parser as DateParser
 from config.database import db
+from config.log import logger_set
 import random
 import string
 import jwt
@@ -8,6 +9,7 @@ import datetime
 import base64
 
 SECRET_KEY = "defaultdevicesecretkey"
+logger = logger_set(__name__)
 
 
 class Device(db.Model):
@@ -65,6 +67,13 @@ class Device(db.Model):
         self.password = base64.b64encode(str.encode(password)).decode('utf-8')
         self.key = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
         db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: devices%s", {"id": self.id,
+                                                 "name": self.name,
+                                                 "circle_id": self.circle.id if self.circle is not None else -1,
+                                                 "activated": self.activated,
+                                                 "username": self.username,
+                                                 "is_online": self.is_online})
 
     def set_password(self, password):
         self.password = base64.b64encode(str.encode(password)).decode('utf-8')

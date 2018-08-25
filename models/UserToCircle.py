@@ -1,6 +1,9 @@
 from config.database import db
 from dateutil import parser as DateParser
+from config.log import logger_set
 import datetime
+
+logger = logger_set(__name__)
 
 
 class UserToCircle(db.Model):
@@ -38,6 +41,8 @@ class UserToCircle(db.Model):
         if circle is not None:
             self.circle = circle
         db.session.add(self)
+        db.session.flush()
+        logger.debug("Database add: user_to_circle%s", {"id": self.id, "user_id": self.user_id, "circle_id": self.circle_id, "privilege": self.privilege})
 
     def update_content(self, created=None, updated=datetime.datetime.now(), privilege=None):
         if created is not None:
