@@ -5,6 +5,9 @@ from models.User import User as UserModel
 from utils.decorators import secured_route, check_content, secured_admin_route
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
 class AccountCreate(Resource):
@@ -20,6 +23,8 @@ class AccountCreate(Resource):
 
     @check_content
     def post(self, content):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("email", "password", "first_name", "last_name", "birthday")
             UserModel(email=content['email'], password=content['password'], first_name=content['first_name'],
@@ -36,6 +41,8 @@ class AccountCreate(Resource):
 class AccountLogin(Resource):
     @check_content
     def post(self, content):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("email", "password")
             user = db.session.query(UserModel).filter_by(email=content["email"]).first()
@@ -61,6 +68,8 @@ class AccountLogin(Resource):
 class ModifyPassword(Resource):
     @check_content
     def post(self, content):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("email", "previous_password", "new_password")
             email = content["email"]
@@ -80,6 +89,8 @@ class ModifyPassword(Resource):
 class CheckToken(Resource):
     @check_content
     def post(self, content):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             if "token" not in content or content["token"] == "":
                 resp = jsonify({"success": False, "message": "Aucun jwt trouve dans le contenu de la requete"})
@@ -98,6 +109,8 @@ class CheckToken(Resource):
 class AccountLogout(Resource):
     @check_content
     def post(self, content):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("token")
             res, data = UserModel.decode_auth_token(content["token"])
@@ -120,6 +133,8 @@ class AccountLogout(Resource):
 class AccountInfo(Resource):
     @secured_route
     def post(self, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         resp = jsonify({"success": True, "content": user.get_content()})
         resp.status_code = 200
         return resp
@@ -129,6 +144,8 @@ class DeviceAccountInfo(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             user = db.session.query(UserModel).filter(UserModel.id == content["user_id"]).first()
             if user is None:
@@ -144,6 +161,8 @@ class AccountModify(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             email = None if 'email' not in content else content['email']
             first_name = None if 'first_name' not in content else content['first_name']
@@ -163,6 +182,8 @@ class AccountModify(Resource):
 class MailAvailability(Resource):
     @check_content
     def post(self, content):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("email")
             user = db.session.query(UserModel).filter(UserModel.email == content['email']).first()
@@ -180,6 +201,8 @@ class PromoteAdmin(Resource):
     @check_content
     @secured_admin_route
     def post(self, content, admin):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("user_id")
             user = db.session.query(UserModel).filter(UserModel.id == content["user_id"]).first()
@@ -194,6 +217,8 @@ class PromoteAdmin(Resource):
 class CreateApiToken(Resource):
     @secured_route
     def post(self, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             token = user.encode_api_token()
             resp = jsonify({

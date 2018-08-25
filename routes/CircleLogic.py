@@ -1,4 +1,5 @@
 from flask_restful import Resource
+from flask import request
 from config.database import db
 from models.User import User as UserModel
 from models.Circle import Circle
@@ -7,12 +8,17 @@ from utils.decorators import secured_route, check_content
 from models.UserToCircle import UserToCircle
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
 class CircleInvite(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("circle_id", "email")
             circle = db.session.query(Circle).filter(Circle.id == content["circle_id"]).first()
@@ -39,6 +45,8 @@ class CircleJoin(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("invite_id")
             invite = db.session.query(CircleInviteModel).filter(CircleInviteModel.id == content["invite_id"]).first()
@@ -61,6 +69,8 @@ class CircleReject(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("invite_id")
             invite = db.session.query(CircleInviteModel).filter(CircleInviteModel.id == content["invite_id"]).first()
@@ -78,6 +88,8 @@ class CircleQuit(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("circle_id")
             link = db.session.query(UserToCircle).filter(UserToCircle.circle_id == content["circle_id"],
@@ -99,6 +111,8 @@ class CircleKick(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("email", "circle_id")
             kick = db.session.query(UserModel).filter(UserModel.email == content["email"]).first()

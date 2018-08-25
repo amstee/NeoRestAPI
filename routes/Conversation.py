@@ -1,4 +1,5 @@
 from flask_restful import Resource
+from flask import request
 from config.database import db
 from models.Circle import Circle
 from models.Conversation import Conversation
@@ -6,12 +7,17 @@ from models.UserToConversation import UserToConversation
 from utils.decorators import secured_route, check_content, secured_admin_route
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
 class ConversationCreate(Resource):
     @check_content
     @secured_admin_route
     def post(self, content, admin):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("conversation_name", "circle_id")
             circle = db.session.query(Circle).filter(Circle.id == content["circle_id"]).first()
@@ -29,6 +35,8 @@ class ConversationDelete(Resource):
     @check_content
     @secured_admin_route
     def post(self, content, admin):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("conversation_id")
             conv = db.session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
@@ -45,6 +53,8 @@ class ConversationInfo(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("conversation_id")
             conv = db.session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
@@ -61,6 +71,8 @@ class ConversationDeviceInfo(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("conversation_id")
             conv = db.session.query(Conversation).filter(Conversation.id == content["conversation_id"]).first()
@@ -77,6 +89,8 @@ class ConversationList(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("circle_id")
             circle = db.session.query(Circle).filter(Circle.id == content["circle_id"]).first()
@@ -97,6 +111,8 @@ class ConversationDeviceList(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("circle_id")
             circle = db.session.query(Circle).filter(Circle.id == content["circle_id"]).first()
@@ -115,6 +131,8 @@ class ConversationUpdate(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("conversation_id")
             link = db.session.query(UserToConversation).filter(UserToConversation.user_id == user.id,

@@ -1,4 +1,5 @@
 from flask_restful import Resource
+from flask import request
 from utils.decorators import check_content
 from webargs import fields
 from webargs.flaskparser import use_args
@@ -6,6 +7,9 @@ from bot.facebook import send_message, link_user_to_facebook, is_user_linked, se
 from bot.facebook import handle_conversation_payload
 from config.facebook import SECRET_TOKEN
 import sys
+from config.log import logger_set
+
+logger = logger_set(__name__)
 
 
 class WebHookMessenger(Resource):
