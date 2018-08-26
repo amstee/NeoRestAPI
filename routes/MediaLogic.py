@@ -180,9 +180,8 @@ class UploadMessageMedia(Resource):
                     db.session.commit()
                     emit('message', {
                         'conversation_id': message.conversation.id,
-                        'message': message.get_simple_content(),
-                        'time': message.sent,
-                        'sender': user.get_simple_content(),
+                        'message': message.get_simple_json_compliant_content(),
+                        'sender': user.get_simple_json_compliant_content(),
                         'media': media.get_simple_content(),
                         'status': 'done'},
                          room='conversation_' + str(message.conversation.id), namespace='/')
@@ -210,9 +209,8 @@ class DeviceUploadMessageMedia(Resource):
                     db.session.commit()
                     emit('message', {
                         'conversation_id': message.conversation.id,
-                        'message': message.get_simple_content(),
-                        'time': message.sent,
-                        'sender': device.get_simple_content(),
+                        'message': message.get_simple_json_compliant_content(),
+                        'sender': device.get_simple_json_compliant_content(),
                         'media': media.get_simple_content(),
                         'status': 'done'},
                          room='conversation_' + str(message.conversation.id), namespace='/')
