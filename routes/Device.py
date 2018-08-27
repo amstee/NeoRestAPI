@@ -15,8 +15,6 @@ class DeviceAdd(Resource):
     @check_content
     @secured_admin_route
     def post(self, content, admin):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("circle_id", "name")
             circle = db.session.query(Circle).filter(Circle.id == content["circle_id"]).first()
@@ -25,19 +23,20 @@ class DeviceAdd(Resource):
             db.session.commit()
             circle.notify_users('device created')
             resp = SUCCESS()
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             resp = FAILED(e)
             resp.status_code = 409
             return resp
-        return resp
 
 
 class DeviceUpdate(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("device_id")
             device = db.session.query(Device).filter(Device.id == content["device_id"]).first()
@@ -47,7 +46,11 @@ class DeviceUpdate(Resource):
                 return FAILED("Privileges insuffisants", 403)
             device.update_content(name=content['name'] if "name" in content else None)
             device.circle.notify_users(p2={'event': 'device', 'type': 'update', 'device_id': device.id})
-            return SUCCESS()
+            resp = SUCCESS()
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -56,29 +59,34 @@ class DeviceInfo(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("device_id")
             device = db.session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is not None:
                 if not device.circle.has_member(user):
-                    return FAILED("Vous n'appartenez pas au cercle de ce device", 403)
-                return jsonify({"success": True, "content": device.get_content()})
-            resp = FAILED("Le NEO avec identifiant %s n'existe pas" % content["device_id"])
-            resp.status_code = 401
+                    resp = FAILED("Vous n'appartenez pas au cercle de ce device", 403)
+                else:
+                    resp = jsonify({"success": True, "content": device.get_content()})
+            else:
+                resp = FAILED("Le NEO avec identifiant %s n'existe pas" % content["device_id"])
+                resp.status_code = 401
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
-        return resp
 
 
 class InfoForDevice(Resource):
     @secured_route
     def post(self, device):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
-            return jsonify({"success": True, "content": device.get_content()})
+            resp = jsonify({"success": True, "content": device.get_content()})
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -87,38 +95,43 @@ class DeviceDelete(Resource):
     @check_content
     @secured_admin_route
     def post(self, content, admin):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("device_id")
             device = db.session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is not None:
                 db.session.delete(device)
                 db.session.commit()
-                return SUCCESS()
-            resp = FAILED("Le NEO avec identifiant id %s n'existe pas" % content["device_id"])
-            resp.status_code = 401
+                resp = SUCCESS()
+            else:
+                resp = FAILED("Le NEO avec identifiant id %s n'existe pas" % content["device_id"])
+                resp.status_code = 401
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
-        return resp
 
 
 class DeviceActivate(Resource):
     @check_content
     @secured_admin_route
     def post(self, content, admin):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("device_id", "activation_key")
             device = db.session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is not None:
                 res = device.activate(content["activation_key"])
                 if res:
-                    return SUCCESS()
+                    resp = SUCCESS()
                 else:
-                    return FAILED("Clé d'activation invalide")
-            resp = FAILED("Le Neo avec identifiant id %s n'existe pas") % content["device_id"]
+                    resp = FAILED("Clé d'activation invalide")
+            else:
+                resp = FAILED("Le Neo avec identifiant id %s n'existe pas") % content["device_id"]
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
         return resp
@@ -127,8 +140,6 @@ class DeviceActivate(Resource):
 class DeviceLogin(Resource):
     @check_content
     def post(self, content):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("device_username", "device_password")
             device = db.session.query(Device).filter(Device.username == content["device_username"]).first()
@@ -139,9 +150,12 @@ class DeviceLogin(Resource):
                     resp.status_code = 200
                     device.circle.notify_users(p2={'event': 'device', 'type': 'connect', 'device_id': device.id})
                 else:
-                    return FAILED(data)
+                    resp = FAILED(data)
             else:
-                return FAILED("Device introuvable")
+                resp = FAILED("Device introuvable")
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
             return resp
         except Exception as e:
             return FAILED(e)
@@ -150,17 +164,21 @@ class DeviceLogin(Resource):
 class ModifyDevicePassword(Resource):
     @check_content
     def post(self, content):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("device_username", "previous_password", "new_password")
             device = db.session.query(Device).filter(Device.username == content["device_username"]).first()
             if device is not None:
                 if device.check_password(content["previous_password"]):
                     device.update_password(content["new_password"])
-                    return SUCCESS()
-                return FAILED("Ancien mot de passe invalide")
-            return FAILED("Device introuvable")
+                    resp = SUCCESS()
+                else:
+                    resp = FAILED("Ancien mot de passe invalide")
+            else:
+                resp = FAILED("Device introuvable")
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -169,26 +187,32 @@ class CheckDeviceToken(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
-        return jsonify({"success": True, "message": "Le token json de ce device est valide"})
+        try:
+            resp = jsonify({"success": True, "message": "Le token json de ce device est valide"})
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
+        except Exception as e:
+            return FAILED(e)
 
 
 class DeviceLogout(Resource):
     @check_content
     def post(self, content):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("device_token")
             res, data = Device.decode_auth_token(content["device_token"])
             if res is True:
                 data.disconnect()
                 data.circle.notify_users(p2={'event': 'device', 'type': 'disconnect', 'device_id': data.id})
-                return SUCCESS()
+                resp = SUCCESS()
             else:
                 resp = jsonify({"success": True, "message": data})
                 resp.status_code = 403
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
             return resp
         except Exception as e:
             return FAILED(e)
@@ -197,15 +221,17 @@ class DeviceLogout(Resource):
 class UsernameAvailability(Resource):
     @check_content
     def post(self, content):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("device_username")
             device = db.session.query(Device).filter(Device.username == content["device_username"]).first()
             if device is not None:
-                return FAILED("")
+                resp = FAILED("Le nom de device existe déja.")
             else:
-                return SUCCESS()
+                resp = SUCCESS()
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -214,17 +240,20 @@ class DeviceCredentials(Resource):
     @check_content
     @secured_admin_route
     def post(self, content, admin):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("device_id")
             device = db.session.query(Device).filter(Device.id == content["device_id"]).first()
             if device is None:
-                return FAILED("Device Neo introuvable")
-            return jsonify({"success": True, "content": {
-                                "key": device.key,
-                                "username": device.username,
-                                "password": device.get_pre_activation_password()
-                                }})
+                resp = FAILED("Device Neo introuvable")
+            else:
+                resp = jsonify({"success": True, "content": {
+                                    "key": device.key,
+                                    "username": device.username,
+                                    "password": device.get_pre_activation_password()
+                                    }})
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
