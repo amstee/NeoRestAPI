@@ -1,6 +1,8 @@
-import unittest
+from gevent import monkey
 import sys
+monkey.patch_all()
 sys.path.insert(0, '..')
+import unittest
 from config.loader import neo_config
 from flask_socketio import SocketIOTestClient
 from api import NeoAPI, socketio, sockets

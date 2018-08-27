@@ -78,6 +78,7 @@ class CircleReject(Resource):
                 if invite.user_id != user.id:
                     return FAILED("Action non authorisée", 403)
                 db.session.delete(invite)
+                db.session.commit()
                 return SUCCESS()
             return FAILED("Invitation introuvable")
         except Exception as e:

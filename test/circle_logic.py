@@ -1,8 +1,9 @@
-import unittest
+from gevent import monkey
 import sys
-import json
-
+monkey.patch_all()
 sys.path.insert(0, '..')
+import unittest
+import json
 from config.loader import neo_config
 from api import NeoAPI
 from config.database import db

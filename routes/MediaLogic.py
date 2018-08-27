@@ -233,11 +233,14 @@ class MediaRequest(Resource):
             if media is None or media.uploaded is False:
                 return FAILED("Media introuvable")
             if media.can_be_accessed_by_user(user):
-                return send_from_directory(media.get_directory(), media.get_full_name())
+                if media.file_exist():
+                    return send_from_directory(media.get_directory(), media.get_full_name())
+                else:
+                    return FAILED("Le media est introuvable sur le FS")
             else:
                 return FAILED("L'utilisateur ne peut pas acceder a ce media")
         except Exception as e:
-            return FAILED(e)
+            return FAILED("E1 : " + str(e))
 
 
 class DeviceMediaRequest(Resource):
@@ -252,7 +255,10 @@ class DeviceMediaRequest(Resource):
             if media is None or media.uploaded is False:
                 return FAILED("Media introuvable")
             if media.can_be_accessed_by_device(device):
-                return send_from_directory(media.get_directory(), media.get_full_name())
+                if media.file_exist():
+                    return send_from_directory(media.get_directory(), media.get_full_name())
+                else:
+                    return FAILED("Le media est introuvable sur le FS")
             else:
                 return FAILED("L'utilisateur ne peut pas acceder a ce media")
         except Exception as e:
