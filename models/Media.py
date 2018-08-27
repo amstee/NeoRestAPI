@@ -103,6 +103,11 @@ class Media(db.Model):
             return self.circle_link.circle.has_admin(user)
         return False
 
+    def is_attached_to_message(self):
+        if self.message_link is not None:
+            return True
+        return False
+
     def __init__(self, filename=None, extension=None, identifier=None, directory='default'):
         if filename is not None and filename != "":
             self.filename = filename

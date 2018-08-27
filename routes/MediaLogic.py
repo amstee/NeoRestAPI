@@ -25,6 +25,7 @@ class CreateMedia(Resource):
                     request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("medias")
+            ml = []
             for media in content["medias"]:
                 if "purpose" not in media:
                     return FAILED("Purpose not specified")
@@ -43,7 +44,8 @@ class CreateMedia(Resource):
                 m = Media(filename=media["name"])
                 link.media = m
                 db.session.commit()
-                return SUCCESS()
+                ml.append(m)
+            return jsonify({"success": True, "media_list": [me.get_simple_content() for me in ml]})
         except Exception as e:
             return FAILED(e)
 
@@ -56,6 +58,7 @@ class DeviceCreateMedia(Resource):
                     request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("medias")
+            ml = []
             for media in content["medias"]:
                 if "purpose" not in media:
                     return FAILED("Purpose not specified")
@@ -72,7 +75,8 @@ class DeviceCreateMedia(Resource):
                 m = Media(filename=media["name"])
                 link.media = m
                 db.session.commit()
-                return SUCCESS()
+                ml.append(m)
+            return jsonify({"success": True, "media_list": [me.get_simple_content() for me in ml]})
         except Exception as e:
             return FAILED(e)
 
@@ -135,9 +139,18 @@ class DeviceUploadMedia(Resource):
                     media.set_content(request.files['file'])
                     media.upload(request.files['file'])
                     db.session.commit()
+                    if media.is_attached_to_message():
+                        message = media.message_link.message
+                        emit('message', {
+                            'conversation_id': message.conversation.id,
+                            'message': message.get_simple_json_compliant_content(),
+                            'sender': device.get_simple_json_compliant_content(),
+                            'media': media.get_simple_content(),
+                            'status': 'done'},
+                             room='conversation_' + str(message.conversation.id), namespace='/')
                     return SUCCESS()
-            else:
-                return FAILED("Vous ne pouvez pas upload ce media")
+                return FAILED("Fichier introuvable dans la requete")
+            return FAILED("Vous ne pouvez pas upload ce media")
         except Exception as e:
             return FAILED(e)
 
@@ -156,67 +169,18 @@ class UploadMedia(Resource):
                     media.set_content(request.files['file'])
                     media.upload(request.files['file'])
                     db.session.commit()
-                    return SUCCESS()
-            else:
-                return FAILED("Vous ne pouvez pas upload ce media")
-        except Exception as e:
-            return FAILED(e)
-
-
-class UploadMessageMedia(Resource):
-    def post(self, media_id):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
-        try:
-            user = get_user_from_header(request)
-            media = db.session.query(Media).filter(Media.id == media_id).first()
-            if media is None:
-                return FAILED("Media introuvable")
-            if media.can_be_uploaded_by_user(user):
-                if 'file' in request.files:
-                    message = media.message_link.message
-                    media.set_content(request.files['file'])
-                    media.upload(request.files['file'])
-                    db.session.commit()
-                    emit('message', {
-                        'conversation_id': message.conversation.id,
-                        'message': message.get_simple_json_compliant_content(),
-                        'sender': user.get_simple_json_compliant_content(),
-                        'media': media.get_simple_content(),
-                        'status': 'done'},
-                         room='conversation_' + str(message.conversation.id), namespace='/')
+                    if media.is_attached_to_message():
+                        message = media.message_link.message
+                        emit('message', {
+                            'conversation_id': message.conversation.id,
+                            'message': message.get_simple_json_compliant_content(),
+                            'sender': user.get_simple_json_compliant_content(),
+                            'media': media.get_simple_content(),
+                            'status': 'done'},
+                             room='conversation_' + str(message.conversation.id), namespace='/')
                     return SUCCESS()
                 return FAILED("Fichier introuvable dans la requete")
-            return FAILED('Vous ne pouvez pas upload de media pour ce message')
-        except Exception as e:
-            return FAILED(e)
-
-
-class DeviceUploadMessageMedia(Resource):
-    def post(self, media_id):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
-        try:
-            device = get_device_from_header(request)
-            media = db.session.query(Media).filter(Media.id == media_id).first()
-            if media is None:
-                return FAILED("Media introuvable")
-            if media.can_be_uploaded_by_device(device):
-                if 'file' in request.files:
-                    message = media.message_link.message
-                    media.set_content(request.files['file'])
-                    media.upload(request.files['file'])
-                    db.session.commit()
-                    emit('message', {
-                        'conversation_id': message.conversation.id,
-                        'message': message.get_simple_json_compliant_content(),
-                        'sender': device.get_simple_json_compliant_content(),
-                        'media': media.get_simple_content(),
-                        'status': 'done'},
-                         room='conversation_' + str(message.conversation.id), namespace='/')
-                    return SUCCESS()
-                return FAILED("Fichier introuvable dans la requete")
-            return FAILED('Vous ne pouvez pas upload de media pour ce message')
+            return FAILED("Vous ne pouvez pas upload ce media")
         except Exception as e:
             return FAILED(e)
 

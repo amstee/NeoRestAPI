@@ -19,7 +19,7 @@ marshmallow==2.15.1
 paypalrestsdk==1.13.1
 psycopg2-binary==2.7.5
 pycparser==2.18
-PyJWT==1.5.3
+PyJWT==1.6.4
 pyOpenSSL==17.5.0
 python-dateutil==2.6.1
 pytz==2017.3

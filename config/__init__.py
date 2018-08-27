@@ -106,8 +106,6 @@ class NeoAPI(object):
         self.api.add_resource(MediaLogicManager.DeviceCreateMedia, "/device/media/create")
         self.api.add_resource(MediaLogicManager.UploadMedia, '/media/upload/<media_id>')
         self.api.add_resource(MediaLogicManager.DeviceUploadMedia, '/device/media/upload/<media_id>')
-        self.api.add_resource(MediaLogicManager.UploadMessageMedia, '/media/upload_for_message/<media_id>')
-        self.api.add_resource(MediaLogicManager.DeviceUploadMessageMedia, '/device/media/upload_for_message/<media_id>')
         self.api.add_resource(MediaLogicManager.MediaRequest, '/media/retrieve')
         self.api.add_resource(MediaLogicManager.DeviceMediaRequest, '/device/media/retrieve')
         # BASIC MEDIA ROUTES
