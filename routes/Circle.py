@@ -15,8 +15,6 @@ class CircleCreate(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("name")
             circle = Circle(content["name"])
@@ -25,17 +23,18 @@ class CircleCreate(Resource):
             link.user = user
             db.session.commit()
             resp = jsonify({"success": True, "content": circle.get_simple_content()})
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
-        return resp
 
 
 class CircleDelete(Resource):
     @check_content
     @secured_admin_route
     def post(self, content, admin):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("circle_id")
             circle = db.session.query(Circle).filter_by(id=content["circle_id"]).first()
@@ -43,64 +42,76 @@ class CircleDelete(Resource):
                 db.session.delete(circle)
                 db.session.commit()
                 circle.notify_users(p1='circle', p2={'event': 'delete'})
-                return SUCCESS()
-            resp = FAILED("Le cercle est introuvable")
-            resp.status_code = 404
+                resp = SUCCESS()
+            else:
+                resp = FAILED("Le cercle est introuvable")
+                resp.status_code = 404
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
-        return resp
 
 
 class CircleUpdate(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("circle_id")
             circle = db.session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:
                 if not circle.has_member(user):
-                    return FAILED("Cet utilisateur n'a pas access a ce cercle", 403)
-                circle.update_content(name=content["name"] if "name" in content else None,
-                                      created=content["created"] if "created" in content else None)
-                circle.notify_users(p1='circle', p2={'event': 'update'})
-                return SUCCESS()
-            resp = FAILED("Le cercle est introuvable")
-            resp.status_code = 404
+                    resp = FAILED("Cet utilisateur n'a pas access a ce cercle", 403)
+                else:
+                    circle.update_content(name=content["name"] if "name" in content else None,
+                                          created=content["created"] if "created" in content else None)
+                    circle.notify_users(p1='circle', p2={'event': 'update'})
+                    resp = SUCCESS()
+            else:
+                resp = FAILED("Le cercle est introuvable")
+                resp.status_code = 404
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
-        return resp
 
 
 class CircleInfo(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("circle_id")
             circle = db.session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:
                 if not circle.has_member(user):
-                    return FAILED("Cet utilisateur n'a pas access à ce cercle", 403)
-                return jsonify({"success": True, "content": circle.get_content()})
-            resp = FAILED("Le cercle est introuvable")
-            resp.status_code = 401
+                    resp = FAILED("Cet utilisateur n'a pas access à ce cercle", 403)
+                else:
+                    resp = jsonify({"success": True, "content": circle.get_content()})
+            else:
+                resp = FAILED("Le cercle est introuvable")
+                resp.status_code = 401
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
-        return resp
 
 
 class CircleDeviceInfo(Resource):
     @secured_route
     def post(self, device):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
-            return jsonify({"success": True, "content": device.circle.get_content()})
+            resp = jsonify({"success": True, "content": device.circle.get_content()})
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -108,14 +119,15 @@ class CircleDeviceInfo(Resource):
 class CircleList(Resource):
     @secured_route
     def post(self, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             circle_list = []
             for link in user.circle_link:
                 if link.circle not in circle_list:
                     circle_list.append(link.circle)
             resp = jsonify({"success": True, "content": [circle.get_simple_content() for circle in circle_list]})
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
-        return resp
