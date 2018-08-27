@@ -23,8 +23,6 @@ class AccountCreate(Resource):
 
     @check_content
     def post(self, content):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("email", "password", "first_name", "last_name", "birthday")
             UserModel(email=content['email'], password=content['password'], first_name=content['first_name'],
@@ -32,6 +30,9 @@ class AccountCreate(Resource):
             db.session.commit()
             resp = jsonify({"success": True})
             resp.status_code = 201
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
         except Exception as e:
             resp = jsonify({"success": False, "message": str(e)})
             resp.status_code = 409
@@ -41,8 +42,6 @@ class AccountCreate(Resource):
 class AccountLogin(Resource):
     @check_content
     def post(self, content):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("email", "password")
             user = db.session.query(UserModel).filter_by(email=content["email"]).first()
@@ -58,6 +57,9 @@ class AccountLogin(Resource):
             else:
                 resp = jsonify({"succes": False, "message": "Utilisateur introuvable"})
                 resp.status_code = 401
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
             return resp
         except Exception as e:
             import traceback
@@ -68,8 +70,6 @@ class AccountLogin(Resource):
 class ModifyPassword(Resource):
     @check_content
     def post(self, content):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("email", "previous_password", "new_password")
             email = content["email"]
@@ -79,9 +79,15 @@ class ModifyPassword(Resource):
             if user is not None:
                 if user.check_password(prev):
                     user.update_password(new)
-                    return SUCCESS()
-                return FAILED("Le mot de passe de correspond pas")
-            return FAILED("Utilisateur introuvable")
+                    resp = SUCCESS()
+                else:
+                    resp = FAILED("Le mot de passe de correspond pas")
+            else:
+                resp = FAILED("Utilisateur introuvable")
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -89,17 +95,20 @@ class ModifyPassword(Resource):
 class CheckToken(Resource):
     @check_content
     def post(self, content):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             if "token" not in content or content["token"] == "":
                 resp = jsonify({"success": False, "message": "Aucun jwt trouve dans le contenu de la requete"})
-                return resp
-            json_token = content["token"]
-            res, data = UserModel.decode_auth_token(json_token)
-            if res is True:
-                return jsonify({"success": True, "message": "Le token json est valide"})
-            return jsonify({"success": False, "message": data})
+            else:
+                json_token = content["token"]
+                res, data = UserModel.decode_auth_token(json_token)
+                if res is True:
+                    resp = jsonify({"success": True, "message": "Le token json est valide"})
+                else:
+                    resp = jsonify({"success": False, "message": data})
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             resp = jsonify({"success": False, "message": str(e)})
             resp.status_code = 500
@@ -109,8 +118,6 @@ class CheckToken(Resource):
 class AccountLogout(Resource):
     @check_content
     def post(self, content):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("token")
             res, data = UserModel.decode_auth_token(content["token"])
@@ -125,6 +132,9 @@ class AccountLogout(Resource):
             else:
                 resp = jsonify({"success": False, "message": data})
                 resp.status_code = 403
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
             return resp
         except Exception as e:
             return FAILED(e)
@@ -133,26 +143,33 @@ class AccountLogout(Resource):
 class AccountInfo(Resource):
     @secured_route
     def post(self, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
-        resp = jsonify({"success": True, "content": user.get_content()})
-        resp.status_code = 200
-        return resp
+        try:
+            resp = jsonify({"success": True, "content": user.get_content()})
+            resp.status_code = 200
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
+        except Exception as e:
+            return FAILED(e)
 
 
 class DeviceAccountInfo(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             user = db.session.query(UserModel).filter(UserModel.id == content["user_id"]).first()
             if user is None:
-                return FAILED("Utilisateur introuvable")
-            if device.circle.has_member(user):
-                return FAILED("Vous ne pouvez pas voir cet utilisateur")
-            return jsonify({"success": True, "content": user.get_content()})
+                resp = FAILED("Utilisateur introuvable")
+            elif device.circle.has_member(user):
+                resp = FAILED("Vous ne pouvez pas voir cet utilisateur")
+            else:
+                resp = jsonify({"success": True, "content": user.get_content()})
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -161,8 +178,6 @@ class AccountModify(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             email = None if 'email' not in content else content['email']
             first_name = None if 'first_name' not in content else content['first_name']
@@ -174,6 +189,9 @@ class AccountModify(Resource):
                                 birthday=birthday)
             resp = jsonify({"success": True})
             resp.status_code = 200
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
             return resp
         except Exception as e:
             return FAILED(e)
@@ -182,8 +200,6 @@ class AccountModify(Resource):
 class MailAvailability(Resource):
     @check_content
     def post(self, content):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("email")
             user = db.session.query(UserModel).filter(UserModel.email == content['email']).first()
@@ -192,6 +208,9 @@ class MailAvailability(Resource):
             else:
                 resp = jsonify({"success": True})
             resp.status_code = 200
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
             return resp
         except Exception as e:
             return FAILED(e)
@@ -201,15 +220,18 @@ class PromoteAdmin(Resource):
     @check_content
     @secured_admin_route
     def post(self, content, admin):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("user_id")
             user = db.session.query(UserModel).filter(UserModel.id == content["user_id"]).first()
             if user is not None:
                 user.promote_admin()
-                return SUCCESS()
-            return FAILED("Utilisateur introuvable")
+                resp = SUCCESS()
+            else:
+                resp = FAILED("Utilisateur introuvable")
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -217,8 +239,6 @@ class PromoteAdmin(Resource):
 class CreateApiToken(Resource):
     @secured_route
     def post(self, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             token = user.encode_api_token()
             resp = jsonify({
@@ -226,6 +246,9 @@ class CreateApiToken(Resource):
                 "apiToken": token
             })
             resp.status_code = 200
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
             return resp
         except Exception as e:
             return FAILED(e)
