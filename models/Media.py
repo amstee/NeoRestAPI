@@ -31,6 +31,13 @@ class Media(db.Model):
             self.id, self.filename, self.extension, self.directory
         )
 
+    def file_exist(self):
+        if self.filename is None or self.extension is None or self.directory is None:
+            return False
+        if os.path.isfile(self.get_directory() + self.get_full_name()):
+            return True
+        return False
+
     def upload(self, file):
         file_name = secure_filename(file.filename)
         if not os.path.exists(UPLOAD_FOLDER + self.directory + os.path.sep):
@@ -107,11 +114,11 @@ class Media(db.Model):
         self.uploaded = False
         db.session.add(self)
         db.session.flush()
-        logger.debug("Database add: medias%s", {"id": self.id,
-                                                "filename": self.filename,
-                                                "extension": self.extension,
-                                                "identifier": self.identifier,
-                                                "uploaded": self.uploaded})
+        logger.debug("Database add: medias %s", {"id": self.id,
+                                                 "filename": self.filename,
+                                                 "extension": self.extension,
+                                                 "identifier": self.identifier,
+                                                 "uploaded": self.uploaded})
 
     def set_content(self, file):
         file_name = secure_filename(file.filename)
