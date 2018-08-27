@@ -17,8 +17,6 @@ class CircleInvite(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("circle_id", "email")
             circle = db.session.query(Circle).filter(Circle.id == content["circle_id"]).first()
@@ -34,9 +32,15 @@ class CircleInvite(Resource):
                     circle_invite.circle = circle
                     db.session.commit()
                     circle_invite.notify_user(p2={'event': 'invite', 'circle_id': circle.id})
-                    return SUCCESS()
-                return FAILED("Utilisateur spécifié introuvable")
-            return FAILED("Cercle spécifié introuvable")
+                    resp = SUCCESS()
+                else:
+                    resp = FAILED("Utilisateur spécifié introuvable")
+            else:
+                resp = FAILED("Cercle spécifié introuvable")
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -45,22 +49,26 @@ class CircleJoin(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("invite_id")
             invite = db.session.query(CircleInviteModel).filter(CircleInviteModel.id == content["invite_id"]).first()
             if invite is not None:
                 if invite.user_id != user.id:
-                    return FAILED("Action non authorisée", 403)
-                link = UserToCircle(privilege="MEMBRE")
-                link.user = invite.user
-                link.circle = invite.circle
-                db.session.delete(invite)
-                db.session.commit()
-                link.circle.notify_users(p1='circle', p2={'event': 'join', 'user': link.user.email})
-                return SUCCESS()
-            return FAILED("Invitation introuvable")
+                    resp = FAILED("Action non authorisée", 403)
+                else:
+                    link = UserToCircle(privilege="MEMBRE")
+                    link.user = invite.user
+                    link.circle = invite.circle
+                    db.session.delete(invite)
+                    db.session.commit()
+                    link.circle.notify_users(p1='circle', p2={'event': 'join', 'user': link.user.email})
+                    resp = SUCCESS()
+            else:
+                resp = FAILED("Invitation introuvable")
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -69,17 +77,21 @@ class CircleReject(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("invite_id")
             invite = db.session.query(CircleInviteModel).filter(CircleInviteModel.id == content["invite_id"]).first()
             if invite is not None:
                 if invite.user_id != user.id:
-                    return FAILED("Action non authorisée", 403)
-                db.session.delete(invite)
-                return SUCCESS()
-            return FAILED("Invitation introuvable")
+                    resp = FAILED("Action non authorisée", 403)
+                else:
+                    db.session.delete(invite)
+                    resp = SUCCESS()
+            else:
+                resp = FAILED("Invitation introuvable")
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -88,8 +100,6 @@ class CircleQuit(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("circle_id")
             link = db.session.query(UserToCircle).filter(UserToCircle.circle_id == content["circle_id"],
@@ -101,8 +111,13 @@ class CircleQuit(Resource):
                 db.session.commit()
                 circle = db.session.query(Circle).filter(Circle.id == id_circle).first()
                 circle.check_validity()
-                return SUCCESS()
-            return FAILED("L'utilisateur n'appartient pas a ce cercle", 403)
+                resp = SUCCESS()
+            else:
+                resp = FAILED("L'utilisateur n'appartient pas a ce cercle", 403)
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -111,8 +126,6 @@ class CircleKick(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("email", "circle_id")
             kick = db.session.query(UserModel).filter(UserModel.email == content["email"]).first()
@@ -125,9 +138,16 @@ class CircleKick(Resource):
                         db.session.delete(link)
                         db.session.commit()
                         circle.notify_users('circle', {'event': 'kick', 'user': kick.email, 'from': user.email})
-                        return SUCCESS()
-                    return FAILED("Lien entre utilisateur et cercle introuvable")
-                return FAILED("Cercle spécifié introuvable")
-            return FAILED("Utilisateur spécifié introuvable")
+                        resp = SUCCESS()
+                    else:
+                        resp = FAILED("Lien entre utilisateur et cercle introuvable")
+                else:
+                    resp = FAILED("Cercle spécifié introuvable")
+            else:
+                resp = FAILED("Utilisateur spécifié introuvable")
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
