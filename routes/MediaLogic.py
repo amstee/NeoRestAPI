@@ -28,11 +28,19 @@ class CreateMedia(Resource):
             ml = []
             for media in content["medias"]:
                 if "purpose" not in media:
-                    return FAILED("Purpose not specified")
+                    resp = FAILED("Purpose not specified")
+                    logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                                request.method, request.host, request.path,
+                                request.content_type, request.data, resp.status_code)
+                    return resp
                 if "circle_id" in media:
                     circle = db.session.query(Circle).filter(Circle.id == media["circle_id"]).first()
                     if circle is None:
-                        return FAILED("Cercle introuvable")
+                        resp = FAILED("Cercle introuvable")
+                        logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                                    request.method, request.host, request.path,
+                                    request.content_type, request.data, resp.status_code)
+                        return resp
                     link = CircleToMedia()
                     link.circle = circle
                 elif "device_id" in media:
@@ -45,7 +53,11 @@ class CreateMedia(Resource):
                 link.media = m
                 db.session.commit()
                 ml.append(m)
-            return jsonify({"success": True, "media_list": [me.get_simple_content() for me in ml]})
+            resp = jsonify({"success": True, "media_list": [me.get_simple_content() for me in ml]})
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -54,18 +66,24 @@ class DeviceCreateMedia(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("medias")
             ml = []
             for media in content["medias"]:
                 if "purpose" not in media:
-                    return FAILED("Purpose not specified")
+                    resp = FAILED("Purpose not specified")
+                    logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                                request.method, request.host, request.path,
+                                request.content_type, request.data, resp.status_code)
+                    return resp
                 if "circle_id" in media:
                     circle = db.session.query(Circle).filter(Circle.id == media["circle_id"]).first()
                     if circle is None:
-                        return FAILED("Cercle introuvable")
+                        resp = FAILED("Cercle introuvable")
+                        logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                                    request.method, request.host, request.path,
+                                    request.content_type, request.data, resp.status_code)
+                        return resp
                     link = CircleToMedia()
                     link.circle = circle
                 else:
@@ -76,7 +94,11 @@ class DeviceCreateMedia(Resource):
                 link.media = m
                 db.session.commit()
                 ml.append(m)
-            return jsonify({"success": True, "media_list": [me.get_simple_content() for me in ml]})
+            resp = jsonify({"success": True, "media_list": [me.get_simple_content() for me in ml]})
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -85,8 +107,6 @@ class DeviceFindMedia(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("purpose")
             if "circle_id" in content:
@@ -98,7 +118,11 @@ class DeviceFindMedia(Resource):
             else:
                 medias = db.session.query(DeviceToMedia).filter(DeviceToMedia.device_id == device.id,
                                                                 DeviceToMedia.purpose == content["purpose"]).all()
-            return jsonify({"success": True, "medias": [media.get_content() for media in medias]})
+            resp = jsonify({"success": True, "medias": [media.get_content() for media in medias]})
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -107,8 +131,6 @@ class FindMedia(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("purpose")
             if "circle_id" in content:
@@ -120,21 +142,23 @@ class FindMedia(Resource):
             else:
                 medias = db.session.query(UserToMedia).filter(UserToMedia.user_id == user.id,
                                                               UserToMedia.purpose == content["purpose"]).all()
-            return jsonify({"success": True, "medias": [media.get_content() for media in medias]})
+            resp = jsonify({"success": True, "medias": [media.get_content() for media in medias]})
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
 
 class DeviceUploadMedia(Resource):
     def post(self, media_id):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             device = get_device_from_header(request)
             media = db.session.query(Media).filter(Media.id == media_id).first()
             if media is None:
                 return FAILED("Media introuvable")
-            if media.can_be_uploaded_by_device(device):
+            elif media.can_be_uploaded_by_device(device):
                 if 'file' in request.files:
                     media.set_content(request.files['file'])
                     media.upload(request.files['file'])
@@ -148,23 +172,27 @@ class DeviceUploadMedia(Resource):
                             'media': media.get_simple_content(),
                             'status': 'done'},
                              room='conversation_' + str(message.conversation.id), namespace='/')
-                    return SUCCESS()
-                return FAILED("Fichier introuvable dans la requete")
-            return FAILED("Vous ne pouvez pas upload ce media")
+                    resp = SUCCESS()
+                else:
+                    resp = FAILED("Fichier introuvable dans la requete")
+            else:
+                resp = FAILED("Vous ne pouvez pas upload ce media")
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
 
 class UploadMedia(Resource):
     def post(self, media_id):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             user = get_user_from_header(request)
             media = db.session.query(Media).filter(Media.id == media_id).first()
             if media is None:
                 return FAILED("Media introuvable")
-            if media.can_be_uploaded_by_user(user):
+            elif media.can_be_uploaded_by_user(user):
                 if 'file' in request.files:
                     media.set_content(request.files['file'])
                     media.upload(request.files['file'])
@@ -178,9 +206,15 @@ class UploadMedia(Resource):
                             'media': media.get_simple_content(),
                             'status': 'done'},
                              room='conversation_' + str(message.conversation.id), namespace='/')
-                    return SUCCESS()
-                return FAILED("Fichier introuvable dans la requete")
-            return FAILED("Vous ne pouvez pas upload ce media")
+                    resp = SUCCESS()
+                else:
+                    resp = FAILED("Fichier introuvable dans la requete")
+            else:
+                resp = FAILED("Vous ne pouvez pas upload ce media")
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.files, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
 
@@ -189,20 +223,22 @@ class MediaRequest(Resource):
     @check_content
     @secured_route
     def post(self, content, user):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("media_id")
             media = db.session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None or media.uploaded is False:
                 return FAILED("Media introuvable")
-            if media.can_be_accessed_by_user(user):
+            elif media.can_be_accessed_by_user(user):
                 if media.file_exist():
-                    return send_from_directory(media.get_directory(), media.get_full_name())
+                    resp = send_from_directory(media.get_directory(), media.get_full_name())
                 else:
-                    return FAILED("Le media est introuvable sur le FS")
+                    resp = FAILED("Le media est introuvable sur le FS")
             else:
-                return FAILED("L'utilisateur ne peut pas acceder a ce media")
+                resp = FAILED("L'utilisateur ne peut pas acceder a ce media")
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED("E1 : " + str(e))
 
@@ -211,19 +247,21 @@ class DeviceMediaRequest(Resource):
     @check_content
     @secured_route
     def post(self, content, device):
-        logger.info("[%s] [%s] [%s] [%s] [%s]",
-                    request.method, request.host, request.path, request.content_type, request.data)
         try:
             content_checker("media_id")
             media = db.session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None or media.uploaded is False:
-                return FAILED("Media introuvable")
-            if media.can_be_accessed_by_device(device):
+                resp = FAILED("Media introuvable")
+            elif media.can_be_accessed_by_device(device):
                 if media.file_exist():
-                    return send_from_directory(media.get_directory(), media.get_full_name())
+                    resp = send_from_directory(media.get_directory(), media.get_full_name())
                 else:
-                    return FAILED("Le media est introuvable sur le FS")
+                    resp = FAILED("Le media est introuvable sur le FS")
             else:
-                return FAILED("L'utilisateur ne peut pas acceder a ce media")
+                resp = FAILED("L'utilisateur ne peut pas acceder a ce media")
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+            return resp
         except Exception as e:
             return FAILED(e)
