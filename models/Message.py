@@ -95,7 +95,8 @@ class Message(db.Model):
                 "link_id": self.link_id,
                 "sent": None if self.sent is None else self.sent.isoformat(),
                 "read": None if self.read is None else self.read.isoformat(),
-                "content": self.text_content
+                "content": self.text_content,
+                "medias": len(self.media_links) if self.media_links is not None else 0
             }
         else:
             return {
@@ -103,7 +104,8 @@ class Message(db.Model):
                 "device_id": self.device_id,
                 "sent": None if self.sent is None else self.sent.isoformat(),
                 "read": None if self.read is None else self.read.isoformat(),
-                "content": self.text_content
+                "content": self.text_content,
+                "medias": len(self.media_links) if self.media_links is not None else 0
             }
 
     def get_simple_content(self):
@@ -113,7 +115,8 @@ class Message(db.Model):
                 "link_id": self.link_id,
                 "sent": self.sent,
                 "read": self.read,
-                "content": self.text_content
+                "content": self.text_content,
+                "medias": len(self.media_links) if self.media_links is not None else 0
             }
         else:
             return {
@@ -121,5 +124,6 @@ class Message(db.Model):
                 "device_id": self.device_id,
                 "sent": self.sent,
                 "read": self.read,
-                "content": self.text_content
+                "content": self.text_content,
+                "medias": len(self.media_links) if self.media_links is not None else 0
             }
