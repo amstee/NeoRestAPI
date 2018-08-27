@@ -33,19 +33,15 @@ class SocketList:
                 return False
             if 'sid' in session and session['sid'] is not None:
                 socket = self.find_socket(session['sid'])
-                if socket is not None:
+                if socket is not None and socket.client_id == client.id and socket.is_device == is_device:
                     return socket
-                else:
-                    if 'sid' in session:
-                        session.pop('sid')
-                    return None
             for key, value in self.socket_dic.items():
-                if value.client_id is not None:
+                if value is not None:
                     if value.client_id == client.id and value.is_device == is_device:
-                        session['sid'] = key
                         return value
             return None
-        except Exception:
+        except Exception as e:
+            print(e)
             return None
 
     def notify_user(self, client, is_device, p1, p2, namespace='/'):

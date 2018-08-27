@@ -184,7 +184,7 @@ class Media(db.Model):
             "extension": self.extension,
             "directory": self.directory,
             "identifier": self.identifier,
-            "uploaded": self.uploaded
+            "uploaded": str(self.uploaded)
         }
 
     def get_simple_content(self):
@@ -193,7 +193,7 @@ class Media(db.Model):
             "filename": self.filename,
             "extension": self.extension,
             "identifier": self.identifier,
-            "uploaded": self.uploaded
+            "uploaded": str(self.uploaded)
         }
 
 
