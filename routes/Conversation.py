@@ -8,6 +8,7 @@ from utils.decorators import secured_route, check_content, secured_admin_route
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from config.log import logger_set
+from traceback import format_exc as traceback_format_exc
 
 logger = logger_set(__name__)
 
@@ -29,9 +30,12 @@ class ConversationCreate(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class ConversationDelete(Resource):
@@ -50,9 +54,12 @@ class ConversationDelete(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class ConversationInfo(Resource):
@@ -71,9 +78,12 @@ class ConversationInfo(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class ConversationDeviceInfo(Resource):
@@ -92,9 +102,12 @@ class ConversationDeviceInfo(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class ConversationList(Resource):
@@ -117,9 +130,12 @@ class ConversationList(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class ConversationDeviceList(Resource):
@@ -139,9 +155,12 @@ class ConversationDeviceList(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class ConversationUpdate(Resource):
@@ -168,6 +187,9 @@ class ConversationUpdate(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp

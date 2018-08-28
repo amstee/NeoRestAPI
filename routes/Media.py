@@ -8,6 +8,7 @@ from utils.apiUtils import *
 from utils.contentChecker import content_checker
 from utils.security import user_has_access_to_message, device_has_access_to_message
 from config.log import logger_set
+from traceback import format_exc as traceback_format_exc
 
 logger = logger_set(__name__)
 
@@ -28,9 +29,12 @@ class MediaInfo(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class DeviceMediaInfo(Resource):
@@ -49,9 +53,12 @@ class DeviceMediaInfo(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class MediaInfoAdmin(Resource):
@@ -68,9 +75,12 @@ class MediaInfoAdmin(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class MediaDelete(Resource):
@@ -89,9 +99,12 @@ class MediaDelete(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class MediaList(Resource):
@@ -110,9 +123,12 @@ class MediaList(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class DeviceMediaList(Resource):
@@ -132,9 +148,12 @@ class DeviceMediaList(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class MediaUpdate(Resource):
@@ -156,6 +175,9 @@ class MediaUpdate(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp

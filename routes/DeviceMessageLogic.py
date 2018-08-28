@@ -14,6 +14,7 @@ from config.sockets import sockets
 from models.MessageToMedia import MessageToMedia
 from bot.facebook import messenger_conversation_model_send, messenger_user_model_send
 from config.log import logger_set
+from traceback import format_exc as traceback_format_exc
 
 logger = logger_set(__name__)
 
@@ -61,9 +62,12 @@ class FirstDeviceMessageSend(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class DeviceMessageSend(Resource):
@@ -113,6 +117,9 @@ class DeviceMessageSend(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp

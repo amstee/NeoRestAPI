@@ -15,6 +15,7 @@ from config.sockets import sockets
 from flask_socketio import emit
 from bot.facebook import messenger_circle_model_send, messenger_conversation_model_send
 from config.log import logger_set
+from traceback import format_exc as traceback_format_exc
 
 logger = logger_set(__name__)
 
@@ -62,9 +63,12 @@ class FirstMessageToDeviceSend(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class FirstMessageSend(Resource):
@@ -113,9 +117,12 @@ class FirstMessageSend(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class MessageSend(Resource):
@@ -128,7 +135,7 @@ class MessageSend(Resource):
                                                                content["conversation_id"],
                                                                UserToConversation.user_id == user.id).first()
             if link is None:
-                return FAILED("Conversation introuvable", 403)
+                resp = FAILED("Conversation introuvable", 403)
             else:
                 message = Message(content=content["text_message"] if "text_message" in content else "")
                 message.conversation = link.conversation
@@ -168,6 +175,9 @@ class MessageSend(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp

@@ -9,6 +9,7 @@ from models.UserToCircle import UserToCircle
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from config.log import logger_set
+from traceback import format_exc as traceback_format_exc
 
 logger = logger_set(__name__)
 
@@ -40,9 +41,12 @@ class CircleInvite(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class CircleJoin(Resource):
@@ -68,9 +72,12 @@ class CircleJoin(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class CircleReject(Resource):
@@ -92,9 +99,12 @@ class CircleReject(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class CircleQuit(Resource):
@@ -118,9 +128,12 @@ class CircleQuit(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class CircleKick(Resource):
@@ -149,6 +162,9 @@ class CircleKick(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp

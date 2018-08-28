@@ -13,6 +13,7 @@ from utils.apiUtils import *
 from utils.security import get_user_from_header, get_device_from_header
 from flask_socketio import emit
 from config.log import logger_set
+from traceback import format_exc as traceback_format_exc
 
 logger = logger_set(__name__)
 
@@ -57,9 +58,12 @@ class CreateMedia(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class DeviceCreateMedia(Resource):
@@ -98,9 +102,12 @@ class DeviceCreateMedia(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class DeviceFindMedia(Resource):
@@ -122,9 +129,12 @@ class DeviceFindMedia(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class FindMedia(Resource):
@@ -146,9 +156,12 @@ class FindMedia(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class DeviceUploadMedia(Resource):
@@ -157,7 +170,7 @@ class DeviceUploadMedia(Resource):
             device = get_device_from_header(request)
             media = db.session.query(Media).filter(Media.id == media_id).first()
             if media is None:
-                return FAILED("Media introuvable")
+                resp = FAILED("Media introuvable")
             elif media.can_be_uploaded_by_device(device):
                 if 'file' in request.files:
                     media.set_content(request.files['file'])
@@ -180,9 +193,12 @@ class DeviceUploadMedia(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class UploadMedia(Resource):
@@ -191,7 +207,7 @@ class UploadMedia(Resource):
             user = get_user_from_header(request)
             media = db.session.query(Media).filter(Media.id == media_id).first()
             if media is None:
-                return FAILED("Media introuvable")
+                resp = FAILED("Media introuvable")
             elif media.can_be_uploaded_by_user(user):
                 if 'file' in request.files:
                     media.set_content(request.files['file'])
@@ -214,9 +230,12 @@ class UploadMedia(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.files, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class MediaRequest(Resource):
@@ -227,7 +246,7 @@ class MediaRequest(Resource):
             content_checker("media_id")
             media = db.session.query(Media).filter(Media.id == content["media_id"]).first()
             if media is None or media.uploaded is False:
-                return FAILED("Media introuvable")
+                resp = FAILED("Media introuvable")
             elif media.can_be_accessed_by_user(user):
                 if media.file_exist():
                     resp = send_from_directory(media.get_directory(), media.get_full_name())
@@ -238,9 +257,12 @@ class MediaRequest(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED("E1 : " + str(e))
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
 
 
 class DeviceMediaRequest(Resource):
@@ -262,6 +284,9 @@ class DeviceMediaRequest(Resource):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
-            return resp
         except Exception as e:
-            return FAILED(e)
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
