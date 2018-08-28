@@ -1,7 +1,3 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
 import json
 from config.loader import neo_config
@@ -9,6 +5,8 @@ from api import NeoAPI
 from config.database import db
 from models.User import User as UserModel
 from utils.testutils import authenticate_user
+from gevent import monkey
+monkey.patch_all()
 
 
 class AccountCreate(unittest.TestCase):

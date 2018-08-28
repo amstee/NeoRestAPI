@@ -1,7 +1,3 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
 import json
 from config.loader import neo_config
@@ -15,6 +11,8 @@ from models.Device import Device
 from utils.testutils import authenticate_user
 from utils.testutils import authenticate_device
 from models.Message import Message
+from gevent import monkey
+monkey.patch_all()
 
 
 class TestFirstDeviceMessageSend(unittest.TestCase):
@@ -59,7 +57,7 @@ class TestFirstDeviceMessageSend(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert len(self.circle.conversations[0].messages) == 1
 
     def test_missing_parameter(self):
@@ -70,7 +68,7 @@ class TestFirstDeviceMessageSend(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_email(self):
         json_data = {
@@ -81,7 +79,7 @@ class TestFirstDeviceMessageSend(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_user(self):
         json_data = {
@@ -92,7 +90,7 @@ class TestFirstDeviceMessageSend(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestDeviceMessageSend(unittest.TestCase):
@@ -158,7 +156,7 @@ class TestDeviceMessageSend(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_device(self):
         json_data = {
@@ -170,7 +168,7 @@ class TestDeviceMessageSend(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_parameter(self):
         json_data = {
@@ -181,4 +179,4 @@ class TestDeviceMessageSend(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']

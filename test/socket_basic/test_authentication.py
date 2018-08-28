@@ -1,7 +1,3 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
 from flask_socketio import SocketIOTestClient
 from config.loader import neo_config
@@ -9,6 +5,8 @@ from api import NeoAPI, sockets, socketio
 from config.database import db
 from utils.testutils import authenticate_user
 from models.User import User as UserModel
+from gevent import monkey
+monkey.patch_all()
 
 
 class SocketioAuthenticate(unittest.TestCase):

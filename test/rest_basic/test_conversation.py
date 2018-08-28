@@ -1,7 +1,3 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
 import json
 from config.loader import neo_config
@@ -12,7 +8,9 @@ from utils.testutils import authenticate_user
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
 from models.Conversation import Conversation
-from models.UserToConversation import UserToConversation as UTC
+from models.UserToConversation import UserToConversation as UserToConv
+from gevent import monkey
+monkey.patch_all()
 
 
 class TestConversationCreate(unittest.TestCase):
@@ -47,10 +45,11 @@ class TestConversationCreate(unittest.TestCase):
             "circle_id": self.circle.id,
             "token": self.tokenAdmin
         }
-        response = self.api.post('/admin/conversation/create', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/conversation/create', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert response_json['content']["name"] == "ConversationTest"
 
     def test_missing_parameter(self):
@@ -58,10 +57,11 @@ class TestConversationCreate(unittest.TestCase):
             "circle_id": self.circle.id,
             "token": self.tokenAdmin
         }
-        response = self.api.post('/admin/conversation/create', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/conversation/create', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_user(self):
         json_data = {
@@ -69,10 +69,11 @@ class TestConversationCreate(unittest.TestCase):
             "circle_id": self.circle.id,
             "token": self.token1
         }
-        response = self.api.post('/admin/conversation/create', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/conversation/create', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_circle(self):
         json_data = {
@@ -80,10 +81,11 @@ class TestConversationCreate(unittest.TestCase):
             "circle_id": 2000000,
             "token": self.tokenAdmin
         }
-        response = self.api.post('/admin/conversation/create', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/conversation/create', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestConversationDelete(unittest.TestCase):
@@ -109,12 +111,12 @@ class TestConversationDelete(unittest.TestCase):
     def create_conversation(self):
         self.conv = Conversation(name="TESTCONVDELETE")
         self.conv.circle = self.circle
-        self.utc1 = UTC()
-        self.utc1.user = self.user1
-        self.utc1.conversation = self.conv
-        self.utc2 = UTC()
-        self.utc2.user = self.user2
-        self.utc2.conversation = self.conv
+        self.UserToConv1 = UserToConv()
+        self.UserToConv1.user = self.user1
+        self.UserToConv1.conversation = self.conv
+        self.UserToConv2 = UserToConv()
+        self.UserToConv2.user = self.user2
+        self.UserToConv2.conversation = self.conv
         db.session.commit()
 
     def create_circle(self):
@@ -125,7 +127,7 @@ class TestConversationDelete(unittest.TestCase):
         db.session.commit()
 
     def test_valid_delete(self):
-        id = self.conv.id
+        conv_id = self.conv.id
         json_data = {
             "conversation_id": self.conv.id,
             "token": self.tokenAdmin
@@ -133,10 +135,10 @@ class TestConversationDelete(unittest.TestCase):
         response = self.api.post('/admin/conversation/delete', data=json.dumps(json_data),
                                  content_type='application/json')
         response_json = json.loads(response.data)
-        c = db.session.query(Conversation).filter(Conversation.id==id).first()
+        c = db.session.query(Conversation).filter(Conversation.id == conv_id).first()
         assert response.status_code == 200
-        assert response_json['success'] == True
-        assert c == None
+        assert response_json['success']
+        assert c is None
 
     def test_missing_parameter(self):
         json_data = {
@@ -146,7 +148,7 @@ class TestConversationDelete(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_user(self):
         json_data = {
@@ -157,7 +159,7 @@ class TestConversationDelete(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_conversation(self):
         json_data = {
@@ -168,7 +170,7 @@ class TestConversationDelete(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestConversationInfo(unittest.TestCase):
@@ -199,12 +201,12 @@ class TestConversationInfo(unittest.TestCase):
     def create_conversation(self):
         self.conv = Conversation(name="ConversationInfoTest")
         self.conv.circle = self.circle
-        self.utc1 = UTC()
-        self.utc1.user = self.user1
-        self.utc1.conversation = self.conv
-        self.utc2 = UTC()
-        self.utc2.user = self.user2
-        self.utc2.conversation = self.conv
+        self.UserToConv1 = UserToConv()
+        self.UserToConv1.user = self.user1
+        self.UserToConv1.conversation = self.conv
+        self.UserToConv2 = UserToConv()
+        self.UserToConv2.user = self.user2
+        self.UserToConv2.conversation = self.conv
         db.session.commit()
 
     def create_circle(self):
@@ -222,7 +224,7 @@ class TestConversationInfo(unittest.TestCase):
         response = self.api.post('/conversation/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert response_json['content']["name"] == "ConversationInfoTest"
 
     def test_invalid_user(self):
@@ -233,7 +235,7 @@ class TestConversationInfo(unittest.TestCase):
         response = self.api.post('/conversation/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_conversation(self):
         json_data = {
@@ -243,7 +245,7 @@ class TestConversationInfo(unittest.TestCase):
         response = self.api.post('/conversation/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_parameter(self):
         json_data = {
@@ -252,7 +254,7 @@ class TestConversationInfo(unittest.TestCase):
         response = self.api.post('/conversation/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestConversationDeviceInfo(unittest.TestCase):
@@ -265,7 +267,7 @@ class TestConversationDeviceInfo(unittest.TestCase):
         db.session.commit()
 
     def test_valid_info(self):
-        assert True == True
+        pass
 
 
 class TestConversationList(unittest.TestCase):
@@ -290,19 +292,20 @@ class TestConversationList(unittest.TestCase):
         self.conv1 = Conversation(name="ConversationInfoTest")
         self.conv2 = Conversation(name="ConversationInfoTest2")
         self.conv3 = Conversation(name="ConversationInfoTest2")
-        self.utc1 = UTC()
-        self.utc2 = UTC()
-        self.utc3 = UTC()
-        self.utc4 = UTC()
-        self.create_conversation(self.conv1, self.user1, self.user2, self.utc1, self.utc2, self.circle)
-        self.create_conversation(self.conv3, self.user1, self.user2, UTC(), UTC(), self.circle)
-        self.create_conversation(self.conv2, self.user2, self.user3, self.utc3, self.utc4, self.circle2)
+        self.UserToConv1 = UserToConv()
+        self.UserToConv2 = UserToConv()
+        self.UserToConv3 = UserToConv()
+        self.UserToConv4 = UserToConv()
+        self.create_conversation(self.conv1, self.user1, self.user2, self.UserToConv1, self.UserToConv2, self.circle)
+        self.create_conversation(self.conv3, self.user1, self.user2, UserToConv(), UserToConv(), self.circle)
+        self.create_conversation(self.conv2, self.user2, self.user3, self.UserToConv3, self.UserToConv4, self.circle2)
         self.token1 = authenticate_user(self.api, self.user1, "test")
         self.token2 = authenticate_user(self.api, self.user2, "test")
         self.token3 = authenticate_user(self.api, self.user3, "test")
         self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
     def create_conversation(self, conv, u1, u2, utc1, utc2, circle):
+        self.c = circle
         conv.circle = circle
         utc1.user = u1
         utc1.conversation = conv
@@ -335,7 +338,7 @@ class TestConversationList(unittest.TestCase):
         response = self.api.post('/conversation/list', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert len(response_json['content']) == 2
 
     def test_valid_list2(self):
@@ -346,7 +349,7 @@ class TestConversationList(unittest.TestCase):
         response = self.api.post('/conversation/list', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert len(response_json['content']) == 1
 
     def test_invalid_user(self):
@@ -357,7 +360,7 @@ class TestConversationList(unittest.TestCase):
         response = self.api.post('/conversation/list', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_user_without_conv(self):
         json_data = {
@@ -367,7 +370,7 @@ class TestConversationList(unittest.TestCase):
         response = self.api.post('/conversation/list', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_parameter(self):
         json_data = {
@@ -376,7 +379,7 @@ class TestConversationList(unittest.TestCase):
         response = self.api.post('/conversation/list', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_circle(self):
         json_data = {
@@ -386,7 +389,7 @@ class TestConversationList(unittest.TestCase):
         response = self.api.post('/conversation/list', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestConversationDeviceList(unittest.TestCase):
@@ -399,7 +402,7 @@ class TestConversationDeviceList(unittest.TestCase):
         db.session.commit()
 
     def test_valid_list(self):
-        assert True == True
+        pass
 
 
 class TestConversationUpdate(unittest.TestCase):
@@ -430,12 +433,12 @@ class TestConversationUpdate(unittest.TestCase):
     def create_conversation(self):
         self.conv = Conversation(name="ConversationUpdateTest")
         self.conv.circle = self.circle
-        self.utc1 = UTC(privilege="ADMIN")
-        self.utc1.user = self.user1
-        self.utc1.conversation = self.conv
-        self.utc2 = UTC()
-        self.utc2.user = self.user2
-        self.utc2.conversation = self.conv
+        self.UserToConv1 = UserToConv(privilege="ADMIN")
+        self.UserToConv1.user = self.user1
+        self.UserToConv1.conversation = self.conv
+        self.UserToConv2 = UserToConv()
+        self.UserToConv2.user = self.user2
+        self.UserToConv2.conversation = self.conv
         db.session.commit()
 
     def create_circle(self):
@@ -455,9 +458,9 @@ class TestConversationUpdate(unittest.TestCase):
         response = self.api.post('/conversation/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert response_json["content"]["name"] == "UPDATEDCONV"
-        assert response_json["content"]["device_access"] == True
+        assert response_json["content"]["device_access"]
 
     def test_invalid_user(self):
         json_data = {
@@ -468,7 +471,7 @@ class TestConversationUpdate(unittest.TestCase):
         response = self.api.post('/conversation/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_user2(self):
         json_data = {
@@ -479,7 +482,7 @@ class TestConversationUpdate(unittest.TestCase):
         response = self.api.post('/conversation/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_parameter(self):
         json_data = {
@@ -488,4 +491,4 @@ class TestConversationUpdate(unittest.TestCase):
         response = self.api.post('/conversation/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']

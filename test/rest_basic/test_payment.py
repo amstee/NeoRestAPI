@@ -1,7 +1,3 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
 import json
 from api import NeoAPI
@@ -11,6 +7,8 @@ from utils.testutils import authenticate_user
 from models.User import User as UserModel
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
+from gevent import monkey
+monkey.patch_all()
 
 
 class TestFakePayment(unittest.TestCase):
@@ -27,12 +25,14 @@ class TestFakePayment(unittest.TestCase):
         self.api = neo.activate_testing()
         self.user1 = db.session.query(UserModel).filter(UserModel.email == "testpayment@test.com").first()
         if self.user1 is None:
-            self.user1 = UserModel(email="testpayment@test.com", password="test", first_name="firstname", last_name="lastname", birthday="1995-12-12")
+            self.user1 = UserModel(email="testpayment@test.com", password="test",
+                                   first_name="firstname", last_name="lastname", birthday="1995-12-12")
         self.user2 = db.session.query(UserModel).filter(UserModel.email == "testpayment2@test.com").first()
         if self.user2 is None:
-            self.user2 = UserModel(email="testpayment2@test.com", password="test", first_name="firstname", last_name="lastname", birthday="1111-11-11")
+            self.user2 = UserModel(email="testpayment2@test.com", password="test",
+                                   first_name="firstname", last_name="lastname", birthday="1111-11-11")
         self.circle1 = Circle(name="TestPaymentCircle")
-        self.link1 =  UserToCircle()
+        self.link1 = UserToCircle()
         self.link1.user = self.user1
         self.link1.circle = self.circle1
         db.session.commit()
@@ -47,7 +47,7 @@ class TestFakePayment(unittest.TestCase):
         response = self.api.post('/device/buy', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
 
     def test_invalid_user(self):
         json_data = {
@@ -57,7 +57,7 @@ class TestFakePayment(unittest.TestCase):
         response = self.api.post('/device/buy', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_parameter(self):
         json_data = {
@@ -66,8 +66,7 @@ class TestFakePayment(unittest.TestCase):
         response = self.api.post('/device/buy', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json["success"] == False
-
+        assert not response_json["success"]
 
     def test_invalid_circle(self):
         json_data = {
@@ -77,4 +76,4 @@ class TestFakePayment(unittest.TestCase):
         response = self.api.post('/device/buy', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']

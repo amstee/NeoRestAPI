@@ -1,7 +1,3 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
 import json
 from config.loader import neo_config
@@ -16,6 +12,8 @@ from utils.testutils import authenticate_user, authenticate_device
 from models.Message import Message
 from models.Media import Media
 from models.Device import Device
+from gevent import monkey
+monkey.patch_all()
 
 
 class TestMediaInfo(unittest.TestCase):
@@ -87,7 +85,8 @@ class TestMediaInfoAdmin(unittest.TestCase):
         self.linkCircle2 = UserToCircle(user=self.user2, circle=self.circle)
         self.conversation = Conversation(circle=self.circle)
         self.linkConversation = UserToConversation(user=self.user1, conversation=self.conversation, privilege="ADMIN")
-        self.linkConversation2 = UserToConversation(user=self.user2, conversation=self.conversation, privilege="STANDARD")
+        self.linkConversation2 = UserToConversation(user=self.user2, conversation=self.conversation,
+                                                    privilege="STANDARD")
         self.message = Message()
         self.message.conversation = self.conversation
         self.media = Media('test', '.txt', 'test.txt')
@@ -105,7 +104,7 @@ class TestMediaInfoAdmin(unittest.TestCase):
         response = self.api.post('/admin/media/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert 'directory' in response_json['content']
 
     def test_invalid_info(self):
@@ -116,7 +115,7 @@ class TestMediaInfoAdmin(unittest.TestCase):
         response = self.api.post('/admin/media/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestMediaDelete(unittest.TestCase):
@@ -138,7 +137,8 @@ class TestMediaDelete(unittest.TestCase):
         self.linkCircle2 = UserToCircle(user=self.user2, circle=self.circle)
         self.conversation = Conversation(circle=self.circle)
         self.linkConversation = UserToConversation(user=self.user1, conversation=self.conversation, privilege="ADMIN")
-        self.linkConversation2 = UserToConversation(user=self.user2, conversation=self.conversation, privilege="STANDARD")
+        self.linkConversation2 = UserToConversation(user=self.user2,
+                                                    conversation=self.conversation, privilege="STANDARD")
         self.message = Message()
         self.message.conversation = self.conversation
         self.message.link = self.linkConversation
@@ -200,7 +200,7 @@ class TestMediaList(unittest.TestCase):
         response = self.api.post('/media/list', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
 
     def test_invalid_list(self):
         json_data = {
@@ -232,7 +232,8 @@ class TestMediaUpdate(unittest.TestCase):
         self.linkCircle2 = UserToCircle(user=self.user2, circle=self.circle)
         self.conversation = Conversation(circle=self.circle)
         self.linkConversation = UserToConversation(user=self.user1, conversation=self.conversation, privilege="ADMIN")
-        self.linkConversation2 = UserToConversation(user=self.user2, conversation=self.conversation, privilege="STANDARD")
+        self.linkConversation2 = UserToConversation(user=self.user2,
+                                                    conversation=self.conversation, privilege="STANDARD")
         self.message = Message()
         self.message.link = self.linkConversation
         self.message.conversation = self.conversation
@@ -252,7 +253,7 @@ class TestMediaUpdate(unittest.TestCase):
         response = self.api.post('/admin/media/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert self.media.identifier == 't'
 
     def test_invalid_update(self):
@@ -264,7 +265,7 @@ class TestMediaUpdate(unittest.TestCase):
         response = self.api.post('/admin/media/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestDeviceMediaList(unittest.TestCase):
@@ -309,7 +310,7 @@ class TestDeviceMediaList(unittest.TestCase):
         response = self.api.post('/device/media/list', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
 
     def test_invalid_list(self):
         json_data = {
@@ -375,6 +376,3 @@ class TestDeviceMediaInfo(unittest.TestCase):
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert response_json['success'] is False
-
-
-

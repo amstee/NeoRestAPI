@@ -1,7 +1,3 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
 import json
 from config.loader import neo_config
@@ -15,6 +11,8 @@ from models.Device import Device
 from utils.testutils import authenticate_user
 from utils.testutils import authenticate_device
 from models.Message import Message
+from gevent import monkey
+monkey.patch_all()
 
 
 class TestDeviceMessageCreate(unittest.TestCase):
@@ -55,10 +53,11 @@ class TestDeviceMessageCreate(unittest.TestCase):
             "text": "test",
             "directory_name": "Tests"
         }
-        response = self.api.post('/admin/device/message/create', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/device/message/create', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert len(self.conversation.messages) == 1
 
     def test_missing_parameter(self):
@@ -69,10 +68,11 @@ class TestDeviceMessageCreate(unittest.TestCase):
             "text": "test",
             "directory_name": "Tests"
         }
-        response = self.api.post('/admin/device/message/create', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/device/message/create', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_conversation(self):
         json_data = {
@@ -83,10 +83,11 @@ class TestDeviceMessageCreate(unittest.TestCase):
             "text": "test",
             "directory_name": "Tests"
         }
-        response = self.api.post('/admin/device/message/create', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/device/message/create', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_user(self):
         json_data = {
@@ -97,10 +98,11 @@ class TestDeviceMessageCreate(unittest.TestCase):
             "text": "test",
             "directory_name": "Tests"
         }
-        response = self.api.post('/admin/device/message/create', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/device/message/create', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestDeviceMessageDelete(unittest.TestCase):
@@ -150,7 +152,7 @@ class TestDeviceMessageDelete(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert len(self.conversation.messages) == 0
 
     def test_missing_parameter(self):
@@ -161,7 +163,7 @@ class TestDeviceMessageDelete(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_message(self):
         json_data = {
@@ -172,7 +174,7 @@ class TestDeviceMessageDelete(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_user(self):
         json_data = {
@@ -183,7 +185,7 @@ class TestDeviceMessageDelete(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_device(self):
         json_data = {
@@ -194,7 +196,7 @@ class TestDeviceMessageDelete(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestDeviceMessageInfo(unittest.TestCase):
@@ -245,7 +247,7 @@ class TestDeviceMessageInfo(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
 
     def test_invalid_device(self):
         json_data = {
@@ -256,7 +258,7 @@ class TestDeviceMessageInfo(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_parameter(self):
         json_data = {
@@ -266,7 +268,7 @@ class TestDeviceMessageInfo(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_message(self):
         json_data = {
@@ -277,7 +279,7 @@ class TestDeviceMessageInfo(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestDeviceMessageList(unittest.TestCase):
@@ -332,7 +334,7 @@ class TestDeviceMessageList(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert len(response_json["content"]) == 2
 
     def test_invalid_device(self):
@@ -345,7 +347,7 @@ class TestDeviceMessageList(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestDeviceMessageUpdate(unittest.TestCase):
@@ -387,7 +389,6 @@ class TestDeviceMessageUpdate(unittest.TestCase):
         self.device2_token = authenticate_device(self.api, self.device2, self.device2_password)
         self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
 
-
     def test_valid_update(self):
         json_data = {
             "device_token": self.device_token,
@@ -398,7 +399,7 @@ class TestDeviceMessageUpdate(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert self.message.text_content == "44"
 
     def test_invalid_message(self):
@@ -411,7 +412,7 @@ class TestDeviceMessageUpdate(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_device(self):
         json_data = {
@@ -423,7 +424,7 @@ class TestDeviceMessageUpdate(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_parameter(self):
         json_data = {
@@ -434,4 +435,4 @@ class TestDeviceMessageUpdate(unittest.TestCase):
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']

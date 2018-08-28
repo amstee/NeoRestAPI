@@ -1,7 +1,3 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
 import json
 from config.loader import neo_config
@@ -11,6 +7,8 @@ from models.User import User as UserModel
 from models.Circle import Circle
 from models.UserToCircle import UserToCircle
 from utils.testutils import authenticate_user
+from gevent import monkey
+monkey.patch_all()
 
 
 class TestCircleCreate(unittest.TestCase):
@@ -39,7 +37,7 @@ class TestCircleCreate(unittest.TestCase):
         response = self.api.post('/circle/create', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert response_json['content']["name"] == "CircleCreationTest"
 
     def test_missing_parameter(self):
@@ -79,7 +77,7 @@ class TestCircleDelete(unittest.TestCase):
         db.session.commit()
 
     def test_valid_deletion(self):
-        id = self.circle.id
+        circle_id = self.circle.id
         json_data = {
             "token": self.tokenAdmin,
             "circle_id": self.circle.id
@@ -87,9 +85,9 @@ class TestCircleDelete(unittest.TestCase):
         response = self.api.post('/admin/circle/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
-        c = db.session.query(Circle).filter(Circle.id==id).first()
-        assert c == None
+        assert response_json['success']
+        c = db.session.query(Circle).filter(Circle.id == circle_id).first()
+        assert c is None
 
     def test_invalid_user(self):
         json_data = {
@@ -99,7 +97,7 @@ class TestCircleDelete(unittest.TestCase):
         response = self.api.post('/admin/circle/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_parameter(self):
         json_data = {
@@ -108,7 +106,7 @@ class TestCircleDelete(unittest.TestCase):
         response = self.api.post('/admin/circle/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_circle(self):
         json_data = {
@@ -118,7 +116,7 @@ class TestCircleDelete(unittest.TestCase):
         response = self.api.post('/admin/circle/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestCircleUpdate(unittest.TestCase):
@@ -156,7 +154,7 @@ class TestCircleUpdate(unittest.TestCase):
         response = self.api.post('/circle/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert self.circle.name == "UPDATED"
 
     def test_empty_update(self):
@@ -167,7 +165,7 @@ class TestCircleUpdate(unittest.TestCase):
         response = self.api.post('/circle/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert self.circle.name != "UPDATED"
 
     def test_missing_parameter(self):
@@ -177,7 +175,7 @@ class TestCircleUpdate(unittest.TestCase):
         response = self.api.post('/circle/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_user(self):
         json_data = {
@@ -188,7 +186,7 @@ class TestCircleUpdate(unittest.TestCase):
         response = self.api.post('/circle/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestCircleInfo(unittest.TestCase):
@@ -225,7 +223,7 @@ class TestCircleInfo(unittest.TestCase):
         response = self.api.post('/circle/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert self.circle.name == response_json["content"]["name"]
 
     def test_invalid_parameter(self):
@@ -235,7 +233,7 @@ class TestCircleInfo(unittest.TestCase):
         response = self.api.post('/circle/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_user(self):
         json_data = {
@@ -245,7 +243,7 @@ class TestCircleInfo(unittest.TestCase):
         response = self.api.post('/circle/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestCircleList(unittest.TestCase):
@@ -283,11 +281,10 @@ class TestCircleList(unittest.TestCase):
         response = self.api.post('/circle/list', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert response_json['content'][0]["name"] == "INFO1"
         assert response_json['content'][1]["name"] == "INFO2"
         assert response_json['content'][2]["name"] == "INFO3"
-
 
     def test_empty_list(self):
         json_data = {
@@ -296,6 +293,5 @@ class TestCircleList(unittest.TestCase):
         response = self.api.post('/circle/list', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert len(response_json["content"]) == 0
-

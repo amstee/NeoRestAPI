@@ -1,7 +1,3 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
 import json
 from config.loader import neo_config
@@ -13,6 +9,8 @@ from models.UserToCircle import UserToCircle
 from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
 from utils.testutils import authenticate_user
+from gevent import monkey
+monkey.patch_all()
 
 
 class TestConversationInvite(unittest.TestCase):
@@ -66,7 +64,7 @@ class TestConversationInvite(unittest.TestCase):
         response = self.api.post('/conversation/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert len(self.conv.links) == 2
 
     def test_missing_conversation_id(self):
@@ -77,7 +75,7 @@ class TestConversationInvite(unittest.TestCase):
         response = self.api.post('/conversation/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_email(self):
         json_data = {
@@ -87,7 +85,7 @@ class TestConversationInvite(unittest.TestCase):
         response = self.api.post('/conversation/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_conversation(self):
         json_data = {
@@ -98,7 +96,7 @@ class TestConversationInvite(unittest.TestCase):
         response = self.api.post('/conversation/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_email(self):
         json_data = {
@@ -109,7 +107,7 @@ class TestConversationInvite(unittest.TestCase):
         response = self.api.post('/conversation/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_user_dest(self):
         json_data = {
@@ -120,7 +118,7 @@ class TestConversationInvite(unittest.TestCase):
         response = self.api.post('/conversation/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
         assert len(self.conv.links) == 1
 
     def test_already_existing_user(self):
@@ -136,7 +134,7 @@ class TestConversationInvite(unittest.TestCase):
         response = self.api.post('/conversation/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
         assert len(self.conv.links) == 2
 
 
@@ -194,7 +192,7 @@ class TestConversationUserPromote(unittest.TestCase):
         response = self.api.post('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert len(self.conv.links) == 2
         assert self.utc2.privilege == "ADMIN"
         assert self.utc1.privilege == "STANDARD"
@@ -208,7 +206,7 @@ class TestConversationUserPromote(unittest.TestCase):
         response = self.api.post('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_user_rights(self):
         json_data = {
@@ -219,7 +217,7 @@ class TestConversationUserPromote(unittest.TestCase):
         response = self.api.post('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_email(self):
         json_data = {
@@ -229,7 +227,7 @@ class TestConversationUserPromote(unittest.TestCase):
         response = self.api.post('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_conversation_id(self):
         json_data = {
@@ -239,7 +237,7 @@ class TestConversationUserPromote(unittest.TestCase):
         response = self.api.post('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_conversation(self):
         json_data = {
@@ -250,7 +248,7 @@ class TestConversationUserPromote(unittest.TestCase):
         response = self.api.post('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_email(self):
         json_data = {
@@ -261,7 +259,7 @@ class TestConversationUserPromote(unittest.TestCase):
         response = self.api.post('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestConversationKick(unittest.TestCase):
@@ -310,7 +308,7 @@ class TestConversationKick(unittest.TestCase):
         db.session.commit()
 
     def test_valid_kick(self):
-        id = self.conv.id
+        conv_id = self.conv.id
         json_data = {
             "token": self.token1,
             "conversation_id": self.conv.id,
@@ -318,10 +316,10 @@ class TestConversationKick(unittest.TestCase):
         }
         response = self.api.post('/conversation/kick', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
-        c = db.session.query(Conversation).filter(Conversation.id==id).first()
+        c = db.session.query(Conversation).filter(Conversation.id == conv_id).first()
         assert response.status_code == 200
-        assert response_json['success'] == True
-        assert c == None
+        assert response_json['success']
+        assert c is None
 
     def test_invalid_user(self):
         json_data = {
@@ -332,7 +330,7 @@ class TestConversationKick(unittest.TestCase):
         response = self.api.post('/conversation/kick', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_user_rights(self):
         json_data = {
@@ -343,7 +341,7 @@ class TestConversationKick(unittest.TestCase):
         response = self.api.post('/conversation/kick', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_email(self):
         json_data = {
@@ -353,7 +351,7 @@ class TestConversationKick(unittest.TestCase):
         response = self.api.post('/conversation/kick', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_conversation_id(self):
         json_data = {
@@ -363,7 +361,7 @@ class TestConversationKick(unittest.TestCase):
         response = self.api.post('/conversation/kick', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_conversation(self):
         json_data = {
@@ -374,7 +372,7 @@ class TestConversationKick(unittest.TestCase):
         response = self.api.post('/conversation/kick', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_email(self):
         json_data = {
@@ -385,7 +383,7 @@ class TestConversationKick(unittest.TestCase):
         response = self.api.post('/conversation/kick', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestConversationQuit(unittest.TestCase):
@@ -434,17 +432,17 @@ class TestConversationQuit(unittest.TestCase):
         db.session.commit()
 
     def test_valid_quit(self):
-        id = self.conv.id
+        conv_id = self.conv.id
         json_data = {
             "token": self.token1,
             "conversation_id": self.conv.id,
         }
         response = self.api.post('/conversation/quit', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
-        c = db.session.query(Conversation).filter(Conversation.id==id).first()
+        c = db.session.query(Conversation).filter(Conversation.id == conv_id).first()
         assert response.status_code == 200
-        assert response_json['success'] == True
-        assert c == None
+        assert response_json['success']
+        assert c is None
 
     def test_valid_quit2(self):
         self.conv.device_access = True
@@ -458,7 +456,7 @@ class TestConversationQuit(unittest.TestCase):
         c = db.session.query(UserToConversation).filter(UserToConversation.conversation_id == self.conv.id).filter(
             UserToConversation.user_id == self.user2.id).first()
         assert response.status_code == 200
-        assert response_json['success'] is True
+        assert response_json['success']
         assert c is None
         assert len(self.conv.links) == 1
 
@@ -470,7 +468,7 @@ class TestConversationQuit(unittest.TestCase):
         response = self.api.post('/conversation/quit', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_conversation(self):
         json_data = {
@@ -480,7 +478,7 @@ class TestConversationQuit(unittest.TestCase):
         response = self.api.post('/conversation/quit', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_parameter(self):
         json_data = {
@@ -489,7 +487,7 @@ class TestConversationQuit(unittest.TestCase):
         response = self.api.post('/conversation/quit', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_change_admin(self):
         utc = UserToConversation()
@@ -503,7 +501,7 @@ class TestConversationQuit(unittest.TestCase):
         response = self.api.post('/conversation/quit', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
         assert (utc.privilege == "ADMIN" or self.utc2.privilege == "ADMIN")
 
 
@@ -559,30 +557,33 @@ class TestConversationAddDevice(unittest.TestCase):
             "token": self.token1,
             "conversation_id": self.conv.id,
         }
-        response = self.api.post('/conversation/device/add', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/conversation/device/add', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
-        assert self.conv.device_access == True
+        assert response_json['success']
+        assert self.conv.device_access
 
     def test_invalid_user(self):
         json_data = {
             "token": self.token2,
             "conversation_id": self.conv.id,
         }
-        response = self.api.post('/conversation/device/add', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/conversation/device/add', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_parameter(self):
         json_data = {
             "token": self.token2
         }
-        response = self.api.post('/conversation/device/add', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/conversation/device/add', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestConversationRemoveDevice(unittest.TestCase):
@@ -637,27 +638,30 @@ class TestConversationRemoveDevice(unittest.TestCase):
             "token": self.token1,
             "conversation_id": self.conv.id,
         }
-        response = self.api.post('/conversation/device/remove', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/conversation/device/remove', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
-        assert self.conv.device_access == False
+        assert response_json['success']
+        assert not self.conv.device_access
 
     def test_invalid_user(self):
         json_data = {
             "token": self.token2,
             "conversation_id": self.conv.id,
         }
-        response = self.api.post('/conversation/device/remove', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/conversation/device/remove', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_parameter(self):
         json_data = {
             "token": self.token2
         }
-        response = self.api.post('/conversation/device/remove', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/conversation/device/remove', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']

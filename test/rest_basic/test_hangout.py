@@ -1,14 +1,10 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
 import json
 from config.loader import neo_config
 from api import NeoAPI
 from bot.hangout import send_to_space
 
-TESTING_SPACE="spaces/v4YQNAAAAAE"
+TESTING_SPACE = "spaces/v4YQNAAAAAE"
 
 
 class Messaging(unittest.TestCase):
@@ -185,4 +181,3 @@ class TokenLink(unittest.TestCase):
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['text'] == "Votre compte hangout n'est lié a aucun compte NEO"
-

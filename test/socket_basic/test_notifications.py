@@ -1,10 +1,6 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
-import json
 from flask_socketio import SocketIOTestClient
+import json
 from config.loader import neo_config
 from api import NeoAPI, sockets, socketio
 from config.database import db
@@ -16,6 +12,8 @@ from models.UserToCircle import UserToCircle
 from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
 from models.Device import Device
+from gevent import monkey
+monkey.patch_all()
 
 
 class SocketioConversation(unittest.TestCase):
@@ -164,14 +162,16 @@ class SocketioConversation(unittest.TestCase):
             "token": self.token1,
             "conversation_id": self.conversation_id
         }
-        response = self.api.post('/conversation/device/add', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/conversation/device/add', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response_json['success'] is True
         res1 = self.client.get_received()
         res2 = self.deviceClient.get_received()
         assert len(res1) == 1
         assert len(res2) == 1
-        response = self.api.post('/conversation/device/remove', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/conversation/device/remove', data=json.dumps(json_data),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response_json['success'] is True
         res1 = self.client.get_received()
@@ -264,7 +264,7 @@ class SocketioCircle(unittest.TestCase):
         assert len(res3) == 0
 
     def test_valid_circle_quit(self):
-        link = UserToCircle(user=self.user2, circle=self.circle)
+        UserToCircle(user=self.user2, circle=self.circle)
         db.session.commit()
         data = {
             'token': self.token1
@@ -306,7 +306,7 @@ class SocketioCircle(unittest.TestCase):
         assert len(res3) == 1
 
     def test_valid_circle_kick(self):
-        link = UserToCircle(user=self.user2, circle=self.circle)
+        UserToCircle(user=self.user2, circle=self.circle)
         db.session.commit()
         data = {
             'token': self.token1
@@ -355,7 +355,7 @@ class SocketioCircle(unittest.TestCase):
         assert len(res4) == 1
 
     def test_circle_connection(self):
-        link = UserToCircle(user=self.user2, circle=self.circle)
+        UserToCircle(user=self.user2, circle=self.circle)
         db.session.commit()
         data = {
             'token': self.token1
@@ -396,7 +396,8 @@ class SocketioCircle(unittest.TestCase):
         assert len(res3) == 1
         res4 = self.client.get_received()
         assert len(res4) == 1
-        response = self.api.post('/account/logout', data=json.dumps({"token": self.token3}), content_type='application/json')
+        response = self.api.post('/account/logout', data=json.dumps({"token": self.token3}),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response_json["success"] is True
         res = self.client2.get_received()
@@ -405,7 +406,8 @@ class SocketioCircle(unittest.TestCase):
         assert len(res3) == 1
         res4 = self.client.get_received()
         assert len(res4) == 1
-        response = self.api.post('/device/logout', data=json.dumps({"device_token": self.device_token}), content_type='application/json')
+        response = self.api.post('/device/logout', data=json.dumps({"device_token": self.device_token}),
+                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response_json["success"] is True
         res = self.client2.get_received()
@@ -414,6 +416,3 @@ class SocketioCircle(unittest.TestCase):
         assert len(res3) == 1
         res4 = self.client.get_received()
         assert len(res4) == 1
-
-
-

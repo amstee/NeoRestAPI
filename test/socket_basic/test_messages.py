@@ -1,7 +1,3 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
 from flask_socketio import SocketIOTestClient
 from config.loader import neo_config
@@ -16,6 +12,8 @@ from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
 from models.Device import Device
 import json
+from gevent import monkey
+monkey.patch_all()
 
 
 class SocketioMessageEvents(unittest.TestCase):
@@ -86,9 +84,8 @@ class SocketioMessageEvents(unittest.TestCase):
         self.client.emit('join_conversation',
                          {'conversation_id': self.conversation_id}, json=True)
         self.client2.emit('join_conversation',
-                         {'conversation_id': self.conversation_id}, json=True)
-        self.deviceClient.emit('join_conversation',
-                         {'conversation_id': self.conversation_id}, json=True)
+                          {'conversation_id': self.conversation_id}, json=True)
+        self.deviceClient.emit('join_conversation', {'conversation_id': self.conversation_id}, json=True)
         res1 = self.client.get_received()
         res2 = self.client2.get_received()
         res3 = self.deviceClient.get_received()
@@ -136,9 +133,8 @@ class SocketioMessageEvents(unittest.TestCase):
         self.client.emit('join_conversation',
                          {'conversation_id': self.conversation_id}, json=True)
         self.client2.emit('join_conversation',
-                         {'conversation_id': self.conversation_id}, json=True)
-        self.deviceClient.emit('join_conversation',
-                         {'conversation_id': self.conversation_id}, json=True)
+                          {'conversation_id': self.conversation_id}, json=True)
+        self.deviceClient.emit('join_conversation', {'conversation_id': self.conversation_id}, json=True)
         res1 = self.client.get_received()
         res2 = self.client2.get_received()
         res3 = self.deviceClient.get_received()
@@ -183,9 +179,8 @@ class SocketioMessageEvents(unittest.TestCase):
         self.client.emit('join_conversation',
                          {'conversation_id': self.conversation_id}, json=True)
         self.client2.emit('join_conversation',
-                         {'conversation_id': self.conversation_id}, json=True)
-        self.deviceClient.emit('join_conversation',
-                         {'conversation_id': self.conversation_id}, json=True)
+                          {'conversation_id': self.conversation_id}, json=True)
+        self.deviceClient.emit('join_conversation', {'conversation_id': self.conversation_id}, json=True)
         res1 = self.client.get_received()
         res2 = self.client2.get_received()
         res3 = self.deviceClient.get_received()
@@ -200,8 +195,7 @@ class SocketioMessageEvents(unittest.TestCase):
             'conversation_id': self.conversation_id,
             'text_message': 'test web socket'
         }
-        response = self.api.post('/message/send', data=json.dumps(json_data), content_type='application/json')
-        response_json = json.loads(response.data)
+        self.api.post('/message/send', data=json.dumps(json_data), content_type='application/json')
         err = self.client.get_received()
         res = self.client2.get_received()
         res2 = self.deviceClient.get_received()
@@ -211,4 +205,3 @@ class SocketioMessageEvents(unittest.TestCase):
         self.client.disconnect()
         self.client2.disconnect()
         self.deviceClient.disconnect()
-
