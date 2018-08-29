@@ -1,7 +1,7 @@
 import logging
 import json
 
-with open('../config.json') as data_file:
+with open('config.json') as data_file:
     neo_config = json.load(data_file)
 
 LOG_ACTIVATE = neo_config["logs"]["activate"]
