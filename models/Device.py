@@ -7,9 +7,10 @@ import jwt
 import hashlib
 import datetime
 import base64
+from config.log import LOG_DATABASE_FILE
 
+logger = logger_set(module=__name__, file=LOG_DATABASE_FILE)
 SECRET_KEY = ""
-logger = logger_set(__name__)
 
 
 class Device(db.Model):

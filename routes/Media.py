@@ -9,8 +9,9 @@ from utils.contentChecker import content_checker
 from utils.security import user_has_access_to_message, device_has_access_to_message
 from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
+from config.log import LOG_MEDIA_FILE
 
-logger = logger_set(__name__)
+logger = logger_set(module=__name__, file=LOG_MEDIA_FILE)
 
 
 class MediaInfo(Resource):

@@ -2,8 +2,9 @@ from dateutil import parser as DateParser
 from config.database import db
 import datetime
 from utils.log import logger_set
+from config.log import LOG_DATABASE_FILE
 
-logger = logger_set(__name__)
+logger = logger_set(module=__name__, file=LOG_DATABASE_FILE)
 
 
 class CircleToMedia(db.Model):

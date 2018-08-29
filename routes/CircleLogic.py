@@ -10,8 +10,9 @@ from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
+from config.log import LOG_CIRCLE_FILE
 
-logger = logger_set(__name__)
+logger = logger_set(module=__name__, file=LOG_CIRCLE_FILE)
 
 
 class CircleInvite(Resource):

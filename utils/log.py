@@ -4,6 +4,7 @@ from config.log import LEVELS, LOG_LEVEL, LOG_ACTIVATE, LOG_FOLDER, LOG_CONSOLE,
 
 
 def logger_set(module, file=None):
+    print(file)
     if not path.exists(LOG_FOLDER):
         makedirs(LOG_FOLDER)
     if file is None:

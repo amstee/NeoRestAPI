@@ -15,8 +15,9 @@ from models.MessageToMedia import MessageToMedia
 from bot.facebook import messenger_conversation_model_send, messenger_user_model_send
 from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
+from config.log import LOG_DEVICE_FILE
 
-logger = logger_set(__name__)
+logger = logger_set(module=__name__, file=LOG_DEVICE_FILE)
 
 
 class FirstDeviceMessageSend(Resource):
