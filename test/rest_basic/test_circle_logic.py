@@ -1,7 +1,3 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
 import json
 from config.loader import neo_config
@@ -12,6 +8,8 @@ from models.UserToCircle import UserToCircle
 from models.CircleInvite import CircleInvite
 from models.Circle import Circle
 from utils.testutils import authenticate_user
+from gevent import monkey
+monkey.patch_all()
 
 
 class TestCircleInvite(unittest.TestCase):
@@ -58,7 +56,7 @@ class TestCircleInvite(unittest.TestCase):
         response_json = json.loads(response.data)
         print(response_json)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
 
     def test_missing_circle_id(self):
         json_data = {
@@ -68,7 +66,7 @@ class TestCircleInvite(unittest.TestCase):
         response = self.api.post('/circle/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_email(self):
         json_data = {
@@ -78,7 +76,7 @@ class TestCircleInvite(unittest.TestCase):
         response = self.api.post('/circle/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_circle(self):
         json_data = {
@@ -89,7 +87,7 @@ class TestCircleInvite(unittest.TestCase):
         response = self.api.post('/circle/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_email(self):
         json_data = {
@@ -100,7 +98,7 @@ class TestCircleInvite(unittest.TestCase):
         response = self.api.post('/circle/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_user(self):
         json_data = {
@@ -111,7 +109,7 @@ class TestCircleInvite(unittest.TestCase):
         response = self.api.post('/circle/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_already_existing_user(self):
         json_data = {
@@ -123,7 +121,7 @@ class TestCircleInvite(unittest.TestCase):
         response = self.api.post('/circle/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestCircleJoin(unittest.TestCase):
@@ -165,7 +163,7 @@ class TestCircleJoin(unittest.TestCase):
         response = self.api.post('/circle/join', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
 
     def test_missing_parameter(self):
         json_data = {
@@ -174,7 +172,7 @@ class TestCircleJoin(unittest.TestCase):
         response = self.api.post('/circle/join', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_invite_id(self):
         json_data = {
@@ -184,7 +182,7 @@ class TestCircleJoin(unittest.TestCase):
         response = self.api.post('/circle/join', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_user(self):
         json_data = {
@@ -194,7 +192,7 @@ class TestCircleJoin(unittest.TestCase):
         response = self.api.post('/circle/join', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestCircleReject(unittest.TestCase):
@@ -235,10 +233,11 @@ class TestCircleReject(unittest.TestCase):
         }
         response = self.api.post('/circle/reject', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
-        deleted_invite = db.session.query(CircleInvite).filter_by(user_id=self.user2.id, circle_id=self.circle.id).first()
+        deleted_invite = db.session.query(CircleInvite).filter_by(user_id=self.user2.id,
+                                                                  circle_id=self.circle.id).first()
         assert deleted_invite is None
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
 
     def test_missing_parameter(self):
         json_data = {
@@ -247,7 +246,7 @@ class TestCircleReject(unittest.TestCase):
         response = self.api.post('/circle/reject', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_user(self):
         json_data = {
@@ -257,7 +256,7 @@ class TestCircleReject(unittest.TestCase):
         response = self.api.post('/circle/reject', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_invalid_invite_id(self):
         json_data = {
@@ -267,7 +266,7 @@ class TestCircleReject(unittest.TestCase):
         response = self.api.post('/circle/reject', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
 
 class TestCircleQuit(unittest.TestCase):
@@ -318,7 +317,7 @@ class TestCircleQuit(unittest.TestCase):
         response = self.api.post('/circle/quit', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
-        assert response_json['success'] == True
+        assert response_json['success']
 
     def test_invalid_user(self):
         json_data = {
@@ -328,7 +327,7 @@ class TestCircleQuit(unittest.TestCase):
         response = self.api.post('/circle/quit', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_missing_parameter(self):
         json_data = {
@@ -337,10 +336,10 @@ class TestCircleQuit(unittest.TestCase):
         response = self.api.post('/circle/quit', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
-        assert response_json['success'] == False
+        assert not response_json['success']
 
     def test_all_user_quit(self):
-        id = self.circle.id
+        circle_id = self.circle.id
         json_data = {
             "token": self.token1,
             "circle_id": self.circle.id
@@ -357,7 +356,7 @@ class TestCircleQuit(unittest.TestCase):
         assert response_json2['success'] is True
         assert response1.status_code == 200
         assert response_json1['success'] is True
-        c = db.session.query(Circle).filter(Circle.id == id).first()
+        c = db.session.query(Circle).filter(Circle.id == circle_id).first()
         assert c is None
 
 

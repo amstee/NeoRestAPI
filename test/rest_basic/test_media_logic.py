@@ -1,7 +1,3 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
 import json
 from config.loader import neo_config
@@ -19,6 +15,8 @@ import io
 import shutil
 import os
 from models.Device import Device
+from gevent import monkey
+monkey.patch_all()
 
 
 class TestMediaCreate(unittest.TestCase):
@@ -284,6 +282,7 @@ class TestDeviceMediaRequest(unittest.TestCase):
         }
         response = self.api.post('/device/message/send', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
+        print(response_json)
         assert response.status_code == 200
         assert response_json['success'] is True
         assert len(response_json['media_list']) == 1
@@ -295,7 +294,8 @@ class TestDeviceMediaRequest(unittest.TestCase):
             'file': (io.BytesIO(b"device sent a file"), 'test_file.txt')
         }
         media_id = response_json['media_list'][0]['id']
-        response = self.api.post('/device/media/upload/' + str(response_json['media_list'][0]['id']), data=data, headers=headers)
+        response = self.api.post('/device/media/upload/' + str(response_json['media_list'][0]['id']),
+                                 data=data, headers=headers)
         response_json = json.loads(response.data)
         assert response_json["success"] is True
         assert os.path.exists('user_files' + os.path.sep + 'conversation_' + str(self.conversation.id) + os.path.sep)
@@ -357,7 +357,8 @@ class TestMediaUpload(unittest.TestCase):
         data = {
             'file': (io.BytesIO(b"user1 sent a file"), 'test_file.txt')
         }
-        response = self.api.post('/media/upload/' + str(response_json['media_list'][0]['id']), data=data, headers=headers)
+        response = self.api.post('/media/upload/' + str(response_json['media_list'][0]['id']),
+                                 data=data, headers=headers)
         response_json = json.loads(response.data)
         assert response_json["success"] is True
         assert os.path.exists('user_files' + os.path.sep + 'conversation_' + str(self.conversation.id) + os.path.sep)
@@ -419,7 +420,8 @@ class TestDeviceMediaUpload(unittest.TestCase):
         data = {
             'file': (io.BytesIO(b"device sent a file"), 'test_file.txt')
         }
-        response = self.api.post('/device/media/upload/' + str(response_json['media_list'][0]['id']), data=data, headers=headers)
+        response = self.api.post('/device/media/upload/' + str(response_json['media_list'][0]['id']),
+                                 data=data, headers=headers)
         response_json = json.loads(response.data)
         assert response_json["success"] is True
         assert os.path.exists('user_files' + os.path.sep + 'conversation_' + str(self.conversation.id) + os.path.sep)

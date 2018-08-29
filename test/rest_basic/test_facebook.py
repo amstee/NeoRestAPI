@@ -1,7 +1,3 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
 import json
 from config.loader import neo_config
@@ -49,7 +45,8 @@ class TokenLink(unittest.TestCase):
                                 },
                             'timestamp': 1534077263855,
                             'message': {
-                                'mid': 'BygawGFup0NPZeLqaWMtJfRQ8NlZ8m_HmSH6bWSVfYD4JPg8bqPYop9c2xaoOPGTFIgaRCvNtgFf1Ynpy3K-mQ',
+                                'mid': 'BygawGFup0NPZeLqaWMtJfRQ8NlZ8m_HmSH6bWSVfYD4JPg8bqP' +
+                                       'Yop9c2xaoOPGTFIgaRCvNtgFf1Ynpy3K-mQ',
                                 'seq': 292,
                                 'text': '/token invalid'
                                 }
@@ -79,7 +76,8 @@ class TokenLink(unittest.TestCase):
                                 },
                             'timestamp': 1534077263855,
                             'message': {
-                                'mid': 'BygawGFup0NPZeLqaWMtJfRQ8NlZ8m_HmSH6bWSVfYD4JPg8bqPYop9c2xaoOPGTFIgaRCvNtgFf1Ynpy3K-mQ',
+                                'mid': 'BygawGFup0NPZeLqaWMtJfRQ8NlZ8m_HmSH6bWSVfYD4JPg8bqPYop9c2' +
+                                       'xaoOPGTFIgaRCvNtgFf1Ynpy3K-mQ',
                                 'seq': 292,
                                 'text': '/token '
                                 }
@@ -109,7 +107,8 @@ class TokenLink(unittest.TestCase):
                                 },
                             'timestamp': 1534077263855,
                             'message': {
-                                'mid': 'BygawGFup0NPZeLqaWMtJfRQ8NlZ8m_HmSH6bWSVfYD4JPg8bqPYop9c2xaoOPGTFIgaRCvNtgFf1Ynpy3K-mQ',
+                                'mid': 'BygawGFup0NPZeLqaWMtJfRQ8NlZ8m_HmSH6bWSVfYD4JPg8bq' +
+                                       'PYop9c2xaoOPGTFIgaRCvNtgFf1Ynpy3K-mQ',
                                 'seq': 292,
                                 'text': 'unitary test'
                                 }

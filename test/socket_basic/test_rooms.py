@@ -1,7 +1,3 @@
-from gevent import monkey
-import sys
-monkey.patch_all()
-sys.path.insert(0, '..')
 import unittest
 from config.loader import neo_config
 from flask_socketio import SocketIOTestClient
@@ -15,6 +11,8 @@ from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
 from models.Device import Device
 from utils.testutils import authenticate_device
+from gevent import monkey
+monkey.patch_all()
 
 
 class SocketioRoomConversation(unittest.TestCase):
