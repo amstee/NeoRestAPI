@@ -7,6 +7,7 @@ import config.facebook as facebook
 import config.database as database
 import models.Device as Device
 import models.User as User
+import config.log as log
 
 
 class ConfigLoader:
@@ -47,6 +48,10 @@ class ConfigLoader:
     hangout_secret = ""
     hangout_token = ""
     hangout_config = {}
+
+    # Logs
+    log_activate = False
+    log_level = ""
 
     def __init__(self, file=None):
         if file is not None:
@@ -90,6 +95,9 @@ class ConfigLoader:
                     self.hangout_secret = data["hangout"]["hangoutSecret"]
                     self.hangout_secret = data["hangout"]["hangoutToken"]
                     self.hangout_config = data["hangout"]["hangoutConfig"]
+                if "logs" in data:
+                    self.log_activate = data["logs"]["activate"]
+                    self.log_level = data["logs"]["level"]
         except FileNotFoundError as fnf:
             print("File error : %s" % fnf, file=sys.stderr)
             return False
@@ -113,6 +121,8 @@ class ConfigLoader:
         database.POSTGRES["port"] = self.postgresql_port
         Device.SECRET_KEY = self.device_secret
         User.SECRET_KEY = self.user_secret
+        log.LOG_ACTIVATE = self.log_activate
+        log.LOG_LEVEL = self.log_level
 
 
 neo_config = ConfigLoader()

@@ -1,6 +1,6 @@
 from dateutil import parser as DateParser
 from config.database import db
-from config.log import logger_set
+from utils.log import logger_set
 import random
 import string
 import jwt

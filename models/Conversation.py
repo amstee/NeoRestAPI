@@ -1,7 +1,7 @@
 from config.database import db
 from dateutil import parser as DateParser
 from flask_socketio import emit
-from config.log import logger_set
+from utils.log import logger_set
 import datetime
 
 logger = logger_set(__name__)

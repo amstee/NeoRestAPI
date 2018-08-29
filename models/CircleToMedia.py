@@ -1,7 +1,7 @@
 from dateutil import parser as DateParser
 from config.database import db
 import datetime
-from config.log import logger_set
+from utils.log import logger_set
 
 logger = logger_set(__name__)
 

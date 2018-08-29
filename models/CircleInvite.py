@@ -2,7 +2,7 @@ from config.database import db
 from dateutil import parser as DateParser
 from config.sockets import sockets
 import datetime
-from config.log import logger_set
+from utils.log import logger_set
 
 logger = logger_set(__name__)
 

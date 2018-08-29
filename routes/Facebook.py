@@ -7,7 +7,7 @@ from bot.facebook import send_message, link_user_to_facebook, is_user_linked, se
 from bot.facebook import handle_conversation_payload
 from config.facebook import SECRET_TOKEN
 import sys
-from config.log import logger_set
+from utils.log import logger_set
 
 logger = logger_set(__name__)
 

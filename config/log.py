@@ -1,18 +1,15 @@
 import logging
+import json
 
+with open('../config.json') as data_file:
+    neo_config = json.load(data_file)
 
-def logger_set(module):
-    logger = logging.getLogger(module)
-    logger.setLevel(logging.DEBUG)
-
-    # create a file handler
-    handler = logging.FileHandler('./neo_api.log')
-    handler.setLevel(logging.DEBUG)
-
-    # create a logging format
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-
-    # add the handlers to the logger
-    logger.addHandler(handler)
-    return logger
+LOG_ACTIVATE = neo_config["logs"]["activate"]
+LOG_LEVEL = neo_config["logs"]["level"]
+LEVELS = {
+    "DEBUG": logging.DEBUG,
+    "INFO": logging.INFO,
+    "WARNING": logging.WARNING,
+    "ERROR": logging.ERROR,
+    "CRITICAL": logging.CRITICAL
+}

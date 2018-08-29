@@ -7,7 +7,7 @@ from utils.contentChecker import content_checker
 from utils.decorators import secured_route, check_content
 from models.UserToCircle import UserToCircle
 from utils.apiUtils import *
-from config.log import logger_set
+from utils.log import logger_set
 
 logger = logger_set(__name__)
 

@@ -2,7 +2,7 @@ from sqlalchemy import event
 from config.database import db
 from config.files import *
 from werkzeug.utils import secure_filename
-from config.log import logger_set
+from utils.log import logger_set
 import os
 
 logger = logger_set(__name__)

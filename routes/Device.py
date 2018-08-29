@@ -6,7 +6,7 @@ from models.Circle import Circle
 from config.database import db
 from utils.apiUtils import *
 from utils.contentChecker import content_checker
-from config.log import logger_set
+from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
 
 logger = logger_set(__name__)

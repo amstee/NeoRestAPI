@@ -8,7 +8,7 @@ from utils.decorators import secured_route, check_content
 from models.UserToCircle import UserToCircle
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
-from config.log import logger_set
+from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
 
 logger = logger_set(__name__)

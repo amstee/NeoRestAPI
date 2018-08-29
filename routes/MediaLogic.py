@@ -12,7 +12,7 @@ from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from utils.security import get_user_from_header, get_device_from_header
 from flask_socketio import emit
-from config.log import logger_set
+from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
 
 logger = logger_set(__name__)
