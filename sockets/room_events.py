@@ -70,10 +70,10 @@ def join_circle_event(content):
                 else:
                     raise Exception("Vous n'appartenez pas a ce cercle")
         logger.info("[%s] [%s] [%s] [%s] [%s] [%s]",
-                    "SOCKET", request.host, "join_conversation", type(content), content, "OK")
+                    "SOCKET", request.host, "join_circle", type(content), content, "OK")
     except Exception as e:
         logger.warning("[%s] [%s] [%s] [%s] [%s] [%s]\n%s",
-                       "SOCKET", request.host, "join_conversation",
+                       "SOCKET", request.host, "join_circle",
                        type(content), content, "ERROR", traceback_format_exc())
         emit('error', str(e), room=sid, namepace='/')
     db.session.close()
@@ -90,10 +90,10 @@ def leave_circle_event(content):
         leave_room('circle_' + str(room))
         socket.emit('success', "Vous avez quitte le cercle")
         logger.info("[%s] [%s] [%s] [%s] [%s] [%s]",
-                    "SOCKET", request.host, "join_conversation", type(content), content, "OK")
+                    "SOCKET", request.host, "leave_circle", type(content), content, "OK")
     except Exception as e:
         logger.warning("[%s] [%s] [%s] [%s] [%s] [%s]\n%s",
-                       "SOCKET", request.host, "join_conversation",
+                       "SOCKET", request.host, "leave_circle",
                        type(content), content, "ERROR", traceback_format_exc())
         emit('error', str(e), room=sid, namepace='/')
     db.session.close()
@@ -110,10 +110,10 @@ def leave_conversation_event(content):
         leave_room('conversation_' + str(room))
         socket.emit('success', "Vous avez quitte la conversation")
         logger.info("[%s] [%s] [%s] [%s] [%s] [%s]",
-                    "SOCKET", request.host, "join_conversation", type(content), content, "OK")
+                    "SOCKET", request.host, "leave_conversation", type(content), content, "OK")
     except Exception as e:
         logger.warning("[%s] [%s] [%s] [%s] [%s] [%s]\n%s",
-                       "SOCKET", request.host, "join_conversation",
+                       "SOCKET", request.host, "leave_conversation",
                        type(content), content, "ERROR", traceback_format_exc())
         emit('error', str(e), room=sid, namepace='/')
     db.session.close()

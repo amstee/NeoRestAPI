@@ -107,9 +107,9 @@ def message_send(content):
                              'message': message.get_simple_json_compliant_content(),
                              'status': 'pending'}, room='conversation_' + str(conv.id), namespace='/')
         logger.info("[%s] [%s] [%s] [%s] [%s] [%s]",
-                    "SOCKET", request.host, "writing", type(content), content, "OK")
+                    "SOCKET", request.host, "message", type(content), content, "OK")
     except Exception as e:
         logger.warning("[%s] [%s] [%s] [%s] [%s] [%s]\n%s",
-                       "SOCKET", request.host, "writing", type(content), content, "ERROR", traceback_format_exc())
+                       "SOCKET", request.host, "message", type(content), content, "ERROR", traceback_format_exc())
         emit('error', str(e), room=sid, namepace='/')
     db.session.close()
