@@ -16,6 +16,7 @@ LOG_DEVICE_FILE = "neo_device.log"
 LOG_MEDIA_FILE = "neo_media.log"
 LOG_MESSAGE_FILE = "neo_message.log"
 LOG_DATABASE_FILE = "neo_database.log"
+LOG_SOCKET_FILE = "neo_socket.log"
 LEVELS = {
     "DEBUG": logging.DEBUG,
     "INFO": logging.INFO,
