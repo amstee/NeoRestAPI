@@ -4,7 +4,7 @@ from utils.decorators import check_content
 from bot.hangout import is_token_valid, link_user_to_hangout, is_user_linked, handle_conversation_payload
 from bot.hangout import send_message_choice
 from sys import stderr
-from config.log import logger_set
+from utils.log import logger_set
 
 logger = logger_set(__name__)
 

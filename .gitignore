@@ -20,3 +20,4 @@ user_files/
 config.json
 .gitlab-ci.yml
 Dockerfile
+logs/

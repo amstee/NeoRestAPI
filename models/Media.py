@@ -2,10 +2,11 @@ from sqlalchemy import event
 from config.database import db
 from config.files import *
 from werkzeug.utils import secure_filename
-from config.log import logger_set
+from utils.log import logger_set
 import os
+from config.log import LOG_DATABASE_FILE
 
-logger = logger_set(__name__)
+logger = logger_set(module=__name__, file=LOG_DATABASE_FILE)
 
 
 class Media(db.Model):

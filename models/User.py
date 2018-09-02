@@ -1,12 +1,13 @@
 from config.database import db
 from dateutil import parser as DateParser
-from config.log import logger_set
+from utils.log import logger_set
 import hashlib
 import jwt
 import datetime
+from config.log import LOG_DATABASE_FILE
 
+logger = logger_set(module=__name__, file=LOG_DATABASE_FILE)
 SECRET_KEY = ""
-logger = logger_set(__name__)
 
 
 class User(db.Model):

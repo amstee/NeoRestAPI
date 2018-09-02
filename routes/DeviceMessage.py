@@ -12,10 +12,11 @@ from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from bot.facebook import messenger_conversation_model_send
 from flask_socketio import emit
-from config.log import logger_set
+from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
+from config.log import LOG_DEVICE_FILE
 
-logger = logger_set(__name__)
+logger = logger_set(module=__name__, file=LOG_DEVICE_FILE)
 
 
 class DeviceMessageCreate(Resource):

@@ -5,10 +5,11 @@ from models.User import User as UserModel
 from utils.decorators import secured_route, check_content, secured_admin_route
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
-from config.log import logger_set
+from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
+from config.log import LOG_ACCOUNT_FILE
 
-logger = logger_set(__name__)
+logger = logger_set(module=__name__, file=LOG_ACCOUNT_FILE)
 
 
 class AccountCreate(Resource):

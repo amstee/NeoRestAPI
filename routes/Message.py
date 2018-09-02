@@ -11,10 +11,11 @@ from utils.apiUtils import *
 from utils.security import user_has_access_to_message, user_is_owner_of_message
 from bot.facebook import messenger_conversation_model_send
 from flask_socketio import emit
-from config.log import logger_set
+from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
+from config.log import LOG_MESSAGE_FILE
 
-logger = logger_set(__name__)
+logger = logger_set(module=__name__, file=LOG_MESSAGE_FILE)
 
 
 class MessageCreate(Resource):

@@ -6,10 +6,11 @@ from models.Circle import Circle
 from config.database import db
 from utils.apiUtils import *
 from utils.contentChecker import content_checker
-from config.log import logger_set
+from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
+from config.log import LOG_DEVICE_FILE
 
-logger = logger_set(__name__)
+logger = logger_set(module=__name__, file=LOG_DEVICE_FILE)
 
 
 class DeviceAdd(Resource):

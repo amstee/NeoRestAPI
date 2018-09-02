@@ -7,10 +7,11 @@ from models.UserToConversation import UserToConversation
 from utils.decorators import secured_route, check_content, secured_admin_route
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
-from config.log import logger_set
+from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
+from config.log import LOG_CONVERSATION_FILE
 
-logger = logger_set(__name__)
+logger = logger_set(module=__name__, file=LOG_CONVERSATION_FILE)
 
 
 class ConversationCreate(Resource):
