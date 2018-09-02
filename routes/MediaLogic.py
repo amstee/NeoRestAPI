@@ -19,6 +19,64 @@ from config.log import LOG_MEDIA_FILE
 logger = logger_set(module=__name__, file=LOG_MEDIA_FILE)
 
 
+class DeleteMedia(Resource):
+    @check_content
+    @secured_route
+    def post(self, content, user):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
+        try:
+            content_checker("media_id")
+            media = db.session.query(Media).filter(Media.id == content["media_id"]).first()
+            if media is None:
+                resp = FAILED("Media introuvable")
+                logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                            request.method, request.host, request.path,
+                            request.content_type, request.data, resp.status_code)
+                return resp
+            if media.can_be_uploaded_by_user(user):
+                db.session.delete(media)
+                db.session.commit()
+                resp = SUCCESS()
+            else:
+                resp = FAILED("Vous n'avez pas les droits necessaires")
+        except Exception as e:
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
+
+
+class DeviceDeleteMedia(Resource):
+    @check_content
+    @secured_route
+    def post(self, content, device):
+        logger.info("[%s] [%s] [%s] [%s] [%s]",
+                    request.method, request.host, request.path, request.content_type, request.data)
+        try:
+            content_checker("media_id")
+            media = db.session.query(Media).filter(Media.id == content["media_id"]).first()
+            if media is None:
+                resp = FAILED("Media introuvable")
+                logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                            request.method, request.host, request.path,
+                            request.content_type, request.data, resp.status_code)
+                return resp
+            if media.can_be_uploaded_by_device(device):
+                db.session.delete(media)
+                db.session.commit()
+                resp = SUCCESS()
+            else:
+                resp = FAILED("Vous n'avez pas les droits necessaires")
+        except Exception as e:
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp
+
+
 class CreateMedia(Resource):
     @check_content
     @secured_route

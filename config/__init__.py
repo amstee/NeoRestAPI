@@ -108,6 +108,8 @@ class NeoAPI(object):
         self.api.add_resource(MediaLogicManager.DeviceUploadMedia, '/device/media/upload/<media_id>')
         self.api.add_resource(MediaLogicManager.MediaRequest, '/media/retrieve')
         self.api.add_resource(MediaLogicManager.DeviceMediaRequest, '/device/media/retrieve')
+        self.api.add_resource(MediaLogicManager.DeleteMedia, '/media/delete')
+        self.api.add_resource(MediaLogicManager.DeviceDeleteMedia, '/device/media/delete')
         # BASIC MEDIA ROUTES
         self.api.add_resource(MediaManager.MediaDelete, '/admin/media/delete')
         self.api.add_resource(MediaManager.MediaInfo, '/media/info')

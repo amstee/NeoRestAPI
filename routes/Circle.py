@@ -44,9 +44,9 @@ class CircleDelete(Resource):
             content_checker("circle_id")
             circle = db.session.query(Circle).filter_by(id=content["circle_id"]).first()
             if circle is not None:
+                circle.notify_users(p1='circle', p2={'event': 'delete'})
                 db.session.delete(circle)
                 db.session.commit()
-                circle.notify_users(p1='circle', p2={'event': 'delete'})
                 resp = SUCCESS()
             else:
                 resp = FAILED("Le cercle est introuvable")
