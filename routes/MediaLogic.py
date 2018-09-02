@@ -125,7 +125,7 @@ class DeviceFindMedia(Resource):
             else:
                 medias = db.session.query(DeviceToMedia).filter(DeviceToMedia.device_id == device.id,
                                                                 DeviceToMedia.purpose == content["purpose"]).all()
-            resp = jsonify({"success": True, "medias": [media.get_content() for media in medias]})
+            resp = jsonify({"success": True, "media_list": [media.get_simple_content() for media in medias]})
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
@@ -152,7 +152,7 @@ class FindMedia(Resource):
             else:
                 medias = db.session.query(UserToMedia).filter(UserToMedia.user_id == user.id,
                                                               UserToMedia.purpose == content["purpose"]).all()
-            resp = jsonify({"success": True, "medias": [media.get_content() for media in medias]})
+            resp = jsonify({"success": True, "media_list": [media.get_simple_content() for media in medias]})
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, resp.status_code)
