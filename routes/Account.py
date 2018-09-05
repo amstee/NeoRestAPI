@@ -2,8 +2,9 @@ from flask import request
 from flask_restful import Resource
 from config.database import db
 from models.User import User as UserModel
-from utils.decorators import secured_route, check_content, secured_admin_route
+from utils.decorators import secured_route, check_content, secured_admin_route, secured_from_header
 from utils.contentChecker import content_checker
+from utils.security import get_any_from_header
 from utils.apiUtils import *
 from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
@@ -78,7 +79,7 @@ class AccountLogin(Resource):
 
 class ModifyPassword(Resource):
     @check_content
-    def post(self, content):
+    def put(self, content):
         try:
             content_checker("email", "previous_password", "new_password")
             email = content["email"]
@@ -158,8 +159,8 @@ class AccountLogout(Resource):
 
 
 class AccountInfo(Resource):
-    @secured_route
-    def post(self, user):
+    @staticmethod
+    def execute(user):
         try:
             resp = jsonify({"success": True, "content": user.get_content()})
             resp.status_code = 200
@@ -173,16 +174,23 @@ class AccountInfo(Resource):
                            request.content_type, request.data, resp.status_code, traceback_format_exc())
         return resp
 
-
-class DeviceAccountInfo(Resource):
-    @check_content
     @secured_route
-    def post(self, content, device):
+    def post(self, user):
+        return AccountInfo.execute(user)
+
+    @secured_from_header
+    def get(self, user):
+        return AccountInfo.execute(user)
+
+
+class UserInfo(Resource):
+    @staticmethod
+    def execute(user_id, client, is_device):
         try:
-            user = db.session.query(UserModel).filter(UserModel.id == content["user_id"]).first()
+            user = db.session.query(UserModel).filter(UserModel.id == user_id).first()
             if user is None:
                 resp = FAILED("Utilisateur introuvable")
-            elif device.circle.has_member(user):
+            elif is_device and not client.circle.has_member(user):
                 resp = FAILED("Vous ne pouvez pas voir cet utilisateur")
             else:
                 resp = jsonify({"success": True, "content": user.get_content()})
@@ -196,11 +204,22 @@ class DeviceAccountInfo(Resource):
                            request.content_type, request.data, resp.status_code, traceback_format_exc())
         return resp
 
+    @check_content
+    @secured_route
+    def post(self, content, device):
+        return UserInfo.execute(content["user_id"], device, True)
+
+
+class GetUserInfo(Resource):
+    def get(self, user_id):
+        client, is_device = get_any_from_header(request)
+        return UserInfo.execute(user_id, client, is_device)
+
 
 class AccountModify(Resource):
     @check_content
     @secured_route
-    def post(self, content, user):
+    def put(self, content, user):
         try:
             email = None if 'email' not in content else content['email']
             first_name = None if 'first_name' not in content else content['first_name']
@@ -224,11 +243,10 @@ class AccountModify(Resource):
 
 
 class MailAvailability(Resource):
-    @check_content
-    def post(self, content):
+    @staticmethod
+    def execute(email):
         try:
-            content_checker("email")
-            user = db.session.query(UserModel).filter(UserModel.email == content['email']).first()
+            user = db.session.query(UserModel).filter(UserModel.email == email).first()
             if user is not None:
                 resp = jsonify({"success": False})
             else:
@@ -243,6 +261,16 @@ class MailAvailability(Resource):
                            request.method, request.host, request.path,
                            request.content_type, request.data, resp.status_code, traceback_format_exc())
         return resp
+
+    @check_content
+    def post(self, content):
+        content_checker("email")
+        return MailAvailability.execute(content["email"])
+
+
+class GetMailAvailability(Resource):
+    def get(self, email):
+        return MailAvailability.execute(email)
 
 
 class PromoteAdmin(Resource):

@@ -2,6 +2,15 @@ from config.database import db
 from models.User import User
 from models.Device import Device
 from models.UserToConversation import UserToConversation
+from .exceptions import InvalidAuthentication
+
+
+def get_any_from_header(request):
+    try:
+        user = get_user_from_header(request)
+        return user, False
+    except InvalidAuthentication:
+        return get_device_from_header(request), True
 
 
 def get_user_from_header(request):
@@ -11,7 +20,7 @@ def get_user_from_header(request):
     res, data = User.decode_auth_token(token)
     if res is True:
         return data
-    raise Exception(data)
+    raise InvalidAuthentication(data)
 
 
 def get_device_from_header(request):
@@ -21,7 +30,7 @@ def get_device_from_header(request):
     res, data = Device.decode_auth_token(token)
     if res is True:
         return data
-    raise Exception(data)
+    raise InvalidAuthentication(data)
 
 
 def user_has_access_to_message(message, user):

@@ -14,6 +14,7 @@ import routes.Payment as PaymentManager
 import routes.Message as BasicMessageManager
 import routes.MessageLogic as MessageLogicManager
 import routes.Media as MediaManager
+import routes.Cookies as CookieManager
 import routes.MediaLogic as MediaLogicManager
 import routes.DeviceMessage as DeviceMessageManager
 import routes.ConversationLogic as ConversationLogicManager
@@ -35,8 +36,11 @@ class NeoAPI(object):
         self.app.config['SQLALCHEMY_DATABASE_URI'] = URI_USED
         self.app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
         self.app.config['SECRET_KEY'] = config.neo_secret
-        self.app.config['SESSION_TYPE'] = "redis"
-        self.app.config['SESSION_REDIS'] = redis.from_url(config.redis_url)
+        if config.use_redis:
+            self.app.config['SESSION_TYPE'] = "redis"
+            self.app.config['SESSION_REDIS'] = redis.from_url(config.redis_url)
+        else:
+            self.app.config["SESSION_TYPE"] = "null"
         from sockets import sockets as socket_blueprint
         self.app.register_blueprint(socket_blueprint)
 
@@ -53,17 +57,21 @@ class NeoAPI(object):
         self.api.add_resource(AccountManager.AccountLogout, '/account/logout')
         self.api.add_resource(AccountManager.AccountInfo, '/account/info')
         self.api.add_resource(AccountManager.AccountModify, '/account/modify')
-        self.api.add_resource(AccountManager.MailAvailability, '/account/create/available')
+        self.api.add_resource(AccountManager.MailAvailability, '/email/available')
         self.api.add_resource(AccountManager.ModifyPassword, '/account/modify/password')
         self.api.add_resource(AccountManager.CheckToken, '/token/verify')
         self.api.add_resource(AccountManager.PromoteAdmin, '/admin/account/promote')
-        self.api.add_resource(AccountManager.DeviceAccountInfo, '/device/account/info')
+        self.api.add_resource(AccountManager.UserInfo, '/device/account/info')
+        self.api.add_resource(AccountManager.GetUserInfo, '/user/info/<user_id>')
+        self.api.add_resource(AccountManager.GetMailAvailability, '/email/available/<email>')
         # CIRCLE LOGIC ROUTES
         self.api.add_resource(CircleLogicManager.CircleInvite, '/circle/invite')
         self.api.add_resource(CircleLogicManager.CircleJoin, '/circle/join')
         self.api.add_resource(CircleLogicManager.CircleReject, '/circle/reject')
         self.api.add_resource(CircleLogicManager.CircleQuit, '/circle/quit')
         self.api.add_resource(CircleLogicManager.CircleKick, '/circle/kick')
+        # Cookies
+        self.api.add_resource(CookieManager.SetCookies, "/cookies/set/token")
         # CIRCLE BASIC ROUTES
         self.api.add_resource(CircleManager.CircleCreate, '/circle/create')
         self.api.add_resource(CircleManager.CircleUpdate, '/circle/update')

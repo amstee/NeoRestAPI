@@ -30,6 +30,7 @@ class ConfigLoader:
     beta_user2_password = ""
 
     # Redis
+    use_redis = False
     redis_url = ""
 
     # Project postgresql config
@@ -76,7 +77,9 @@ class ConfigLoader:
                     self.user_secret = data["secrets"]["userJWT"]
                     self.device_secret = data["secrets"]["deviceJWT"]
                 if "redis" in data:
-                    self.redis_url = data["redis"]["url"]
+                    self.use_redis = data["redis"]["use"]
+                    if self.use_redis:
+                        self.redis_url = data["redis"]["url"]
                 if "database" in data:
                     if "postgresql" in data["database"]:
                         self.postgresql_user = data["database"]["postgresql"]["user"]
