@@ -145,7 +145,7 @@ class TestDeviceMediaCreate(unittest.TestCase):
                 }
             ],
         }
-        response = self.api.post('/device/media/create', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/media/create', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success'] is True
@@ -158,7 +158,7 @@ class TestDeviceMediaCreate(unittest.TestCase):
             'file': (io.BytesIO(b"user1 sent a file 225"), 'test_file.txt')
         }
         mid = response_json['media_list'][0]['id']
-        response = self.api.post('/device/media/upload/' + str(response_json['media_list'][0]['id']), data=data,
+        response = self.api.post('/media/upload/' + str(response_json['media_list'][0]['id']), data=data,
                                  headers=headers)
         response_json = json.loads(response.data)
         assert response_json["success"] is True
@@ -167,7 +167,7 @@ class TestDeviceMediaCreate(unittest.TestCase):
             "device_token": self.tokenDevice,
             "media_id": mid
         }
-        response = self.api.post('/device/media/retrieve', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/media/retrieve', data=json.dumps(json_data), content_type='application/json')
         assert response.data == b"user1 sent a file 225"
 
     def tearDown(self):
@@ -282,7 +282,6 @@ class TestDeviceMediaRequest(unittest.TestCase):
         }
         response = self.api.post('/device/message/send', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
-        print(response_json)
         assert response.status_code == 200
         assert response_json['success'] is True
         assert len(response_json['media_list']) == 1
@@ -294,7 +293,7 @@ class TestDeviceMediaRequest(unittest.TestCase):
             'file': (io.BytesIO(b"device sent a file"), 'test_file.txt')
         }
         media_id = response_json['media_list'][0]['id']
-        response = self.api.post('/device/media/upload/' + str(response_json['media_list'][0]['id']),
+        response = self.api.post('/media/upload/' + str(response_json['media_list'][0]['id']),
                                  data=data, headers=headers)
         response_json = json.loads(response.data)
         assert response_json["success"] is True
@@ -303,7 +302,7 @@ class TestDeviceMediaRequest(unittest.TestCase):
             "device_token": self.tokenDevice,
             "media_id": media_id
         }
-        response = self.api.post('/device/media/retrieve', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/media/retrieve', data=json.dumps(json_data), content_type='application/json')
         assert response.data == b"device sent a file"
 
     def tearDown(self):
@@ -420,7 +419,7 @@ class TestDeviceMediaUpload(unittest.TestCase):
         data = {
             'file': (io.BytesIO(b"device sent a file"), 'test_file.txt')
         }
-        response = self.api.post('/device/media/upload/' + str(response_json['media_list'][0]['id']),
+        response = self.api.post('/media/upload/' + str(response_json['media_list'][0]['id']),
                                  data=data, headers=headers)
         response_json = json.loads(response.data)
         assert response_json["success"] is True
@@ -444,7 +443,7 @@ class TestDeviceMediaUpload(unittest.TestCase):
         data = {
             'file': (io.BytesIO(b"device sent a file 2"), 'test_file.txt')
         }
-        response = self.api.post('/device/media/upload/' + "999", data=data, headers=headers)
+        response = self.api.post('/media/upload/' + "999", data=data, headers=headers)
         response_json = json.loads(response.data)
         assert response_json["success"] is False
 

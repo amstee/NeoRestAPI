@@ -155,7 +155,7 @@ class TestMediaDelete(unittest.TestCase):
             'media_id': self.media.id,
         }
         data = self.media.id
-        response = self.api.post('/admin/media/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.delete('/admin/media/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success'] is True
@@ -197,7 +197,7 @@ class TestMediaList(unittest.TestCase):
             'token': self.token1,
             'message_id': self.message.id
         }
-        response = self.api.post('/media/list', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/message/media/list', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success']
@@ -207,7 +207,7 @@ class TestMediaList(unittest.TestCase):
             'token': self.token2,
             'message_id': self.message.id
         }
-        response = self.api.post('/media/list', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/message/media/list', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert response_json['success'] is False
@@ -250,7 +250,7 @@ class TestMediaUpdate(unittest.TestCase):
             'media_id': self.media.id,
             'identifier': 't'
         }
-        response = self.api.post('/admin/media/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.put('/admin/media/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success']
@@ -262,7 +262,7 @@ class TestMediaUpdate(unittest.TestCase):
             'media_id': self.media.id,
             'identifier': 't'
         }
-        response = self.api.post('/admin/media/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.put('/admin/media/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -307,7 +307,7 @@ class TestDeviceMediaList(unittest.TestCase):
             'device_token': self.tokenDevice,
             'message_id': self.message.id
         }
-        response = self.api.post('/device/media/list', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/message/media/list', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success']
@@ -317,7 +317,7 @@ class TestDeviceMediaList(unittest.TestCase):
             'device_token': self.token1,
             'message_id': self.message.id
         }
-        response = self.api.post('/device/media/list', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/message/media/list', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert response_json['success'] is False
@@ -362,7 +362,7 @@ class TestDeviceMediaInfo(unittest.TestCase):
             'device_token': self.tokenDevice,
             'media_id': self.media.id
         }
-        response = self.api.post('/device/media/info', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/media/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success'] is True
@@ -372,7 +372,7 @@ class TestDeviceMediaInfo(unittest.TestCase):
             'device_token': self.token1,
             'media_id': self.media.id
         }
-        response = self.api.post('/device/media/info', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/media/info', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert response_json['success'] is False

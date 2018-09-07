@@ -25,7 +25,6 @@ def run_all():
           "test/rest_basic/test_conversation.py",
           "test/rest_basic/test_conversation_logic.py",
           "test/rest_basic/test_device.py",
-          "test/rest_basic/test_device_message.py",
           "test/rest_basic/test_device_message_logic.py",
           "test/rest_basic/test_media.py",
           "test/rest_basic/test_media_logic.py",

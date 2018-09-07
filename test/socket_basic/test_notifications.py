@@ -162,7 +162,7 @@ class SocketioConversation(unittest.TestCase):
             "token": self.token1,
             "conversation_id": self.conversation_id
         }
-        response = self.api.post('/conversation/device/add', data=json.dumps(json_data),
+        response = self.api.put('/conversation/device/set', data=json.dumps(json_data),
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response_json['success'] is True
@@ -170,7 +170,7 @@ class SocketioConversation(unittest.TestCase):
         res2 = self.deviceClient.get_received()
         assert len(res1) == 1
         assert len(res2) == 1
-        response = self.api.post('/conversation/device/remove', data=json.dumps(json_data),
+        response = self.api.put('/conversation/device/set', data=json.dumps(json_data),
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response_json['success'] is True

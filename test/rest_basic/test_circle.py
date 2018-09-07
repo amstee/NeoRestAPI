@@ -82,7 +82,7 @@ class TestCircleDelete(unittest.TestCase):
             "token": self.tokenAdmin,
             "circle_id": self.circle.id
         }
-        response = self.api.post('/admin/circle/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.delete('/admin/circle/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success']
@@ -94,7 +94,7 @@ class TestCircleDelete(unittest.TestCase):
             "token": self.token2,
             "circle_id": self.circle.id
         }
-        response = self.api.post('/admin/circle/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.delete('/admin/circle/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
         assert not response_json['success']
@@ -103,7 +103,7 @@ class TestCircleDelete(unittest.TestCase):
         json_data = {
             "token": self.tokenAdmin
         }
-        response = self.api.post('/admin/circle/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.delete('/admin/circle/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -113,7 +113,7 @@ class TestCircleDelete(unittest.TestCase):
             "token": self.tokenAdmin,
             "circle_id": 20000000
         }
-        response = self.api.post('/admin/circle/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.delete('/admin/circle/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -151,7 +151,7 @@ class TestCircleUpdate(unittest.TestCase):
             "circle_id": self.circle.id,
             "name": "UPDATED"
         }
-        response = self.api.post('/circle/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.put('/circle/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success']
@@ -162,7 +162,7 @@ class TestCircleUpdate(unittest.TestCase):
             "token": self.token1,
             "circle_id": self.circle.id,
         }
-        response = self.api.post('/circle/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.put('/circle/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success']
@@ -172,7 +172,7 @@ class TestCircleUpdate(unittest.TestCase):
         json_data = {
             "token": self.token1,
         }
-        response = self.api.post('/circle/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.put('/circle/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -183,7 +183,7 @@ class TestCircleUpdate(unittest.TestCase):
             "circle_id": self.circle.id,
             "name": "UPDATED"
         }
-        response = self.api.post('/circle/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.put('/circle/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
         assert not response_json['success']

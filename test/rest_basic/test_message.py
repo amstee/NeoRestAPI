@@ -14,85 +14,6 @@ from gevent import monkey
 monkey.patch_all()
 
 
-class TestMessageCreate(unittest.TestCase):
-    def setUp(self):
-        neo_config.load_config()
-        neo_config.set_project_variables()
-        neo = NeoAPI(neo_config)
-        self.api = neo.activate_testing()
-        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
-        if self.user1 is None:
-            self.user1 = UserModel(email="testmessage@test.com", password="test", first_name="firstname",
-                                   last_name="lastname", birthday="1995-12-12")
-        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
-        if self.user2 is None:
-            self.user2 = UserModel(email="testmessage2@test.com", password="test", first_name="firstname",
-                                   last_name="lastname", birthday="1111-11-11")
-        self.circle = Circle(name="TestMessageCreate")
-        self.linkCircle = UserToCircle(user=self.user1, circle=self.circle)
-        self.linkCircle2 = UserToCircle(user=self.user2, circle=self.circle)
-        self.conversation = Conversation(circle=self.circle, name="TestMessageCreate")
-        self.linkConversation = UserToConversation(user=self.user1, conversation=self.conversation, privilege="ADMIN")
-        self.linkConversation2 = UserToConversation(user=self.user2, conversation=self.conversation)
-        db.session.commit()
-        self.token1 = authenticate_user(self.api, self.user1, "test")
-        self.token2 = authenticate_user(self.api, self.user2, "test")
-        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
-
-    def test_valid_message(self):
-        json_data = {
-            "token": self.tokenAdmin,
-            "files": [],
-            "link_id": self.linkConversation.id,
-            "text": "Default Test Message",
-            "directory_name": "Tests"
-        }
-        response = self.api.post('/admin/message/create', data=json.dumps(json_data), content_type='application/json')
-        response_json = json.loads(response.data)
-        assert response.status_code == 200
-        assert response_json['success']
-        assert len(self.linkConversation.messages) == 1
-        assert len(self.conversation.messages) == 1
-
-    def test_invalid_link(self):
-        json_data = {
-            "token": self.tokenAdmin,
-            "files": [],
-            "link_id": 200000,
-            "text": "Default Test Message",
-            "directory_name": "Tests"
-        }
-        response = self.api.post('/admin/message/create', data=json.dumps(json_data), content_type='application/json')
-        response_json = json.loads(response.data)
-        assert response.status_code != 200
-        assert not response_json['success']
-
-    def test_invalid_user(self):
-        json_data = {
-            "token": self.token1,
-            "files": [],
-            "link_id": self.linkConversation.id,
-            "text": "Default Test Message",
-            "directory_name": "Tests"
-        }
-        response = self.api.post('/admin/message/create', data=json.dumps(json_data), content_type='application/json')
-        response_json = json.loads(response.data)
-        assert response.status_code != 200
-        assert not response_json['success']
-
-    def test_missing_parameter(self):
-        json_data = {
-            "token": self.token1,
-            "files": [],
-            "text": "Default Test Message",
-            "directory_name": "Tests"
-        }
-        response = self.api.post('/admin/message/create', data=json.dumps(json_data), content_type='application/json')
-        response_json = json.loads(response.data)
-        assert response.status_code != 200
-        assert not response_json['success']
-
-
 class TestMessageDelete(unittest.TestCase):
     def setUp(self):
         neo_config.load_config()
@@ -129,7 +50,7 @@ class TestMessageDelete(unittest.TestCase):
             "token": self.token1,
             "message_id": self.message2.id
         }
-        response = self.api.post('/message/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.delete('/message/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success']
@@ -142,7 +63,7 @@ class TestMessageDelete(unittest.TestCase):
             "token": self.token2,
             "message_id": self.message2.id
         }
-        response = self.api.post('/message/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.delete('/message/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
         assert not response_json['success']
@@ -151,7 +72,7 @@ class TestMessageDelete(unittest.TestCase):
         json_data = {
             "token": self.token1
         }
-        response = self.api.post('/message/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.delete('/message/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -161,7 +82,7 @@ class TestMessageDelete(unittest.TestCase):
             "token": self.token1,
             "message_id": 200000
         }
-        response = self.api.post('/message/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.delete('/message/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']

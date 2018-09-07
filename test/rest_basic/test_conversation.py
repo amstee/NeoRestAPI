@@ -132,7 +132,7 @@ class TestConversationDelete(unittest.TestCase):
             "conversation_id": self.conv.id,
             "token": self.tokenAdmin
         }
-        response = self.api.post('/admin/conversation/delete', data=json.dumps(json_data),
+        response = self.api.delete('/admin/conversation/delete', data=json.dumps(json_data),
                                  content_type='application/json')
         response_json = json.loads(response.data)
         c = db.session.query(Conversation).filter(Conversation.id == conv_id).first()
@@ -144,7 +144,7 @@ class TestConversationDelete(unittest.TestCase):
         json_data = {
             "token": self.tokenAdmin
         }
-        response = self.api.post('/admin/conversation/delete', data=json.dumps(json_data),
+        response = self.api.delete('/admin/conversation/delete', data=json.dumps(json_data),
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
@@ -155,7 +155,7 @@ class TestConversationDelete(unittest.TestCase):
             "conversation_id": self.conv.id,
             "token": self.token1
         }
-        response = self.api.post('/admin/conversation/delete', data=json.dumps(json_data),
+        response = self.api.delete('/admin/conversation/delete', data=json.dumps(json_data),
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
@@ -166,7 +166,7 @@ class TestConversationDelete(unittest.TestCase):
             "conversation_id": 2000000,
             "token": self.tokenAdmin
         }
-        response = self.api.post('/admin/conversation/delete', data=json.dumps(json_data),
+        response = self.api.delete('/admin/conversation/delete', data=json.dumps(json_data),
                                  content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
@@ -392,19 +392,6 @@ class TestConversationList(unittest.TestCase):
         assert not response_json['success']
 
 
-class TestConversationDeviceList(unittest.TestCase):
-    def setUp(self):
-        neo_config.load_config()
-        neo_config.set_project_variables()
-        neo = NeoAPI(neo_config)
-        self.api = neo.activate_testing()
-        db.session.query(UserModel).delete()
-        db.session.commit()
-
-    def test_valid_list(self):
-        pass
-
-
 class TestConversationUpdate(unittest.TestCase):
     def setUp(self):
         neo_config.load_config()
@@ -455,7 +442,7 @@ class TestConversationUpdate(unittest.TestCase):
             "device_access": True,
             "token": self.token1
         }
-        response = self.api.post('/conversation/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.put('/conversation/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success']
@@ -468,7 +455,7 @@ class TestConversationUpdate(unittest.TestCase):
             "conversation_name": "UPDATEDCONV",
             "token": self.token2
         }
-        response = self.api.post('/conversation/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.put('/conversation/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
         assert not response_json['success']
@@ -479,7 +466,7 @@ class TestConversationUpdate(unittest.TestCase):
             "conversation_name": "UPDATEDCONV",
             "token": self.tokenAdmin
         }
-        response = self.api.post('/conversation/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.put('/conversation/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
         assert not response_json['success']
@@ -488,7 +475,7 @@ class TestConversationUpdate(unittest.TestCase):
         json_data = {
             "token": self.token2
         }
-        response = self.api.post('/conversation/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.put('/conversation/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
