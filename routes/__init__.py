@@ -46,6 +46,7 @@ class ResourceManager:
         api.add_resource(circle_handlers.CircleInfo, '/circle/info')
         api.add_resource(circle_handlers.GetCircleInfo, '/circle/info/<circle_id>')
         api.add_resource(circle_handlers.CircleList, '/circle/list')
+        api.add_resource(circle_handlers.GetCircleList, '/user/circle/list')
 
     @staticmethod
     def add_cookies_resources(api):
@@ -101,10 +102,10 @@ class ResourceManager:
     @staticmethod
     def add_media_resources(api):
         api.add_resource(media_handlers.MediaDelete, '/admin/media/delete')
-        api.add_resource(media_handlers.MediaInfo, '/media/info')
-        api.add_resource(media_handlers.GetMediaInfo, '/media/info/<media_id>')
         api.add_resource(media_handlers.MediaInfoAdmin, '/admin/media/info')
         api.add_resource(media_handlers.MediaUpdate, '/admin/media/update')
+        api.add_resource(media_handlers.MediaInfo, '/media/info')
+        api.add_resource(media_handlers.GetMediaInfo, '/media/info/<media_id>')
         api.add_resource(media_handlers.MediaList, '/message/media/list')
         api.add_resource(media_handlers.GetMediaList, '/message/media/list/<message_id>')
 

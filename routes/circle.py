@@ -1,7 +1,7 @@
 from flask_restful import Resource
 from flask import request
 from utils.decorators import secured_route, check_content, check_admin_route, secured_user_route
-from utils.security import get_any_from_header
+from utils.security import get_any_from_header, get_user_from_header
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from utils.exceptions import ContentNotFound, InvalidAuthentication
@@ -64,3 +64,12 @@ class CircleList(Resource):
     @secured_user_route
     def post(self, user):
         return core.get_list(user)
+
+
+class GetCircleList(Resource):
+    def get(self):
+        try:
+            user = get_user_from_header(request)
+            return core.get_list(user)
+        except InvalidAuthentication as ie:
+            return FAILED(ie)
