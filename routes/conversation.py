@@ -22,7 +22,7 @@ class ConversationCreate(Resource):
 class ConversationDelete(Resource):
     @check_content
     @check_admin_route
-    def delete(self, content):
+    def post(self, content):
         try:
             content_checker("conversation_id")
             return core.admin_delete(content["conversation_id"])
@@ -73,7 +73,7 @@ class GetConversationList(Resource):
 class ConversationUpdate(Resource):
     @check_content
     @secured_route
-    def put(self, content, client, is_device):
+    def post(self, content, client, is_device):
         try:
             content_checker("conversation_id")
             return core.update(content, content["conversation_id"], client, is_device)

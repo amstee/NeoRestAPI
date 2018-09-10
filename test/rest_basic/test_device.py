@@ -41,7 +41,7 @@ class TestDeviceAdd(unittest.TestCase):
             "circle_id": self.circle.id,
             "name": "Papie"
         }
-        response = self.api.post('/admin/device/add', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/device/create', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success']
@@ -53,7 +53,7 @@ class TestDeviceAdd(unittest.TestCase):
             "circle_id": self.circle.id,
             "name": "Papie"
         }
-        response = self.api.post('/admin/device/add', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/device/create', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -63,7 +63,7 @@ class TestDeviceAdd(unittest.TestCase):
             "token": self.tokenAdmin,
             "name": "Papie"
         }
-        response = self.api.post('/admin/device/add', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/device/create', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -99,7 +99,7 @@ class TestDeviceUpdate(unittest.TestCase):
             "device_id": self.device.id,
             "name": "1"
         }
-        response = self.api.put('/device/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/device/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success']
@@ -111,7 +111,7 @@ class TestDeviceUpdate(unittest.TestCase):
             "device_id": 20000,
             "name": "1"
         }
-        response = self.api.put('/device/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/device/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -121,7 +121,7 @@ class TestDeviceUpdate(unittest.TestCase):
             "token": self.token1,
             "name": "1"
         }
-        response = self.api.put('/device/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/device/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -132,7 +132,7 @@ class TestDeviceUpdate(unittest.TestCase):
             "device_id": self.device.id,
             "name": "1"
         }
-        response = self.api.put('/device/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/device/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
         assert not response_json['success']
@@ -232,7 +232,7 @@ class TestDeviceDelete(unittest.TestCase):
             "token": self.tokenAdmin,
             "device_id": self.device.id,
         }
-        response = self.api.delete('/admin/device/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/device/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success']
@@ -244,7 +244,7 @@ class TestDeviceDelete(unittest.TestCase):
             "token": self.token1,
             "device_id": self.device.id,
         }
-        response = self.api.delete('/admin/device/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/device/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -253,7 +253,7 @@ class TestDeviceDelete(unittest.TestCase):
         json_data = {
             "token": self.tokenAdmin,
         }
-        response = self.api.delete('/admin/device/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/device/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -263,7 +263,7 @@ class TestDeviceDelete(unittest.TestCase):
             "token": self.tokenAdmin,
             "device_id": 200000,
         }
-        response = self.api.delete('/admin/device/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/device/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -438,7 +438,7 @@ class TestModifyDevicePassword(unittest.TestCase):
             "previous_password": self.device_password,
             "new_password": "test"
         }
-        response = self.api.put('/device/modify/password', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/device/modify/password', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success']
@@ -448,7 +448,7 @@ class TestModifyDevicePassword(unittest.TestCase):
             "device_username": self.device.username,
             "new_password": "test"
         }
-        response = self.api.put('/device/modify/password', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/device/modify/password', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -459,7 +459,7 @@ class TestModifyDevicePassword(unittest.TestCase):
             "previous_password": "mdr",
             "new_password": "test"
         }
-        response = self.api.put('/device/modify/password', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/device/modify/password', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -470,7 +470,7 @@ class TestModifyDevicePassword(unittest.TestCase):
             "previous_password": self.device_password,
             "new_password": "test"
         }
-        response = self.api.put('/device/modify/password', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/device/modify/password', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']

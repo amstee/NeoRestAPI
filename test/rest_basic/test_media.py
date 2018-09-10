@@ -155,7 +155,7 @@ class TestMediaDelete(unittest.TestCase):
             'media_id': self.media.id,
         }
         data = self.media.id
-        response = self.api.delete('/admin/media/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/media/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success'] is True
@@ -250,7 +250,7 @@ class TestMediaUpdate(unittest.TestCase):
             'media_id': self.media.id,
             'identifier': 't'
         }
-        response = self.api.put('/admin/media/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/media/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success']
@@ -262,7 +262,7 @@ class TestMediaUpdate(unittest.TestCase):
             'media_id': self.media.id,
             'identifier': 't'
         }
-        response = self.api.put('/admin/media/update', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/admin/media/update', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']

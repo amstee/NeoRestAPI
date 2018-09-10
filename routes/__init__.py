@@ -121,14 +121,14 @@ class ResourceManager:
 
     @staticmethod
     def add_device_routes(api):
-        api.add_resource(device_handlers.DeviceAdd, '/admin/device/add')
+        api.add_resource(device_handlers.DeviceAdd, '/admin/device/create')
         api.add_resource(device_handlers.DeviceDelete, '/admin/device/delete')
         api.add_resource(device_handlers.DeviceActivate, '/admin/device/activate')
+        api.add_resource(device_handlers.DeviceCredentials, '/admin/device/credentials')
         api.add_resource(device_handlers.DeviceUpdate, '/device/update')
         api.add_resource(device_handlers.DeviceInfo, '/device/info')
         api.add_resource(device_handlers.GetDeviceInfo, '/device/info/<device_id>')
         api.add_resource(device_handlers.DeviceLogin, '/device/authenticate')
-        api.add_resource(device_handlers.DeviceCredentials, '/admin/device/credentials')
         api.add_resource(device_handlers.DeviceLogout, '/device/logout')
         api.add_resource(device_handlers.UsernameAvailability, '/device/username/available')
         api.add_resource(device_handlers.GetUsernameAvailability, '/device/username/available/<username>')

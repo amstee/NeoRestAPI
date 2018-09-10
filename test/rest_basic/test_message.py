@@ -50,7 +50,7 @@ class TestMessageDelete(unittest.TestCase):
             "token": self.token1,
             "message_id": self.message2.id
         }
-        response = self.api.delete('/message/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/message/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success']
@@ -63,7 +63,7 @@ class TestMessageDelete(unittest.TestCase):
             "token": self.token2,
             "message_id": self.message2.id
         }
-        response = self.api.delete('/message/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/message/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
         assert not response_json['success']
@@ -72,7 +72,7 @@ class TestMessageDelete(unittest.TestCase):
         json_data = {
             "token": self.token1
         }
-        response = self.api.delete('/message/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/message/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -82,7 +82,7 @@ class TestMessageDelete(unittest.TestCase):
             "token": self.token1,
             "message_id": 200000
         }
-        response = self.api.delete('/message/delete', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/message/delete', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']

@@ -26,7 +26,7 @@ class AccountLogin(Resource):
 
 class ModifyPassword(Resource):
     @check_content
-    def put(self, content):
+    def post(self, content):
         try:
             content_checker("email", "previous_password", "new_password")
             return core.modify_password(content["email"], content["previous_password"], content["new_password"])
@@ -79,7 +79,7 @@ class GetUserInfo(Resource):
 class AccountModify(Resource):
     @check_content
     @secured_user_route
-    def put(self, content, user):
+    def post(self, content, user):
         return core.update(content, user)
 
 

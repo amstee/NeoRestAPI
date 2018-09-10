@@ -42,7 +42,7 @@ class MediaInfoAdmin(Resource):
 class MediaDelete(Resource):
     @check_content
     @check_admin_route
-    def delete(self, content):
+    def post(self, content):
         try:
             content_checker("media_id")
             return core.delete(content["media_id"])
@@ -73,7 +73,7 @@ class GetMediaList(Resource):
 class MediaUpdate(Resource):
     @check_content
     @check_admin_route
-    def put(self, content):
+    def post(self, content):
         try:
             content_checker("media_id")
             return core.admin_update(content, content["media_id"])

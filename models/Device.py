@@ -31,7 +31,7 @@ class Device(db.Model):
     circle = db.relationship("Circle", back_populates="device")
     messages = db.relationship("Message", back_populates="device")
     media_links = db.relationship("DeviceToMedia", back_populates="device", order_by="DeviceToMedia.id",
-                                  cascade="save-update, delete")
+                                  cascade="all, delete-orphan")
 
     def __init__(self, created=datetime.datetime.now(), updated=datetime.datetime.now(),
                  username=None, name=None, activated=False, is_online=None):

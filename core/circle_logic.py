@@ -27,8 +27,11 @@ def invite(circle_id, email, client, is_device):
                 circle_invite.user = dest
                 circle_invite.circle = circle
                 db.session.commit()
-                circle_invite.notify_user(p2={'event': 'invite', 'circle_id': circle.id})
-                resp = SUCCESS()
+                res = circle_invite.notify_user(p2={'event': 'invite', 'circle_id': circle.id})
+                if not res:
+                    resp = FAILED("DYLAN --> DESTINATAIRE INTROUVABLE DANS LA SOCKET LIST")
+                else:
+                    resp = SUCCESS()
             else:
                 resp = FAILED("Utilisateur spécifié introuvable")
         else:

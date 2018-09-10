@@ -11,7 +11,7 @@ import core.message as core
 class MessageDelete(Resource):
     @check_content
     @secured_route
-    def delete(self, content, client, is_device):
+    def post(self, content, client, is_device):
         try:
             content_checker("message_id")
             return core.delete(content["message_id"], client, is_device)

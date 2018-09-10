@@ -22,7 +22,7 @@ class CircleCreate(Resource):
 class CircleDelete(Resource):
     @check_content
     @check_admin_route
-    def delete(self, content):
+    def post(self, content):
         try:
             content_checker("circle_id")
             return core.delete(content["circle_id"])
@@ -33,7 +33,7 @@ class CircleDelete(Resource):
 class CircleUpdate(Resource):
     @check_content
     @secured_route
-    def put(self, content, client, is_device):
+    def post(self, content, client, is_device):
         return core.update(content, client, is_device)
 
 

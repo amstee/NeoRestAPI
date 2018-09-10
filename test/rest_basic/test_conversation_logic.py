@@ -189,7 +189,7 @@ class TestConversationUserPromote(unittest.TestCase):
             "conversation_id": self.conv.id,
             "email": self.user2.email
         }
-        response = self.api.put('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
         assert response_json['success']
@@ -203,7 +203,7 @@ class TestConversationUserPromote(unittest.TestCase):
             "conversation_id": self.conv.id,
             "email": self.user3.email
         }
-        response = self.api.put('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -214,7 +214,7 @@ class TestConversationUserPromote(unittest.TestCase):
             "conversation_id": self.conv.id,
             "email": self.user1.email
         }
-        response = self.api.put('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
         assert not response_json['success']
@@ -224,7 +224,7 @@ class TestConversationUserPromote(unittest.TestCase):
             "token": self.token1,
             "conversation_id": self.conv.id
         }
-        response = self.api.put('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -234,7 +234,7 @@ class TestConversationUserPromote(unittest.TestCase):
             "token": self.token1,
             "email": self.user2.email
         }
-        response = self.api.put('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -245,7 +245,7 @@ class TestConversationUserPromote(unittest.TestCase):
             "conversation_id": 200000,
             "email": self.user3.email
         }
-        response = self.api.put('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -256,7 +256,7 @@ class TestConversationUserPromote(unittest.TestCase):
             "conversation_id": self.conv.id,
             "email": "invalid.email@gmail.com"
         }
-        response = self.api.put('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
+        response = self.api.post('/conversation/promote', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
@@ -557,7 +557,7 @@ class TestConversationAddDevice(unittest.TestCase):
             "token": self.token1,
             "conversation_id": self.conv.id,
         }
-        response = self.api.put('/conversation/device/set', data=json.dumps(json_data),
+        response = self.api.post('/conversation/device/set', data=json.dumps(json_data),
                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
@@ -569,7 +569,7 @@ class TestConversationAddDevice(unittest.TestCase):
             "token": self.token2,
             "conversation_id": self.conv.id,
         }
-        response = self.api.put('/conversation/device/set', data=json.dumps(json_data),
+        response = self.api.post('/conversation/device/set', data=json.dumps(json_data),
                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
@@ -579,7 +579,7 @@ class TestConversationAddDevice(unittest.TestCase):
         json_data = {
             "token": self.token2
         }
-        response = self.api.put('/conversation/device/set', data=json.dumps(json_data),
+        response = self.api.post('/conversation/device/set', data=json.dumps(json_data),
                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200
@@ -638,7 +638,7 @@ class TestConversationRemoveDevice(unittest.TestCase):
             "token": self.token1,
             "conversation_id": self.conv.id,
         }
-        response = self.api.put('/conversation/device/set', data=json.dumps(json_data),
+        response = self.api.post('/conversation/device/set', data=json.dumps(json_data),
                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 200
@@ -650,7 +650,7 @@ class TestConversationRemoveDevice(unittest.TestCase):
             "token": self.token2,
             "conversation_id": self.conv.id,
         }
-        response = self.api.put('/conversation/device/set', data=json.dumps(json_data),
+        response = self.api.post('/conversation/device/set', data=json.dumps(json_data),
                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code == 403
@@ -660,7 +660,7 @@ class TestConversationRemoveDevice(unittest.TestCase):
         json_data = {
             "token": self.token2
         }
-        response = self.api.put('/conversation/device/set', data=json.dumps(json_data),
+        response = self.api.post('/conversation/device/set', data=json.dumps(json_data),
                                 content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200

@@ -20,7 +20,7 @@ class ConversationInvite(Resource):
 class ConversationUserPromote(Resource):
     @check_content
     @secured_user_route
-    def put(self, content, user):
+    def post(self, content, user):
         try:
             content_checker("conversation_id", "email")
             return core.user_promote(content["conversation_id"], content["email"], user)
@@ -53,7 +53,7 @@ class ConversationQuit(Resource):
 class ConvesationSetDevice(Resource):
     @check_content
     @secured_route
-    def put(self, content, client, is_device):
+    def post(self, content, client, is_device):
         try:
             content_checker("conversation_id")
             return core.set_device(content["conversation_id"], client, is_device)

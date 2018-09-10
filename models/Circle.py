@@ -15,15 +15,15 @@ class Circle(db.Model):
     created = db.Column(db.DateTime)
     updated = db.Column(db.DateTime)
 
-    device = db.relationship("Device", uselist=False, back_populates="circle", cascade="save-update")
+    device = db.relationship("Device", uselist=False, back_populates="circle", cascade="all")
     user_link = db.relationship("UserToCircle", back_populates="circle", order_by="UserToCircle.id",
-                                cascade="save-update, delete")
+                                cascade="all, delete-orphan")
     circle_invite = db.relationship("CircleInvite", back_populates="circle", order_by="CircleInvite.id",
-                                    cascade="save-update, delete")
+                                    cascade="all, delete-orphan")
     conversations = db.relationship("Conversation", back_populates="circle", order_by="Conversation.id",
-                                    cascade="save-update, delete")
+                                    cascade="all, delete-orphan")
     media_links = db.relationship("CircleToMedia", back_populates="circle", order_by="CircleToMedia.id",
-                                  cascade="save-update, delete")
+                                  cascade="all, delete-orphan")
 
     def __repr__(self):
         return "<Circle(id='%d' device_id='%d' users='%s')>" % (self.id, self.device.id, str(self.user_link))

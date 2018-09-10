@@ -22,7 +22,7 @@ class DeviceAdd(Resource):
 class DeviceUpdate(Resource):
     @check_content
     @secured_route
-    def put(self, content, client, is_device):
+    def post(self, content, client, is_device):
         try:
             content_checker("device_id")
             return core.update(content, content["device_id"], client, is_device)
@@ -56,7 +56,7 @@ class GetDeviceInfo(Resource):
 class DeviceDelete(Resource):
     @check_content
     @check_admin_route
-    def delete(self, content):
+    def post(self, content):
         try:
             content_checker("device_id")
             return core.admin_delete(content["device_id"])
@@ -87,7 +87,7 @@ class DeviceLogin(Resource):
 
 class ModifyDevicePassword(Resource):
     @check_content
-    def put(self, content):
+    def post(self, content):
         try:
             content_checker("device_username", "previous_password", "new_password")
             return core.modify_password(content["device_username"], content["previous_password"], content["new_password"])

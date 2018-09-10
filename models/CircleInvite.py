@@ -64,7 +64,7 @@ class CircleInvite(db.Model):
         if p2 is None:
             p2 = {}
         p2['circle_invite_id'] = self.id
-        sockets.notify_user(self.user, False, p1, p2)
+        return sockets.notify_user(self.user, False, p1, p2)
 
     def get_simple_content(self):
         return {

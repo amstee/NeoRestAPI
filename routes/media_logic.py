@@ -11,7 +11,7 @@ import core.media_logic as core
 class DeleteMedia(Resource):
     @check_content
     @secured_route
-    def delete(self, content, client, is_device):
+    def post(self, content, client, is_device):
         try:
             content_checker("media_id")
             return core.delete(content["media_id"], client, is_device)

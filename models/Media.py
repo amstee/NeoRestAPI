@@ -19,13 +19,13 @@ class Media(db.Model):
     uploaded = db.Boolean()
 
     message_link = db.relationship("MessageToMedia", back_populates="media", uselist=False,
-                                   cascade="save-update, delete")
+                                   cascade="all, delete-orphan")
     user_link = db.relationship("UserToMedia", back_populates="media", uselist=False,
-                                cascade="save-update, delete")
+                                cascade="all, delete-orphan")
     device_link = db.relationship("DeviceToMedia", back_populates="media", uselist=False,
-                                  cascade="save-update, delete")
+                                  cascade="all, delete-orphan")
     circle_link = db.relationship("CircleToMedia", back_populates="media", uselist=False,
-                                  cascade="save-update, delete")
+                                  cascade="all, delete-orphan")
 
     def __repr__(self):
         return "<Media(id='%d' filename='%s' extension='%s' directory='%s')>" % (

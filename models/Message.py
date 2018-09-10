@@ -21,7 +21,7 @@ class Message(db.Model):
     link = db.relationship("UserToConversation", back_populates="messages")
     conversation = db.relationship("Conversation", back_populates="messages")
     media_links = db.relationship("MessageToMedia", back_populates="message", order_by="MessageToMedia.id",
-                                  cascade="save-update, delete")
+                                  cascade="all, delete-orphan")
     device = db.relationship("Device", back_populates="messages")
 
     def __repr__(self):

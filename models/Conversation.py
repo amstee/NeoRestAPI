@@ -20,7 +20,7 @@ class Conversation(db.Model):
     circle = db.relationship("Circle", back_populates="conversations")
     links = db.relationship("UserToConversation", back_populates="conversation")
     messages = db.relationship("Message", back_populates="conversation", order_by="Message.id",
-                               cascade="save-update, delete")
+                               cascade="all, delete-orphan")
 
     def __repr__(self):
         return "<Conversation(id='%d' name='%s' created='%s' updated='%s')>" % (self.id, self.name,

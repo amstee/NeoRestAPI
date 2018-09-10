@@ -28,13 +28,13 @@ class User(db.Model):
 
     # RELATIONS
     circle_link = db.relationship("UserToCircle", back_populates="user", order_by="UserToCircle.id",
-                                  cascade="save-update, delete")
+                                  cascade="all, delete-orphan")
     conversation_links = db.relationship("UserToConversation", back_populates="user", order_by="UserToConversation.id",
-                                         cascade="save-update, delete")
+                                         cascade="all, delete-orphan")
     circle_invite = db.relationship("CircleInvite", back_populates="user", order_by="CircleInvite.id",
-                                    cascade="save-update, delete")
+                                    cascade="all, delete-orphan")
     media_links = db.relationship("UserToMedia", back_populates="user", order_by="UserToMedia.id",
-                                  cascade="save-update, delete")
+                                  cascade="all, delete-orphan")
 
     def __init__(self, email=None, password=None, first_name=None, last_name=None,
                  birthday=None, is_online=False, created=datetime.datetime.now(),
