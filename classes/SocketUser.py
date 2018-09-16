@@ -1,9 +1,9 @@
 from flask_socketio import emit
 from models.User import User
 from models.Device import Device
-import time
 from config.webrtc import EXPIRY, SECRET_KEY
 from config.database import db
+import time
 import hashlib
 import hmac
 
@@ -23,8 +23,31 @@ class SocketUser:
         self.sid = sid
 
     def __str__(self):
-        return '<SocketUser(' + str(self.sid) + " Connected : " + \
+        return '<SocketClient(' + str(self.sid) + "client_id : " + self.client_id + " Connected : " + \
                str(self.connected) + " Authenticated : " + str(self.authenticated) + ')>'
+
+    @staticmethod
+    def construct_client(client_id, is_device, data):
+        client = SocketUser(data["sid"])
+        client.client_id = client_id
+        client.is_device = is_device
+        client.connected = True if data["co"] == "True" else False
+        client.authenticated = True if data["auth"] == "True" else False
+        client.token = data["token"]
+        client.webrtc_username = data["wu"]
+        client.webrtc_password = data["wp"]
+        client.webrtc_credentials_valididity = int(data["wcv"])
+        return client
+
+    def get_payload(self):
+        return {"sid": self.sid, "co": self.connected, "auth": self.authenticated, "token": self.token,
+                "wu": self.webrtc_username, "wp": self.webrtc_password,
+                "wcv": self.webrtc_credentials_valididity}
+
+    def get_key(self):
+        if self.client_id is None:
+            return None
+        return ("d" if self.is_device else "u") + str(self.client_id)
 
     def generate_credentials(self):
         validity = time.time() + EXPIRY

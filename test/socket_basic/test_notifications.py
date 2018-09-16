@@ -81,6 +81,8 @@ class SocketioConversation(unittest.TestCase):
         assert res2[0]['name'] == 'success'
         assert len(res3) == 1
         assert res3[0]['name'] == 'success'
+        if not self.neo.config.use_redis:
+            assert len(sockets) == 3
         json_data = {
             "token": self.token1,
             "conversation_id": self.conversation_id,

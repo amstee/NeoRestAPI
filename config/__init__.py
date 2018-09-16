@@ -9,7 +9,7 @@ from .sockets import sockets
 from .redis import RedisSessionInterface
 from utils.database import init_default_content
 from .database import URI_USED, init_db
-import redis
+# import redis
 
 socketio = SocketIO(async_mode="gevent")
 
@@ -22,10 +22,10 @@ class NeoAPI(object):
         self.app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
         self.app.config['SECRET_KEY'] = config.neo_secret
         if config.use_redis:
-            self.app.config['SESSION_TYPE'] = "redis"
-            self.app.config['SESSION_REDIS'] = redis.from_url(config.redis_url)
-        else:
-            self.app.config["SESSION_TYPE"] = "null"
+            sockets.storage.set_conf(config.use_redis, config.redis_url)
+            # self.app.config['SESSION_TYPE'] = "redis"
+            # self.app.config['SESSION_REDIS'] = redis.from_url(config.redis_url)
+        self.app.config["SESSION_TYPE"] = "null"
         from sockets import sockets as socket_blueprint
         self.app.register_blueprint(socket_blueprint)
 

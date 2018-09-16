@@ -33,9 +33,9 @@ class SocketioAuthenticate(unittest.TestCase):
     def test_valid_connection(self):
         assert len(sockets) == 0
         self.client.connect()
-        assert len(sockets) == 1
+        assert len(sockets) == 0
         self.client2.connect()
-        assert len(sockets) == 2
+        assert len(sockets) == 0
 
     def test_valid_authentication(self):
         data = {
@@ -47,6 +47,8 @@ class SocketioAuthenticate(unittest.TestCase):
         res = self.client.get_received()
         assert len(res) == 1
         assert res[0]['name'] == 'success'
+        if not self.neo.config.use_redis:
+            assert len(sockets) == 1
 
     def test_invalid_authentication(self):
         data = {

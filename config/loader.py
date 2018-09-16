@@ -8,6 +8,7 @@ import config.database as database
 import models.Device as Device
 import models.User as User
 import config.log as log
+import classes.StoreWrapper as Storage
 
 
 class ConfigLoader:

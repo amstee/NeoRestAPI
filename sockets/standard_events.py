@@ -10,7 +10,6 @@ logger = logger_set(module=__name__, file=LOG_SOCKET_FILE)
 
 @socketio.on("connect")
 def connection():
-    sockets.add(request.sid)
     logger.info("[%s] [%s] [%s] [%s]",
                 "SOCKET", request.host, "connect", request.sid)
 
@@ -18,13 +17,12 @@ def connection():
 @socketio.on('authenticate')
 def authenticate(content):
     sid = request.sid
-    socket = sockets.find_socket(sid)
     try:
-        if socket is None:
-            raise Exception('Socket user introuvable')
         if 'token' not in content:
             raise Exception('Json web token introuvable')
+        socket = sockets.new_client(sid)
         b, data = socket.authenticate(content['token'])
+        sockets.save_client(socket)
         if not b:
             raise Exception(data)
         socket.emit('success', data)
