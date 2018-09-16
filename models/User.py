@@ -5,6 +5,7 @@ import hashlib
 import jwt
 import datetime
 from config.log import LOG_DATABASE_FILE
+from config.facebook import SECRET_KEY as SECRET_KEY_BOT
 
 logger = logger_set(module=__name__, file=LOG_DATABASE_FILE)
 SECRET_KEY = ""
@@ -148,7 +149,7 @@ class User(db.Model):
                 'first_name': self.first_name,
                 'last_name': self.last_name
             }
-            token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+            token = jwt.encode(payload, SECRET_KEY_BOT, algorithm="HS256")
             return token.decode()
         except Exception as e:
             print(e)

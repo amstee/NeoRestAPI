@@ -125,6 +125,7 @@ class ResourceManager:
         api.add_resource(device_handlers.DeviceDelete, '/admin/device/delete')
         api.add_resource(device_handlers.DeviceActivate, '/admin/device/activate')
         api.add_resource(device_handlers.DeviceCredentials, '/admin/device/credentials')
+        api.add_resource(device_handlers.DeviceList, '/admin/device/list')
         api.add_resource(device_handlers.DeviceUpdate, '/device/update')
         api.add_resource(device_handlers.DeviceInfo, '/device/info')
         api.add_resource(device_handlers.GetDeviceInfo, '/device/info/<device_id>')

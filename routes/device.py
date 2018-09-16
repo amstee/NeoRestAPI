@@ -136,3 +136,15 @@ class DeviceCredentials(Resource):
             return core.admin_credentials(content["device_id"])
         except ContentNotFound as cnf:
             return FAILED(cnf)
+
+
+class DeviceList(Resource):
+    @check_content
+    @check_admin_route
+    def post(self, content):
+        try:
+            content_checker("email")
+            return core.admin_list(content["email"])
+        except ContentNotFound as cnf:
+            return FAILED(cnf)
+

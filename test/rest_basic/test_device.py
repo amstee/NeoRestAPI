@@ -476,7 +476,6 @@ class TestModifyDevicePassword(unittest.TestCase):
         assert not response_json['success']
 
 
-
 class TestDeviceLogout(unittest.TestCase):
     def setUp(self):
         neo_config.load_config()
@@ -520,3 +519,63 @@ class TestDeviceLogout(unittest.TestCase):
         response_json = json.loads(response.data)
         assert response.status_code != 200
         assert not response_json['success']
+
+class TestDeviceList(unittest.TestCase):
+    def setUp(self):
+        neo_config.load_config()
+        neo_config.set_project_variables()
+        neo = NeoAPI(neo_config)
+        self.api = neo.activate_testing()
+        self.user1 = db.session.query(UserModel).filter(UserModel.email == "testmessage@test.com").first()
+        if self.user1 is None:
+            self.user1 = UserModel(email="testdevicelist@test.com", password="test", first_name="firstname",
+                                   last_name="lastname", birthday="1995-12-12")
+        self.user2 = db.session.query(UserModel).filter(UserModel.email == "testmessage2@test.com").first()
+        if self.user2 is None:
+            self.user2 = UserModel(email="testdevicelist2@test.com", password="test", first_name="firstname",
+                                   last_name="lastname", birthday="1111-11-11")
+        self.circle = Circle(name="Mamie")
+        self.linkCircle = UserToCircle(user=self.user1, circle=self.circle, privilege="ADMIN")
+        self.linkCircle2 = UserToCircle(user=self.user2, circle=self.circle)
+        self.device = Device(name="Papie")
+        self.device.circle = self.circle
+        db.session.commit()
+        self.token1 = authenticate_user(self.api, self.user1, "test")
+        self.token2 = authenticate_user(self.api, self.user2, "test")
+        self.tokenAdmin = authenticate_user(self.api, "contact.projetneo@gmail.com", "PapieNeo2019")
+
+    def test_valid_list(self):
+        json_data = {
+            "email": self.user1.email,
+            "token": self.tokenAdmin
+        }
+        response = self.api.post('/admin/device/list', data=json.dumps(json_data), content_type='application/json')
+        response_json = json.loads(response.data)
+        assert response.status_code == 200
+        assert response_json['success']
+        assert response_json['devices'][0]['id'] == self.device.id
+        assert not response_json['devices'][0]['id'] == self.device.id + 1
+
+    def test_invalid_list_no_device(self):
+        json_data = {
+            "email": self.user2.email,
+            "token": self.tokenAdmin
+        }
+        response = self.api.post('/admin/device/list', data=json.dumps(json_data), content_type='application/json')
+        response_json = json.loads(response.data)
+        assert response.status_code == 400
+        assert not response_json['success']
+        assert response_json['message'] == "Aucun NEO n'appartient à cet utilisateur"
+
+    def test_invalid_email(self):
+        json_data = {
+            "email": "invalid@email.test",
+            "token": self.tokenAdmin
+        }
+        response = self.api.post('/admin/device/list', data=json.dumps(json_data), content_type='application/json')
+        response_json = json.loads(response.data)
+        print(response_json)
+        assert response.status_code == 401
+        assert not response_json['success']
+        assert response_json['message'] == "Le NEO avec l'email %s n'existe pas" % "invalid@email.test"
+

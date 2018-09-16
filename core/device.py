@@ -1,6 +1,7 @@
 from flask import request
 from models.Device import Device
 from models.Circle import Circle
+from models.User import User
 from config.database import db
 from utils.apiUtils import *
 from utils.log import logger_set
@@ -230,6 +231,33 @@ def admin_delete(device_id):
             resp = SUCCESS()
         else:
             resp = FAILED("Le NEO avec identifiant id %s n'existe pas" % str(device_id))
+            resp.status_code = 401
+        logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                    request.method, request.host, request.path,
+                    request.content_type, request.data, resp.status_code)
+    except Exception as e:
+        resp = FAILED(e)
+        logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                       request.method, request.host, request.path,
+                       request.content_type, request.data, resp.status_code, traceback_format_exc())
+    return resp
+
+
+def admin_list(email):
+    try:
+        user = db.session.query(User).filter(User.email == email).first()
+        if user is not None:
+            if len(user.circle_link) > 0:
+                for link in user.circle_link:
+                    if link.privilege == "ADMIN":
+                        devices = db.session.query(Device).filter(Device.circle_id == link.circle_id)
+                        resp = jsonify({"success": True, "devices": [device.get_simple_content() for device in devices]})
+                    else:
+                        resp = FAILED("Aucun NEO n'appartient à cet utilisateur")
+            else:
+                resp = FAILED("L'utilisateur n'appartient à aucun cercle")
+        else:
+            resp = FAILED("Le NEO avec l'email %s n'existe pas" % str(email))
             resp.status_code = 401
         logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                     request.method, request.host, request.path,

@@ -15,6 +15,7 @@ import io
 import shutil
 import os
 from models.Device import Device
+from datauri import DataURI
 from gevent import monkey
 monkey.patch_all()
 
@@ -90,7 +91,10 @@ class TestMediaCreate(unittest.TestCase):
             "media_id": mid
         }
         response = self.api.post('/media/retrieve', data=json.dumps(json_data), content_type='application/json')
-        assert response.data == b"user1 sent a file 22"
+        response_json = json.loads(response.data)
+        response_file = DataURI(response_json['data'])
+        assert response_json['success']
+        assert response_file.data == b"user1 sent a file 22"
 
     def tearDown(self):
         if os.path.exists("user_files"):
@@ -168,7 +172,10 @@ class TestDeviceMediaCreate(unittest.TestCase):
             "media_id": mid
         }
         response = self.api.post('/media/retrieve', data=json.dumps(json_data), content_type='application/json')
-        assert response.data == b"user1 sent a file 225"
+        response_json = json.loads(response.data)
+        response_file = DataURI(response_json['data'])
+        assert response_json['success']
+        assert response_file.data == b"user1 sent a file 225"
 
     def tearDown(self):
         if os.path.exists("user_files"):
@@ -233,7 +240,10 @@ class TestMediaRequest(unittest.TestCase):
             "media_id": media_id
         }
         response = self.api.post('/media/retrieve', data=json.dumps(json_data), content_type='application/json')
-        assert response.data == b"user1 sent a file"
+        response_json = json.loads(response.data)
+        response_file = DataURI(response_json['data'])
+        assert response_json['success']
+        assert response_file.data == b"user1 sent a file"
 
     def tearDown(self):
         if os.path.exists("user_files"):
@@ -303,7 +313,10 @@ class TestDeviceMediaRequest(unittest.TestCase):
             "media_id": media_id
         }
         response = self.api.post('/media/retrieve', data=json.dumps(json_data), content_type='application/json')
-        assert response.data == b"device sent a file"
+        response_json = json.loads(response.data)
+        response_file = DataURI(response_json['data'])
+        assert response_json['success']
+        assert response_file.data == b"device sent a file"
 
     def tearDown(self):
         shutil.rmtree('user_files')

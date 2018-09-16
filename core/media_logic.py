@@ -12,6 +12,7 @@ from flask_socketio import emit
 from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
 from config.log import LOG_MEDIA_FILE
+from datauri import DataURI
 
 logger = logger_set(module=__name__, file=LOG_MEDIA_FILE)
 
@@ -24,7 +25,8 @@ def retrieve(media_id, client, is_device):
         elif (not is_device and media.can_be_accessed_by_user(client)) or \
                 (is_device and media.can_be_accessed_by_device(client)):
             if media.file_exist():
-                resp = send_from_directory(media.get_directory(), media.get_full_name())
+                data_uri = DataURI.from_file(media.get_full_path())
+                resp = jsonify({"success": True, "data": data_uri})
             else:
                 resp = FAILED("Le media est introuvable sur le FS")
         else:
