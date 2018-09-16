@@ -2,7 +2,7 @@ import unittest
 import json
 from config.loader import neo_config
 from api import NeoAPI
-from routes.Facebook import send_message
+from bot.facebook import send_message
 
 MESSENGER_ID_TESTING="1726772610739883"
 
