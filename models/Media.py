@@ -148,6 +148,9 @@ class Media(db.Model):
     def get_full_name(self):
         return self.filename + self.extension
 
+    def get_full_path(self):
+        return os.path.join(self.get_directory(), self.get_full_name())
+
     def update_content(self, filename=None, extension=None, directory=None, identifier=None):
         if filename is not None and filename != "":
             self.filename = filename
