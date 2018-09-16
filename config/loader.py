@@ -41,12 +41,10 @@ class ConfigLoader:
     postgresql_port = ""
 
     # Facebook API
-    facebook_secret_key = ""
     facebook_secret_token = ""
     facebook_page_access_token = ""
 
     # Hangout API
-    hangout_secret = ""
     hangout_token = ""
     hangout_config = {}
 
@@ -91,11 +89,9 @@ class ConfigLoader:
                     self.beta_user1_password = data["database"]["user1Password"]
                     self.beta_user2_password = data["database"]["user2Password"]
                 if "facebook" in data:
-                    self.facebook_secret_key = data["facebook"]["facebookSecretKey"]
                     self.facebook_secret_token = data["facebook"]["facebookSecretToken"]
                     self.facebook_page_access_token = data["facebook"]["facebookPageAccessToken"]
                 if "hangout" in data:
-                    self.hangout_secret = data["hangout"]["hangoutSecret"]
                     self.hangout_secret = data["hangout"]["hangoutToken"]
                     self.hangout_config = data["hangout"]["hangoutConfig"]
                 if "logs" in data:
@@ -111,10 +107,8 @@ class ConfigLoader:
 
     def set_project_variables(self):
         webrtc.SECRET_KEY = self.webrtc_secret
-        hangout.SECRET_KEY = self.hangout_secret
         hangout.TOKEN = self.hangout_token
         hangout.KEY_FILE = self.hangout_config
-        facebook.SECRET_KEY = self.facebook_secret_key
         facebook.SECRET_TOKEN = self.facebook_secret_token
         facebook.PAGE_ACCESS_TOKEN = self.facebook_page_access_token
         database.POSTGRES["user"] = self.postgresql_user
