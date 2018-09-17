@@ -28,16 +28,18 @@ class SocketUser:
 
     @staticmethod
     def construct_client(client_id, is_device, data):
-        client = SocketUser(data["sid"])
-        client.client_id = client_id
-        client.is_device = is_device
-        client.connected = True if data["co"] == "True" else False
-        client.authenticated = True if data["auth"] == "True" else False
-        client.token = data["token"]
-        client.webrtc_username = data["wu"]
-        client.webrtc_password = data["wp"]
-        client.webrtc_credentials_valididity = int(data["wcv"])
-        return client
+        if data is not None:
+            client = SocketUser(data["sid"])
+            client.client_id = client_id
+            client.is_device = is_device
+            client.connected = True if data["co"] == "True" else False
+            client.authenticated = True if data["auth"] == "True" else False
+            client.token = data["token"]
+            client.webrtc_username = data["wu"]
+            client.webrtc_password = data["wp"]
+            client.webrtc_credentials_valididity = int(data["wcv"])
+            return client
+        return None
 
     def get_payload(self):
         return {"sid": self.sid, "co": self.connected, "auth": self.authenticated, "token": self.token,
