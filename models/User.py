@@ -22,8 +22,8 @@ class User(db.Model):
     created = db.Column(db.DateTime)
     updated = db.Column(db.DateTime)
     json_token = db.Column(db.String(4096))
-    facebook_psid = db.Column(db.BigInteger)
-    hangout_space = db.Column(db.String(255))
+    facebook_psid = db.Column(db.String(256))
+    hangout_space = db.Column(db.String(256))
     type = db.Column(db.String(10))
     is_online = db.Column(db.Boolean)
 

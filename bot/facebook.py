@@ -134,7 +134,7 @@ def link_user_to_facebook(api_token, psid):
             try:
                 user = db.session.query(User).filter(User.id == payload['sub']).first()
                 if user is not None:
-                    user.update_content(facebook_psid=psid)
+                    user.update_content(facebook_psid=str(psid))
                     return "Bienvenue sur NEO, " + payload['first_name'] + " " + payload['last_name'] + " !"
                 else:
                     return 'Token invalide !'

@@ -63,9 +63,8 @@ class TokenLink(unittest.TestCase):
         response = self.api.post('/api/messenger/webhook', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         response_json = json.loads(response_json)
-        print(response_json)
         assert response.status_code == 200
-        assert response_json["message"]["text"] == "Token invalide, authentifiez vous a nouveau"
+        assert response_json["message"]["text"] == "Bienvenue sur NEO, firstname lastname !"
     
     def test_invalid_token(self):
         json_data = {
