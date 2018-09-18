@@ -79,23 +79,27 @@ def message_choice(sender_id, message_text):
 
 
 def send_message_choice(recipient_id, message_text):
-    params = {
-        "access_token": PAGE_ACCESS_TOKEN
-    }
-    headers = {
-        "Content-Type": "application/json"
-    }
-    data = json.dumps({
-        "recipient": {
-            "id": recipient_id
-        },
-        "message": {
-            "text": "Choisissez une conversation",
-            "quick_replies": message_choice(recipient_id, message_text)
+    user = db.session.query(User).filter(User.facebook_psid == recipient_id).first()
+    if user.conversation_links is not None:
+        params = {
+            "access_token": PAGE_ACCESS_TOKEN
         }
-    })
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
-    return data, r.status_code
+        headers = {
+            "Content-Type": "application/json"
+        }
+        data = json.dumps({
+            "recipient": {
+                "id": recipient_id
+            },
+            "message": {
+                "text": "Choisissez une conversation",
+                "quick_replies": message_choice(recipient_id, message_text)
+            }
+        })
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+        return data, r.status_code
+    else:
+        return send_message(recipient_id, "Vous n'appartnez à aucune conversation")
 
 
 def messenger_user_model_send(user_target, text_message):
