@@ -79,7 +79,7 @@ def message_choice(sender_id, message_text, user):
 
 def send_message_choice(recipient_id, message_text):
     user = db.session.query(User).filter(User.facebook_psid == recipient_id).first()
-    if len(user.conversation_links) == 0:
+    if len(user.conversation_links) > 0:
         params = {
             "access_token": PAGE_ACCESS_TOKEN
         }
@@ -98,7 +98,7 @@ def send_message_choice(recipient_id, message_text):
         r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
         return data, r.status_code
     else:
-        return send_message(recipient_id, "Vous n'appartnez à aucune conversation")
+        return send_message(recipient_id, "Vous n'appartenez à aucune conversation")
 
 
 def messenger_user_model_send(user_target, text_message):
