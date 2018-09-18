@@ -88,10 +88,10 @@ def is_token_valid(content):
         return False
 
 
-def message_choice(hangout_space, message_text):
+def message_choice(hangout_space, message_text, user):
     quick_replies = []
     user = db.session.query(User).filter(User.hangout_space == hangout_space).first()
-    for user_to_conversation in user.conversationLinks:
+    for user_to_conversation in user.conversation_links:
         conv = db.session.query(Conversation).filter(Conversation.id == user_to_conversation.conversation_id).first()
         payload = encode_post_back_payload(hangout_space, message_text, user_to_conversation)
         quick_replies.append({
@@ -112,20 +112,24 @@ def message_choice(hangout_space, message_text):
 
 
 def send_message_choice(recipient_id, message_text):
-    resp = jsonify({
-                "cards": [{
-                        "header": {
-                            "title": "Choisissez une conversation",
-                            "subtitle": message_text,
-                        },
-                        "sections": [{
-                            "widgets": [{
-                                    "buttons": message_choice(recipient_id, message_text)
+    user = db.session.query(User).filter(User.hangout_space == recipient_id).first()
+    if len(user.conversation_links) > 0:
+        resp = jsonify({
+                    "cards": [{
+                            "header": {
+                                "title": "Choisissez une conversation",
+                                "subtitle": message_text,
+                            },
+                            "sections": [{
+                                "widgets": [{
+                                        "buttons": message_choice(recipient_id, message_text, user)
+                                }]
                             }]
                         }]
-                    }]
-                })
-    return resp
+                    })
+        return resp
+    else:
+        return send_to_space(recipient_id, "Vous n'appartenez à aucune conversation")
 
 
 def send_to_space(space_id, message):
