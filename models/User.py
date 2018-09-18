@@ -67,7 +67,8 @@ class User(db.Model):
                 self.updated = updated
         self.is_online = is_online
         self.type = "DEFAULT"
-        self.facebook_psid = -1
+        self.facebook_psid = None
+        self.hangout_space = None
         db.session.add(self)
         db.session.flush()
         logger.debug("Database add: users%s", self.get_simple_content())

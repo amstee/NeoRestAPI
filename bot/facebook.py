@@ -102,7 +102,7 @@ def send_message_choice(recipient_id, message_text):
 
 
 def messenger_user_model_send(user_target, text_message):
-    if user_target.facebook_psid != -1:
+    if user_target.facebook_psid is not None and user_target.facebook_psid != "":
         send_message(user_target.facebook_psid, text_message)
         return True
     return False
