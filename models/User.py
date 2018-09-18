@@ -22,8 +22,8 @@ class User(db.Model):
     created = db.Column(db.DateTime)
     updated = db.Column(db.DateTime)
     json_token = db.Column(db.String(4096))
-    facebook_psid = db.Column(db.BigInteger)
-    hangout_space = db.Column(db.String(255))
+    facebook_psid = db.Column(db.String(256))
+    hangout_space = db.Column(db.String(256))
     type = db.Column(db.String(10))
     is_online = db.Column(db.Boolean)
 
@@ -67,7 +67,8 @@ class User(db.Model):
                 self.updated = updated
         self.is_online = is_online
         self.type = "DEFAULT"
-        self.facebook_psid = -1
+        self.facebook_psid = None
+        self.hangout_space = None
         db.session.add(self)
         db.session.flush()
         logger.debug("Database add: users%s", self.get_simple_content())
@@ -261,7 +262,7 @@ class User(db.Model):
             "isOnline": self.is_online,
             "type": self.type,
             "hangout": False if self.hangout_space is None or len(self.hangout_space) == 0 else True,
-            "facebook": False if self.facebook_psid is None or self.facebook_psid <= 0 else True,
+            "facebook": False if self.facebook_psid is None or len(self.facebook_psid) == 0 else True,
             "circles": [link.get_content() for link in self.circle_link],
             "invites": [invite.get_content() for invite in self.circle_invite],
             "conversations": [link.get_simple_content() for link in self.conversation_links],

@@ -34,7 +34,7 @@ def handle_conversation_payload(message_payload):
     try:
         payload = jwt.decode(message_payload, SECRET_KEY)
         try:
-            link = db.session.query(UserToConversation).filter(UserToConversation.id == payload["link_id"] and
+            link = db.session.query(UserToConversation).filter(UserToConversation.id == payload["link_id"],
                                                                UserToConversation.user_id == payload["user_id"]).first()
             message = Message(content=payload["message_text"])
             message.link = link
@@ -68,10 +68,9 @@ def send_message(recipient_id, message_text):
     return data, r.status_code
 
 
-def message_choice(sender_id, message_text):
+def message_choice(sender_id, message_text, user):
     quick_replies = []
-    user = db.session.query(User).filter(User.facebook_psid == sender_id).first()
-    for user_to_conv in user.conversationLinks:
+    for user_to_conv in user.conversation_links:
         conv = db.session.query(Conversation).filter(Conversation.id == user_to_conv.conversation_id).first()
         payload = encode_post_back_payload(sender_id, message_text, user_to_conv)
         quick_replies.append({"content_type": "text", "title": conv.name, "payload": payload})
@@ -79,27 +78,31 @@ def message_choice(sender_id, message_text):
 
 
 def send_message_choice(recipient_id, message_text):
-    params = {
-        "access_token": PAGE_ACCESS_TOKEN
-    }
-    headers = {
-        "Content-Type": "application/json"
-    }
-    data = json.dumps({
-        "recipient": {
-            "id": recipient_id
-        },
-        "message": {
-            "text": "Choisissez une conversation",
-            "quick_replies": message_choice(recipient_id, message_text)
+    user = db.session.query(User).filter(User.facebook_psid == recipient_id).first()
+    if len(user.conversation_links) > 0:
+        params = {
+            "access_token": PAGE_ACCESS_TOKEN
         }
-    })
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
-    return data, r.status_code
+        headers = {
+            "Content-Type": "application/json"
+        }
+        data = json.dumps({
+            "recipient": {
+                "id": recipient_id
+            },
+            "message": {
+                "text": "Choisissez une conversation",
+                "quick_replies": message_choice(recipient_id, message_text, user)
+            }
+        })
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+        return data, r.status_code
+    else:
+        return send_message(recipient_id, "Vous n'appartenez à aucune conversation")
 
 
 def messenger_user_model_send(user_target, text_message):
-    if user_target.facebook_psid != -1:
+    if user_target.facebook_psid is not None and user_target.facebook_psid != "":
         send_message(user_target.facebook_psid, text_message)
         return True
     return False
@@ -131,7 +134,7 @@ def link_user_to_facebook(api_token, psid):
             try:
                 user = db.session.query(User).filter(User.id == payload['sub']).first()
                 if user is not None:
-                    user.update_content(facebook_psid=psid)
+                    user.update_content(facebook_psid=str(psid))
                     return "Bienvenue sur NEO, " + payload['first_name'] + " " + payload['last_name'] + " !"
                 else:
                     return 'Token invalide !'
