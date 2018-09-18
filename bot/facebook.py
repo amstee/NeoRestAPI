@@ -68,10 +68,9 @@ def send_message(recipient_id, message_text):
     return data, r.status_code
 
 
-def message_choice(sender_id, message_text):
+def message_choice(sender_id, message_text, user):
     quick_replies = []
-    user = db.session.query(User).filter(User.facebook_psid == sender_id).first()
-    for user_to_conv in user.conversationLinks:
+    for user_to_conv in user.conversation_links:
         conv = db.session.query(Conversation).filter(Conversation.id == user_to_conv.conversation_id).first()
         payload = encode_post_back_payload(sender_id, message_text, user_to_conv)
         quick_replies.append({"content_type": "text", "title": conv.name, "payload": payload})
@@ -93,7 +92,7 @@ def send_message_choice(recipient_id, message_text):
             },
             "message": {
                 "text": "Choisissez une conversation",
-                "quick_replies": message_choice(recipient_id, message_text)
+                "quick_replies": message_choice(recipient_id, message_text, user)
             }
         })
         r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
