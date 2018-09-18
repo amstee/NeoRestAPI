@@ -79,7 +79,7 @@ def message_choice(sender_id, message_text, user):
 
 def send_message_choice(recipient_id, message_text):
     user = db.session.query(User).filter(User.facebook_psid == recipient_id).first()
-    if user.conversation_links is not None:
+    if len(user.conversation_links) == 0:
         params = {
             "access_token": PAGE_ACCESS_TOKEN
         }
