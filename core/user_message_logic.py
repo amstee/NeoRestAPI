@@ -11,6 +11,7 @@ from utils.apiUtils import *
 from config.sockets import sockets
 from flask_socketio import emit
 from bot.facebook import messenger_circle_model_send, messenger_conversation_model_send
+from bot.hangout import hangout_conversation_model_send
 from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
 from config.log import LOG_MESSAGE_FILE
@@ -59,6 +60,10 @@ def message_send(content, conversation_id, user):
                 messenger_conversation_model_send(link.user_id, conversation, info_sender + message.text_content)
             except Exception:
                 pass
+            try:
+                hangout_conversation_model_send(link.user_id, conversation, info_sender + message.text_content)
+            except Exception:
+                pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
             resp.status_code = 200
         logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
@@ -105,7 +110,11 @@ def first_message_to_user(content, email, circle_id, user):
                                  "event": 'invite'})
             info_sender = "[" + conversation.name + "] " + user.first_name + " : "
             try:
-                messenger_circle_model_send(0, circle, info_sender + message.text_content)
+                messenger_conversation_model_send(user.id, conversation, info_sender + message.text_content)
+            except Exception:
+                pass
+            try:
+                hangout_conversation_model_send(user.id, conversation, info_sender + message.text_content)
             except Exception:
                 pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id,
@@ -153,7 +162,11 @@ def first_message_to_device(content, circle_id, user):
                                  "event": 'invite'})
             info_sender = "[" + conversation.name + "] " + user.first_name + " : "
             try:
-                messenger_circle_model_send(0, circle, info_sender + message.text_content)
+                messenger_conversation_model_send(user.id, conversation, info_sender + message.text_content)
+            except Exception:
+                pass
+            try:
+                hangout_conversation_model_send(user.id, conversation, info_sender + message.text_content)
             except Exception:
                 pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})

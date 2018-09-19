@@ -10,6 +10,7 @@ from flask_socketio import emit
 from config.sockets import sockets
 from models.MessageToMedia import MessageToMedia
 from bot.facebook import messenger_conversation_model_send, messenger_user_model_send
+from bot.hangout import hangout_conversation_model_send
 from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
 from config.log import LOG_DEVICE_FILE
@@ -56,6 +57,10 @@ def message_send(content, conversation_id, device):
                 messenger_conversation_model_send(0, conv, info_sender + message.text_content)
             except Exception:
                 pass
+            try:
+                hangout_conversation_model_send(0, conv, info_sender + message.text_content)
+            except Exception:
+                pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})
             resp.status_code = 200
         logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
@@ -100,7 +105,11 @@ def first_message_to_user(content, email, device):
                                  "event": 'invite'})
             info_and_message = "[" + conversation.name + "] " + device.name + " : " + str(message.text_content)
             try:
-                messenger_user_model_send(user_target=user, text_message=info_and_message)
+                messenger_conversation_model_send(0, conversation, info_and_message)
+            except Exception:
+                pass
+            try:
+                hangout_conversation_model_send(0, conversation, info_and_message)
             except Exception:
                 pass
             resp = jsonify({"success": True, 'media_list': media_list, 'message_id': message.id})

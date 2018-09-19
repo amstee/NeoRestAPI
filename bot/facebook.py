@@ -7,7 +7,6 @@ from models.UserToConversation import UserToConversation
 from models.Message import Message
 from config.facebook import SECRET_KEY, PAGE_ACCESS_TOKEN
 import requests
-import sys
 import jwt
 import datetime
 import json
@@ -26,7 +25,6 @@ def encode_post_back_payload(facebook_psid, message_text, link):
         token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
         return token.decode()
     except Exception as e:
-        print(e)
         return str(e)
 
 
@@ -41,7 +39,6 @@ def handle_conversation_payload(message_payload):
             message.conversation = link.conversation
             db.session.commit()
         except Exception as e:
-            print("Une erreur est survenue : " + str(e), file=sys.stderr)
             return "Une erreur est survenue : " + str(e)
     except jwt.ExpiredSignatureError:
         return 'Message expiré, renvoyez le message'
@@ -112,7 +109,7 @@ def messenger_circle_model_send(sender_id, circle, text_message):
     circle_targets = db.session.query(UserToCircle).filter(UserToCircle.circle_id == circle.id)
     for targetUser in circle_targets:
         targer_user_data = db.session.query(User).filter(targetUser.user_id == User.id).first()
-        if sender_id != targer_user_data.id and targer_user_data.facebook_psid != -1:
+        if sender_id != targer_user_data.id and targer_user_data.facebook_psid is not None:
             send_message(targer_user_data.facebook_psid, text_message)
 
 

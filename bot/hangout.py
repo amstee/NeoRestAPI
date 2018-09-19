@@ -28,7 +28,6 @@ def encode_post_back_payload(hangout_space, message_text, link):
         token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
         return token.decode()
     except Exception as e:
-        print(e)
         return str(e)
 
 
@@ -45,7 +44,6 @@ def handle_conversation_payload(message_payload):
             db.session.commit()
             return "Votre message a été envoyé avec succès"
         except Exception as e:
-            print("Une erreur est survenue : " + str(e), file=sys.stderr)
             return "Une erreur est survenue : " + str(e)
     except jwt.ExpiredSignatureError:
         return 'Message expiré, renvoyez le message'
@@ -66,6 +64,9 @@ def link_user_to_hangout(api_token, email):
             try:
                 user = db.session.query(User).filter(User.id == payload['sub']).first()
                 if user is not None:
+                    old_user = db.session.query(User).filter(User.hangout_space == str(email)).first()
+                    if old_user is not None:
+                        old_user.update_content(facebook_psid=None)
                     user.update_content(hangout_space=email)
                     return "Bienvenue sur NEO, " + payload['first_name'] + " " + payload['last_name'] + " !"
                 else:
@@ -84,7 +85,6 @@ def is_token_valid(content):
             return True
         return False
     except Exception as e:
-        print(e, file=sys.stderr)
         return False
 
 
