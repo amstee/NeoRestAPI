@@ -7,7 +7,7 @@ from routes import ResourceManager
 from models.User import User
 from .sockets import sockets
 from .redis import RedisSessionInterface
-from utils.database import init_default_content
+from utils.database import init_default_content, clean_default_content
 from .database import URI_USED, init_db
 # import redis
 
@@ -21,10 +21,6 @@ class NeoAPI(object):
         self.app.config['SQLALCHEMY_DATABASE_URI'] = URI_USED
         self.app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
         self.app.config['SECRET_KEY'] = config.neo_secret
-        if config.use_redis:
-            sockets.storage.set_conf(config.use_redis, config.redis_url)
-            # self.app.config['SESSION_TYPE'] = "redis"
-            # self.app.config['SESSION_REDIS'] = redis.from_url(config.redis_url)
         self.app.config["SESSION_TYPE"] = "null"
         from sockets import sockets as socket_blueprint
         self.app.register_blueprint(socket_blueprint)
@@ -56,7 +52,6 @@ class NeoAPI(object):
 
     def activate_testing(self):
         self.app.config['TESTING'] = True
-
         self.app.app_context().push()
         User.CreateNeoAdmin(self.config.admin_password)
         init_default_content(self.config.beta_user1_password, self.config.beta_user2_password)
@@ -65,6 +60,8 @@ class NeoAPI(object):
 
 def create_app(config):
     neo = NeoAPI(config)
+    if config.use_redis:
+        sockets.storage.set_conf(config.use_redis, config.redis_url)
     with neo.app.app_context():
         User.CreateNeoAdmin(config.admin_password)
         init_default_content(config.beta_user1_password, config.beta_user2_password)
