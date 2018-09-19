@@ -34,6 +34,7 @@ def message_send(conversation_id, content, socket):
                           is_user=False)
         message.conversation = conv
         message.device = client
+        info_sender = "[" + conv.name + "] " + client.name + " : "
     else:
         link = db.session.query(UserToConversation). \
             filter(UserToConversation.user_id == socket.client_id,
@@ -43,14 +44,17 @@ def message_send(conversation_id, content, socket):
         message = Message(content=content['text_message'] if 'text_message' in content else '')
         message.conversation = conv
         message.link = link
+        info_sender = "[" + conv.name + "] " + client.first_name + " : "
     db.session.commit()
     try:
-        messenger_conversation_model_send(socket.client_id, conv, content["text_message"])
+        messenger_conversation_model_send(0 if socket.is_device else socket.client_id,
+                                          conv, info_sender + content["text_message"])
     except Exception as e:
         logger.info("[%s] [%s] [%s] [%s] [%s] [%s]",
                     "SOCKET", "", "message", type(content), content, "FACEBOOK FAILED : " + str(e))
     try:
-        hangout_conversation_model_send(socket.client_id, conv, content["text_message"])
+        hangout_conversation_model_send(0 if socket.is_device else socket.client_id,
+                                        conv, info_sender + content["text_message"])
     except Exception as e:
         logger.info("[%s] [%s] [%s] [%s] [%s] [%s]",
                     "SOCKET", "", "message", type(content), content, "HANGOUT FAILED : " + str(e))
