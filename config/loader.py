@@ -8,7 +8,6 @@ import config.database as database
 import models.Device as Device
 import models.User as User
 import config.log as log
-import classes.StoreWrapper as Storage
 
 
 class ConfigLoader:
@@ -77,8 +76,7 @@ class ConfigLoader:
                     self.device_secret = data["secrets"]["deviceJWT"]
                 if "redis" in data:
                     self.use_redis = data["redis"]["use"]
-                    if self.use_redis:
-                        self.redis_url = data["redis"]["url"]
+                    self.redis_url = data["redis"]["url"]
                 if "database" in data:
                     if "postgresql" in data["database"]:
                         self.postgresql_user = data["database"]["postgresql"]["user"]
