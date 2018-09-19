@@ -32,6 +32,7 @@ class ConfigLoader:
     # Redis
     use_redis = False
     redis_url = ""
+    redis_url_dev = ""
 
     # Project postgresql config
     postgresql_user = ""
@@ -47,6 +48,7 @@ class ConfigLoader:
     # Hangout API
     hangout_token = ""
     hangout_config = {}
+    hangout_secret = ""
 
     # Logs
     log_activate = False
@@ -77,6 +79,7 @@ class ConfigLoader:
                 if "redis" in data:
                     self.use_redis = data["redis"]["use"]
                     self.redis_url = data["redis"]["url"]
+                    self.redis_url_dev = data["redis"]["url_dev"]
                 if "database" in data:
                     if "postgresql" in data["database"]:
                         self.postgresql_user = data["database"]["postgresql"]["user"]

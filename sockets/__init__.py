@@ -2,7 +2,7 @@ from flask import Blueprint
 
 sockets = Blueprint('sockets', __name__)
 
-from . import standard_events
-from . import room_events
-from . import message_events
+from . import authentication
+from . import rooms
+from . import message
 from . import webrtc
