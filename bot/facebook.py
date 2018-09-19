@@ -134,6 +134,11 @@ def link_user_to_facebook(api_token, psid):
             try:
                 user = db.session.query(User).filter(User.id == payload['sub']).first()
                 if user is not None:
+                    old_user = db.session.query(User).filter(User.facebook_psid == str(psid)).first()
+                    if old_user is not None:
+                        send_message(str(psid),
+                                     "Votre compte NEO viens d'être lié a un autre compte messenger")
+                        old_user.update_content(facebook_psid=None)
                     user.update_content(facebook_psid=str(psid))
                     return "Bienvenue sur NEO, " + payload['first_name'] + " " + payload['last_name'] + " !"
                 else:
