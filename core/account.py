@@ -220,3 +220,9 @@ def create_api_token(user):
                        request.method, request.host, request.path,
                        request.content_type, request.data, resp.status_code, traceback_format_exc())
     return resp
+
+
+def add_ios_token(ios_token, user):
+        user.ios_token = ios_token
+        db.session.commit()
+        return SUCCESS()

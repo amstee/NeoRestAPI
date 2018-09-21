@@ -8,6 +8,7 @@ from utils.apiUtils import *
 from utils.log import logger_set
 from traceback import format_exc as traceback_format_exc
 from config.log import LOG_CIRCLE_FILE
+from mobile import push_ios as ios
 
 logger = logger_set(module=__name__, file=LOG_CIRCLE_FILE)
 
@@ -28,6 +29,7 @@ def invite(circle_id, email, client, is_device):
                 circle_invite.circle = circle
                 db.session.commit()
                 circle_invite.notify_user(p2={'event': 'invite', 'circle_id': circle.id})
+                ios.send_notification(dest, "Invatation cercle " + circle.name)
                 resp = SUCCESS()
             else:
                 resp = FAILED("Utilisateur spécifié introuvable")

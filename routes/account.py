@@ -5,7 +5,12 @@ from utils.contentChecker import content_checker
 from utils.security import get_any_from_header
 from utils.apiUtils import *
 from utils.exceptions import InvalidAuthentication, ContentNotFound
+from utils.log import logger_set
+from config.log import LOG_ACCOUNT_FILE
+from traceback import format_exc as traceback_format_exc
 import core.account as core
+
+logger = logger_set(module=__name__, file=LOG_ACCOUNT_FILE)
 
 
 class AccountCreate(Resource):
@@ -113,3 +118,21 @@ class CreateApiToken(Resource):
     @secured_user_route
     def post(self, user):
         return core.create_api_token(user)
+
+
+class AddIOSToken(Resource):
+    @check_content
+    @secured_user_route
+    def post(self, content, user):
+        try:
+            content_checker("ios_token")
+            resp = core.add_ios_token(content["ios_token"], user)
+            logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
+                        request.method, request.host, request.path,
+                        request.content_type, request.data, resp.status_code)
+        except Exception as e:
+            resp = FAILED(e)
+            logger.warning("[%s] [%s] [%s] [%s] [%s] [%d]\n%s",
+                           request.method, request.host, request.path,
+                           request.content_type, request.data, resp.status_code, traceback_format_exc())
+        return resp

@@ -54,6 +54,7 @@ def message_send(content, conversation_id, user):
                                  'message': message.get_simple_json_compliant_content(),
                                  'status': 'pending'}, room='conversation_' + str(message.conversation_id),
                      namespace='/')
+            message.conversation.mobile_notification("Nouveau message de %s" % user.email)
             conversation = db.session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
             info_sender = "[" + link.conversation.name + "] " + user.first_name + " : "
             try:

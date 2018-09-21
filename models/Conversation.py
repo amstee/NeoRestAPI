@@ -4,6 +4,8 @@ from flask_socketio import emit
 from utils.log import logger_set
 import datetime
 from config.log import LOG_DATABASE_FILE
+from mobile import push_ios as ios
+from mobile import push_android as android
 
 logger = logger_set(module=__name__, file=LOG_DATABASE_FILE)
 
@@ -51,6 +53,11 @@ class Conversation(db.Model):
                                                        "name": self.name,
                                                        "circle_id": self.circle_id,
                                                        "device_access": self.device_access})
+
+    def mobile_notification(self, alert):
+        for link in self.links:
+            ios.send_notification(link.user, alert)
+            android.send_notification(link.user, alert)
 
     def has_members(self, *args):
         for member in args:

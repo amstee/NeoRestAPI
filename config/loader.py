@@ -34,6 +34,12 @@ class ConfigLoader:
     redis_url = ""
     redis_url_dev = ""
 
+    # IOS Push
+    use_ios = False
+    ios_cert = ""
+    ios_key = ""
+    ios_token = ""
+
     # Project postgresql config
     postgresql_user = ""
     postgresql_password = ""
@@ -80,6 +86,11 @@ class ConfigLoader:
                     self.use_redis = data["redis"]["use"]
                     self.redis_url = data["redis"]["url"]
                     self.redis_url_dev = data["redis"]["url_dev"]
+                if "ios_push" in data:
+                    self.use_ios = data["ios_push"]["user"]
+                    self.ios_cert = data["ios_push"]["cert"]
+                    self.ios_key = data["ios_push"]["key"]
+                    self.ios_token = data["ios_push"]["token"]
                 if "database" in data:
                     if "postgresql" in data["database"]:
                         self.postgresql_user = data["database"]["postgresql"]["user"]
