@@ -148,9 +148,9 @@ def hangout_circle_model_send(sender_id, circle, text_message):
     circle_targets = db.session.query(UserToCircle).filter(UserToCircle.circle_id == circle.id)
     for target_user in circle_targets:
         target_user_data = db.session.query(User).filter(target_user.user_id == User.id).first()
-        if sender_id != target_user_data.id and target_user_data.hangout_email is not None and \
-                len(target_user_data.hangout_email) > 0:
-            send_to_space(target_user_data.hangout_email, text_message)
+        if sender_id != target_user_data.id and target_user_data.hangout_space is not None and \
+                len(target_user_data.hangout_space) > 0:
+            send_to_space(target_user_data.hangout_space, text_message)
 
 
 def hangout_conversation_model_send(sender_id, conversation, text_message):
