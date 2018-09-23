@@ -1,7 +1,7 @@
+import datetime
 from config.database import db
 from dateutil import parser as DateParser
 from utils.log import logger_set
-import datetime
 from config.log import LOG_DATABASE_FILE
 
 logger = logger_set(module=__name__, file=LOG_DATABASE_FILE)

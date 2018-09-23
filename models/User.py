@@ -27,6 +27,7 @@ class User(db.Model):
     hangout_space = db.Column(db.String(256))
     type = db.Column(db.String(10))
     is_online = db.Column(db.Boolean)
+    ios_token = db.Column(db.string(64))
 
     # RELATIONS
     circle_link = db.relationship("UserToCircle", back_populates="user", order_by="UserToCircle.id",
@@ -270,8 +271,9 @@ class User(db.Model):
             "updated": self.updated,
             "isOnline": self.is_online,
             "type": self.type,
-            "hangout": False if self.hangout_space is None or len(self.hangout_space) == 0 else True,
-            "facebook": False if self.facebook_psid is None or len(self.facebook_psid) == 0 else True,
+            "hangout": False if (self.hangout_space is None or len(self.hangout_space) == 0) else True,
+            "facebook": False if (self.facebook_psid is None or len(self.facebook_psid) == 0) else True,
+            "ios_token": False if (self.ios_token is None or len(self.ios_token == 0)) else True,
             "circles": [link.get_content() for link in self.circle_link],
             "invites": [invite.get_content() for invite in self.circle_invite],
             "conversations": [link.get_simple_content() for link in self.conversation_links],

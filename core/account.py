@@ -142,3 +142,15 @@ def create_api_token(user):
         response = jsonify({"success": False, "message": AccountException.message})
         response.status_code = AccountException.status_code
     return response
+
+
+def add_ios_token(ios_token, user):
+    try:
+        user.ios_token = ios_token
+        db.session.commit()
+        response = jsonify({"success": True})
+        response.status_code = 200
+    except AccountException:
+        response = jsonify({"success": False, "message": AccountException.message})
+        response.status_code = AccountException.status_code
+    return response
