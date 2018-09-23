@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from flask_restful import Resource
-from utils.decorators import check_content
+from utils.decorators import check_content_old
 from bot.hangout import is_token_valid, link_user_to_hangout, is_user_linked, handle_conversation_payload
 from bot.hangout import send_message_choice
 from sys import stderr
@@ -10,7 +10,7 @@ logger = logger_set(__name__)
 
 
 class WebHookHangout(Resource):
-    @check_content
+    @check_content_old
     def post(self, content):
         try:
             if is_token_valid(content):

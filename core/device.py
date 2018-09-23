@@ -33,7 +33,7 @@ def logout(device_token):
     try:
         res, data = Device.decode_auth_token(device_token)
         if res is True:
-            data.disconnect()
+            data.disconnect_old()
             data.circle.notify_users(p2={'event': 'device', 'type': 'disconnect', 'device_id': data.id})
             resp = SUCCESS()
         else:
@@ -90,7 +90,7 @@ def login(username, password):
     try:
         device = db.session.query(Device).filter(Device.username == username).first()
         if device is not None:
-            res, data = device.authenticate(password)
+            res, data = device.old_authenticate(password)
             if res is True:
                 resp = jsonify({"success": True, "device_token": data})
                 resp.status_code = 200

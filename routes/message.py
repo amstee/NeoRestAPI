@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request
-from utils.decorators import secured_route, check_content
+from utils.decorators import secured_route, check_content_old
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from utils.security import get_any_from_header
@@ -9,7 +9,7 @@ import core.message as core
 
 
 class MessageDelete(Resource):
-    @check_content
+    @check_content_old
     @secured_route
     def post(self, content, client, is_device):
         try:
@@ -20,7 +20,7 @@ class MessageDelete(Resource):
 
 
 class MessageInfo(Resource):
-    @check_content
+    @check_content_old
     @secured_route
     def post(self, content, client, is_device):
         try:
@@ -40,7 +40,7 @@ class GetMessageInfo(Resource):
 
 
 class MessageList(Resource):
-    @check_content
+    @check_content_old
     @secured_route
     def post(self, content, client, is_device):
         try:
@@ -60,7 +60,7 @@ class GetMessageList(Resource):
 
 
 class MessageUpdate(Resource):
-    @check_content
+    @check_content_old
     @secured_route
     def post(self, content, client, is_device):
         try:

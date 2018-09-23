@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request
-from utils.decorators import secured_route, check_content, check_admin_route
+from utils.decorators import secured_route, check_content_old, check_admin_route
 from utils.apiUtils import *
 from utils.contentChecker import content_checker
 from utils.exceptions import ContentNotFound, InvalidAuthentication
@@ -9,7 +9,7 @@ import core.media as core
 
 
 class MediaInfo(Resource):
-    @check_content
+    @check_content_old
     @secured_route
     def post(self, content, client, is_device):
         try:
@@ -29,7 +29,7 @@ class GetMediaInfo(Resource):
 
 
 class MediaInfoAdmin(Resource):
-    @check_content
+    @check_content_old
     @check_admin_route
     def post(self, content):
         try:
@@ -40,7 +40,7 @@ class MediaInfoAdmin(Resource):
 
 
 class MediaDelete(Resource):
-    @check_content
+    @check_content_old
     @check_admin_route
     def post(self, content):
         try:
@@ -51,7 +51,7 @@ class MediaDelete(Resource):
 
 
 class MediaList(Resource):
-    @check_content
+    @check_content_old
     @secured_route
     def post(self, content, client, is_device):
         try:
@@ -71,7 +71,7 @@ class GetMediaList(Resource):
 
 
 class MediaUpdate(Resource):
-    @check_content
+    @check_content_old
     @check_admin_route
     def post(self, content):
         try:

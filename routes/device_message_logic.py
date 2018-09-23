@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from utils.decorators import check_content, secured_device_route
+from utils.decorators import check_content_old, secured_device_route
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from utils.exceptions import ContentNotFound
@@ -7,7 +7,7 @@ import core.device_message_logic as core
 
 
 class FirstDeviceMessageSend(Resource):
-    @check_content
+    @check_content_old
     @secured_device_route
     def post(self, content, device):
         try:
@@ -18,7 +18,7 @@ class FirstDeviceMessageSend(Resource):
 
 
 class DeviceMessageSend(Resource):
-    @check_content
+    @check_content_old
     @secured_device_route
     def post(self, content, device):
         try:

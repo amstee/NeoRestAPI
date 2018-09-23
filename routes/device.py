@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource
-from utils.decorators import check_content, check_admin_route, secured_route, secured_device_route
+from utils.decorators import check_content_old, check_admin_route, secured_route, secured_device_route
 from utils.security import get_any_from_header
 from utils.apiUtils import *
 from utils.contentChecker import content_checker
@@ -9,7 +9,7 @@ import core.device as core
 
 
 class DeviceAdd(Resource):
-    @check_content
+    @check_content_old
     @check_admin_route
     def post(self, content):
         try:
@@ -20,7 +20,7 @@ class DeviceAdd(Resource):
 
 
 class DeviceUpdate(Resource):
-    @check_content
+    @check_content_old
     @secured_route
     def post(self, content, client, is_device):
         try:
@@ -31,7 +31,7 @@ class DeviceUpdate(Resource):
 
 
 class DeviceInfo(Resource):
-    @check_content
+    @check_content_old
     @secured_route
     def post(self, content, client, is_device):
         try:
@@ -54,7 +54,7 @@ class GetDeviceInfo(Resource):
 
 
 class DeviceDelete(Resource):
-    @check_content
+    @check_content_old
     @check_admin_route
     def post(self, content):
         try:
@@ -65,7 +65,7 @@ class DeviceDelete(Resource):
 
 
 class DeviceActivate(Resource):
-    @check_content
+    @check_content_old
     @check_admin_route
     def post(self, content):
         try:
@@ -76,7 +76,7 @@ class DeviceActivate(Resource):
 
 
 class DeviceLogin(Resource):
-    @check_content
+    @check_content_old
     def post(self, content):
         try:
             content_checker("device_username", "device_password")
@@ -86,7 +86,7 @@ class DeviceLogin(Resource):
 
 
 class ModifyDevicePassword(Resource):
-    @check_content
+    @check_content_old
     def post(self, content):
         try:
             content_checker("device_username", "previous_password", "new_password")
@@ -96,14 +96,14 @@ class ModifyDevicePassword(Resource):
 
 
 class CheckDeviceToken(Resource):
-    @check_content
+    @check_content_old
     @secured_device_route
     def post(self, content, device):
         return core.check_token(content, device)
 
 
 class DeviceLogout(Resource):
-    @check_content
+    @check_content_old
     def post(self, content):
         try:
             content_checker("device_token")
@@ -113,7 +113,7 @@ class DeviceLogout(Resource):
 
 
 class UsernameAvailability(Resource):
-    @check_content
+    @check_content_old
     def post(self, content):
         try:
             content_checker("device_username")
@@ -128,7 +128,7 @@ class GetUsernameAvailability(Resource):
 
 
 class DeviceCredentials(Resource):
-    @check_content
+    @check_content_old
     @check_admin_route
     def post(self, content):
         try:
@@ -139,7 +139,7 @@ class DeviceCredentials(Resource):
 
 
 class DeviceList(Resource):
-    @check_content
+    @check_content_old
     @check_admin_route
     def post(self, content):
         try:

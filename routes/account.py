@@ -1,61 +1,57 @@
 from flask import request
 from flask_restful import Resource
-from utils.decorators import secured_route, check_content, check_admin_route, secured_user_route
+from utils.decorators import secured_route, check_content_old, check_content, check_admin_route
+from utils.decorators import secured_user_route, route_log
 from utils.contentChecker import content_checker
 from utils.security import get_any_from_header
 from utils.apiUtils import *
 from utils.exceptions import InvalidAuthentication, ContentNotFound
+from config.log import LOG_ACCOUNT_FILE
+from utils.log import logger_set
 import core.account as core
+
+logger = logger_set(module=__name__, file=LOG_ACCOUNT_FILE)
 
 
 class AccountCreate(Resource):
-    @check_content
+    @route_log(logger)
+    @check_content(("email", str(), True), ("password", str(), True), ("first_name", str(), True),
+                   ("last_name", str(), True), ("birthday", str(), True))
     def post(self, content):
-        return core.create(content)
+        return core.create(content["email"], content["password"], content["first_name"],
+                           content["last_name"], content["birthday"])
 
 
 class AccountLogin(Resource):
-    @check_content
+    @route_log(logger)
+    @check_content(("email", str(), True), ("password", str(), True))
     def post(self, content):
-        try:
-            content_checker("email", "password")
             return core.login(content["email"], content["password"])
-        except ContentNotFound as cnf:
-            return FAILED(cnf)
 
 
 class ModifyPassword(Resource):
-    @check_content
+    @route_log(logger)
+    @check_content(("email", str(), True), ("previous_password", str(), True), ("new_password", str(), True))
     def post(self, content):
-        try:
-            content_checker("email", "previous_password", "new_password")
-            return core.modify_password(content["email"], content["previous_password"], content["new_password"])
-        except ContentNotFound as cnf:
-            return FAILED(cnf)
+        return core.modify_password(content["email"], content["previous_password"], content["new_password"])
 
 
 class CheckToken(Resource):
-    @check_content
+    @route_log(logger)
+    @check_content(("token", str(), True))
     def post(self, content):
-        try:
-            content_checker("token")
-            return core.check_token(content["token"])
-        except ContentNotFound as cnf:
-            return FAILED(cnf)
+        return core.check_token(content["token"])
 
 
 class AccountLogout(Resource):
-    @check_content
+    @route_log(logger)
+    @check_content(("token", str(), True))
     def post(self, content):
-        try:
-            content_checker("token")
-            return core.logout(content["token"])
-        except ContentNotFound as cnf:
-            return FAILED(cnf)
+        return core.logout(content["token"])
 
 
 class UserInfo(Resource):
-    @check_content
+    @check_content_old
     @secured_route
     def post(self, content, client, is_device):
         if "user_id" not in content and is_device is False:
@@ -77,14 +73,14 @@ class GetUserInfo(Resource):
 
 
 class AccountModify(Resource):
-    @check_content
+    @check_content_old
     @secured_user_route
     def post(self, content, user):
         return core.update(content, user)
 
 
 class MailAvailability(Resource):
-    @check_content
+    @check_content_old
     def post(self, content):
         try:
             content_checker("email")
@@ -99,7 +95,7 @@ class GetMailAvailability(Resource):
 
 
 class PromoteAdmin(Resource):
-    @check_content
+    @check_content_old
     @check_admin_route
     def post(self, content):
         try:
