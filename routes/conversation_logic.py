@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from utils.decorators import secured_route, check_content_old, secured_user_route
+from utils.decorators import secured_route_old, check_content_old, secured_user_route
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from utils.exceptions import ContentNotFound
@@ -8,7 +8,7 @@ import core.conversation_logic as core
 
 class ConversationInvite(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             content_checker("conversation_id", "email")
@@ -52,7 +52,7 @@ class ConversationQuit(Resource):
 
 class ConvesationSetDevice(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             content_checker("conversation_id")

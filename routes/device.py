@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource
-from utils.decorators import check_content_old, check_admin_route, secured_route, secured_device_route
+from utils.decorators import check_content_old, check_admin_route, secured_route_old, secured_device_route
 from utils.security import get_any_from_header
 from utils.apiUtils import *
 from utils.contentChecker import content_checker
@@ -21,7 +21,7 @@ class DeviceAdd(Resource):
 
 class DeviceUpdate(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             content_checker("device_id")
@@ -32,7 +32,7 @@ class DeviceUpdate(Resource):
 
 class DeviceInfo(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             if is_device:

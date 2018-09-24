@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource
-from utils.decorators import secured_route, check_content_old
+from utils.decorators import secured_route_old, check_content_old
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from utils.security import get_any_from_header
@@ -10,7 +10,7 @@ import core.media_logic as core
 
 class DeleteMedia(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             content_checker("media_id")
@@ -21,7 +21,7 @@ class DeleteMedia(Resource):
 
 class CreateMedia(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             content_checker("medias")
@@ -32,7 +32,7 @@ class CreateMedia(Resource):
 
 class FindMedia(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             content_checker("purpose")
@@ -52,7 +52,7 @@ class UploadMedia(Resource):
 
 class MediaRequest(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             content_checker("media_id")

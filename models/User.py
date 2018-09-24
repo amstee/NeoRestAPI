@@ -27,7 +27,7 @@ class User(db.Model):
     hangout_space = db.Column(db.String(256))
     type = db.Column(db.String(10))
     is_online = db.Column(db.Boolean)
-    ios_token = db.Column(db.string(64))
+    ios_token = db.Column(db.String(64))
 
     # RELATIONS
     circle_link = db.relationship("UserToCircle", back_populates="user", order_by="UserToCircle.id",

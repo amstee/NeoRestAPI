@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request
-from utils.decorators import secured_route, check_content_old, check_admin_route
+from utils.decorators import secured_route_old, check_content_old, check_admin_route
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from utils.exceptions import ContentNotFound, InvalidAuthentication
@@ -32,7 +32,7 @@ class ConversationDelete(Resource):
 
 class ConversationInfo(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             content_checker("conversation_id")
@@ -52,7 +52,7 @@ class GetConversationInfo(Resource):
 
 class ConversationList(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             content_checker("circle_id")
@@ -72,7 +72,7 @@ class GetConversationList(Resource):
 
 class ConversationUpdate(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             content_checker("conversation_id")

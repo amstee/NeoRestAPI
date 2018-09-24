@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request
-from utils.decorators import secured_route, check_content_old, check_admin_route, secured_user_route
+from utils.decorators import secured_route_old, check_content_old, check_admin_route, secured_user_route
 from utils.security import get_any_from_header, get_user_from_header
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
@@ -32,14 +32,14 @@ class CircleDelete(Resource):
 
 class CircleUpdate(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         return core.update(content, client, is_device)
 
 
 class CircleInfo(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             if not is_device:

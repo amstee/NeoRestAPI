@@ -1,11 +1,7 @@
 from flask import request
 from flask_restful import Resource
-from utils.decorators import secured_route, check_content_old, check_content, check_admin_route
-from utils.decorators import secured_user_route, route_log
-from utils.contentChecker import content_checker
+from utils.decorators import secured_route_old, check_content, check_admin_route, secured_user_route, route_log
 from utils.security import get_any_from_header
-from utils.apiUtils import *
-from utils.exceptions import InvalidAuthentication, ContentNotFound
 from config.log import LOG_ACCOUNT_FILE
 from utils.log import logger_set
 import core.account as core
@@ -51,61 +47,54 @@ class AccountLogout(Resource):
 
 
 class UserInfo(Resource):
-    @check_content_old
-    @secured_route
+    @route_log(logger)
+    @check_content(("user_id", int(), False))
+    @secured_route_old
     def post(self, content, client, is_device):
         if "user_id" not in content and is_device is False:
             return core.get_info(client.id, client, is_device)
-        try:
-            content_checker("user_id")
-            return core.get_info(content["user_id"], client, is_device)
-        except ContentNotFound as cnf:
-            return FAILED(cnf)
+        return core.get_info(content["user_id"], client, is_device)
 
 
 class GetUserInfo(Resource):
+    @route_log(logger)
     def get(self, user_id):
-        try:
-            client, is_device = get_any_from_header(request)
-            return core.get_info(user_id, client, is_device)
-        except InvalidAuthentication as ia:
-            return FAILED(ia)
+        client, is_device = get_any_from_header(request)
+        return core.get_info(user_id, client, is_device)
 
 
 class AccountModify(Resource):
-    @check_content_old
+    @route_log(logger)
+    @check_content(("email", str(), False), ("first_name", str(), False),
+                   ("last_name", str(), False), ("birthday", str(), False))
     @secured_user_route
     def post(self, content, user):
         return core.update(content, user)
 
 
 class MailAvailability(Resource):
-    @check_content_old
+    @route_log(logger)
+    @check_content(("email", str(), True))
     def post(self, content):
-        try:
-            content_checker("email")
-            return core.is_email_available(content["email"])
-        except ContentNotFound as cnf:
-            return FAILED(cnf)
+        return core.is_email_available(content["email"])
 
 
 class GetMailAvailability(Resource):
+    @route_log(logger)
     def get(self, email):
         return core.is_email_available(email)
 
 
 class PromoteAdmin(Resource):
-    @check_content_old
+    @route_log(logger)
+    @check_content(("user_id", int(), True))
     @check_admin_route
     def post(self, content):
-        try:
-            content_checker("user_id")
-            core.promote_admin(content["user_id"])
-        except ContentNotFound as cnf:
-            return FAILED(cnf)
+        core.promote_admin(content["user_id"])
 
 
 class CreateApiToken(Resource):
+    @route_log(logger)
     @secured_user_route
     def post(self, user):
         return core.create_api_token(user)

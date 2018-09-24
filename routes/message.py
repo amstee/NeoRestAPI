@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request
-from utils.decorators import secured_route, check_content_old
+from utils.decorators import secured_route_old, check_content_old
 from utils.contentChecker import content_checker
 from utils.apiUtils import *
 from utils.security import get_any_from_header
@@ -10,7 +10,7 @@ import core.message as core
 
 class MessageDelete(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             content_checker("message_id")
@@ -21,7 +21,7 @@ class MessageDelete(Resource):
 
 class MessageInfo(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             content_checker("message_id")
@@ -41,7 +41,7 @@ class GetMessageInfo(Resource):
 
 class MessageList(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             content_checker("conversation_id", "quantity")
@@ -61,7 +61,7 @@ class GetMessageList(Resource):
 
 class MessageUpdate(Resource):
     @check_content_old
-    @secured_route
+    @secured_route_old
     def post(self, content, client, is_device):
         try:
             content_checker("message_id", "text_content")
