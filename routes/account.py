@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource
-from utils.decorators import secured_route_old, check_content, check_admin_route, secured_user_route, route_log
+from utils.decorators import secured_route, check_content, check_admin_route, secured_user_route, route_log
 from utils.security import get_any_from_header
 from config.log import LOG_ACCOUNT_FILE
 from utils.log import logger_set
@@ -49,7 +49,7 @@ class AccountLogout(Resource):
 class UserInfo(Resource):
     @route_log(logger)
     @check_content(("user_id", int(), False))
-    @secured_route_old
+    @secured_route
     def post(self, content, client, is_device):
         if "user_id" not in content and is_device is False:
             return core.get_info(client.id, client, is_device)
@@ -67,7 +67,7 @@ class AccountModify(Resource):
     @route_log(logger)
     @check_content(("email", str(), False), ("first_name", str(), False),
                    ("last_name", str(), False), ("birthday", str(), False))
-    @secured_user_route
+    @secured_route
     def post(self, content, user):
         return core.update(content, user)
 
@@ -88,13 +88,13 @@ class GetMailAvailability(Resource):
 class PromoteAdmin(Resource):
     @route_log(logger)
     @check_content(("user_id", int(), True))
-    @check_admin_route
+    @secured_route("ADMIN")
     def post(self, content):
         core.promote_admin(content["user_id"])
 
 
 class CreateApiToken(Resource):
     @route_log(logger)
-    @secured_user_route
+    @secured_route
     def post(self, user):
         return core.create_api_token(user)

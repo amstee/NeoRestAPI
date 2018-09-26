@@ -4,9 +4,9 @@ from models.User import User
 from models.Device import Device
 from .security import get_user_from_header, get_device_from_header
 from .exceptions import InvalidAuthentication
-from exceptions.content import JsonNotFound, JsonParameterFormatError, JsonParameterNotFound, JsonUnreadable
-from exceptions.content import ContentException
-from functools import wraps
+from exceptions.content import *
+from exceptions.account import AccountException, InsufficientAccountRight
+from exceptions.device import DeviceException
 from traceback import format_exc
 import json
 
@@ -44,7 +44,7 @@ def secured_from_header(func):
                     return resp
             if "neo_device_token" in request.cookies:
                 token = request.headers.get("neo_device_token")
-                res, data = Device.decode_auth_token(token)
+                res, data = Device.decode_auth_token_old(token)
                 if res is True:
                     kwargs['client'] = data
                     kwargs["is_device"] = True
@@ -91,7 +91,7 @@ def secured_device_route(func):
                     json_token = content["device_token"]
                 else:
                     json_token = request.cookies.get("neo_device_token")
-                res, data = Device.decode_auth_token(json_token)
+                res, data = Device.decode_auth_token_old(json_token)
                 if res is True:
                     kwargs['device'] = data
                     return func(*args, **kwargs)
@@ -109,7 +109,7 @@ def secured_device_route(func):
     return func_wrapper
 
 
-def secured_route(func):
+def secured_route_old(func):
     def func_wrapper(*args, **kwargs):
         try:
             content = request.get_json()
@@ -132,7 +132,7 @@ def secured_route(func):
                     json_token = content["device_token"]
                 else:
                     json_token = request.cookies.get("neo_device_token")
-                res, data = Device.decode_auth_token(json_token)
+                res, data = Device.decode_auth_token_old(json_token)
                 if res is True:
                     kwargs['client'] = data
                     kwargs["is_device"] = True
@@ -237,14 +237,44 @@ def parametrized(dec):
 
 
 @parametrized
+def secured_route(func, account_type="DEFAULT"):
+    def func_wrapper(*args, **kwargs):
+        content = request.get_json()
+        if "token" in content and content["token"] != "" or "neo_user_token" in request.cookies:
+            if "token" in content:
+                json_token = content["token"]
+            else:
+                json_token = request.cookies.get("neo_user_token")
+            client = User.decode_auth_token(json_token)
+            if client.type != account_type and account_type == "ADMIN":
+                raise InsufficientAccountRight
+            kwargs['client'] = client
+            kwargs["is_device"] = False
+            return func(*args, **kwargs)
+        if "device_token" in content and content["device_token"] != "" or "neo_device_token" in request.cookies:
+            if "device_token" in content:
+                json_token = content["device_token"]
+            else:
+                json_token = request.cookies.get("neo_device_token")
+            client = Device.decode_auth_token(json_token)
+            kwargs['client'] = client
+            kwargs["is_device"] = True
+            return func(*args, **kwargs)
+        raise TokenNotFound
+    return func_wrapper
+
+
+@parametrized
 def route_log(f, logger):
-    @wraps(f)
     def wrapped(*args, **kwargs):
         try:
             response = f(*args, **kwargs)
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, response.status_code)
+        except (AccountException or DeviceException) as HandledException:
+            response = jsonify({"success": False, "message": HandledException.message})
+            response.status_code = HandledException.status_code
         except Exception:
             response = jsonify({"success": False})
             response.status_code = 500

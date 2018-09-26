@@ -6,7 +6,7 @@ import jwt
 import datetime
 from config.log import LOG_DATABASE_FILE
 from config.facebook import SECRET_KEY as SECRET_KEY_BOT
-from exceptions.account import InvalidPassword, UnauthenticatedUser, ExpiredUserSession, InvalidJwtToken, UserNotFound
+from exceptions.account import *
 
 logger = logger_set(module=__name__, file=LOG_DATABASE_FILE)
 SECRET_KEY = ""
@@ -116,7 +116,7 @@ class User(db.Model):
             payload = jwt.decode(auth_token, SECRET_KEY)
             user = db.session.query(User).filter(User.id == payload['sub']).first()
             if user is None:
-                raise UserNotFound
+                raise TokenNotBoundToUser
             if user.json_token is None:
                 raise UnauthenticatedUser
             return user

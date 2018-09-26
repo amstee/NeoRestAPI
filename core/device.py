@@ -31,7 +31,7 @@ def is_username_available(username):
 
 def logout(device_token):
     try:
-        res, data = Device.decode_auth_token(device_token)
+        res, data = Device.decode_auth_token_old(device_token)
         if res is True:
             data.disconnect_old()
             data.circle.notify_users(p2={'event': 'device', 'type': 'disconnect', 'device_id': data.id})

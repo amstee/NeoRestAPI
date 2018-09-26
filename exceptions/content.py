@@ -32,3 +32,10 @@ class JsonUnreadable(ContentException):
     def __init__(self):
         ContentException.message = self.message
         ContentException.status_code = self.status_code
+
+
+class TokenNotFound(ContentException):
+    def __init__(self):
+        ContentException.message = "Token JWT introuvable dans la requête"
+        ContentException.status_code = 401
+

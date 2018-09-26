@@ -16,6 +16,12 @@ class UserNotFound(AccountException):
         AccountException.status_code = 404
 
 
+class TokenNotBoundToUser(AccountException):
+    def __init__(self):
+        AccountException.message = "Le token d'authentification ne correspond à aucun utilisateur"
+        AccountException.status_code = 404
+
+
 class MismatchingPassword(AccountException):
     def __init__(self):
         AccountException.message = "Le mot de passe de correspond pas"
@@ -49,5 +55,11 @@ class InvalidJwtToken(AccountException):
 class NotAllowedToSeeUser(AccountException):
     def __init__(self):
         AccountException.message = "Vous ne pouvez pas voir cet utilisateur"
+        AccountException.status_code = 403
+
+
+class InsufficientAccountRight(AccountException):
+    def __init__(self):
+        AccountException.message = "Les droits de votre compte sont insuffisant"
         AccountException.status_code = 403
 
