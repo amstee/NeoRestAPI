@@ -54,8 +54,8 @@ class SocketUser:
     def generate_credentials(self):
         validity = time.time() + EXPIRY
         self.webrtc_username = str(validity) + ':' + str(self.client_id) + str(self.is_device)
-        digest_maker = hmac.new(SECRET_KEY, '', hashlib.sha1)
-        digest_maker.update(self.webrtc_username)
+        digest_maker = hmac.new(SECRET_KEY.encode('utf-8'), b'', hashlib.sha1)
+        digest_maker.update(self.webrtc_username.encode('utf-8'))
         self.webrtc_password = digest_maker.digest()
         self.webrtc_credentials_valididity = validity
         return self.webrtc_username, self.webrtc_password
