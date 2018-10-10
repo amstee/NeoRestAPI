@@ -18,7 +18,7 @@ def forward_message(json, socket):
         raise Exception("Destinataire non connecte aux websockets")
     dest_socket.emit("webrtc_forward", {
         "sender_id": socket.client_id,
-        "is_device": socket.client.is_device,
+        "is_device": socket.is_device,
         "content": json
     })
     socket.emit("success", "Message forwarded")
