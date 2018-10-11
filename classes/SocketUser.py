@@ -23,8 +23,7 @@ class SocketUser:
         self.sid = sid
 
     def __str__(self):
-        return '<SocketClient(' + str(self.sid) + "client_id : " + self.client_id + " Connected : " + \
-               str(self.connected) + " Authenticated : " + str(self.authenticated) + ')>'
+        return '<SocketClient(' + str(self.client_id) + ', ' + str(self.sid) + ')/>'
 
     @staticmethod
     def construct_client(client_id, is_device, data):

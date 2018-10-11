@@ -35,6 +35,7 @@ class SocketioWebrtcEvents(unittest.TestCase):
         if self.user2 is None:
             self.user2 = UserModel(email="tea@test.com", password="test", first_name="firstname",
                                    last_name="lastname", birthday="1995-12-12")
+        self.email = self.user2.email
         self.circle = Circle(name="Mamie")
         self.linkCircle = UserToCircle(user=self.user1, circle=self.circle, privilege="ADMIN")
         self.linkCircle2 = UserToCircle(user=self.user2, circle=self.circle)
@@ -83,3 +84,21 @@ class SocketioWebrtcEvents(unittest.TestCase):
         self.client.emit('webrtc_credentials')
         res1 = self.client.get_received()
         assert len(res1) == 1
+
+    def test_valid_forward(self):
+        assert len(sockets) == 0
+        self.client.connect()
+        self.client2.connect()
+        self.client.emit('authenticate', {'token': self.token1}, json=True)
+        self.client2.emit('authenticate', {'token': self.token2}, json=True)
+        res1 = self.client.get_received()
+        res2 = self.client2.get_received()
+        assert len(res1) == 1
+        assert res1[0]['name'] == 'success'
+        assert len(res2) == 1
+        assert res2[0]['name'] == 'success'
+        self.client.emit('webrtc_forward', {'email': self.email})
+        res1 = self.client.get_received()
+        res2 = self.client2.get_received()
+        assert len(res1) == 1
+        assert len(res2) == 1
