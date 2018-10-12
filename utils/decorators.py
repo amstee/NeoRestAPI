@@ -239,7 +239,7 @@ def parametrized(dec):
 @parametrized
 def secured_route(func, account_type="DEFAULT"):
     def func_wrapper(*args, **kwargs):
-        content = request.get_json()
+        content = json.loads(request.data)
         if "token" in content and content["token"] != "" or "neo_user_token" in request.cookies:
             if "token" in content:
                 json_token = content["token"]
@@ -272,7 +272,7 @@ def route_log(f, logger):
             logger.info("[%s] [%s] [%s] [%s] [%s] [%d]",
                         request.method, request.host, request.path,
                         request.content_type, request.data, response.status_code)
-        except (AccountException or DeviceException) as HandledException:
+        except (AccountException, DeviceException) as HandledException:
             response = jsonify({"success": False, "message": HandledException.message})
             response.status_code = HandledException.status_code
         except Exception:
@@ -286,17 +286,37 @@ def route_log(f, logger):
 
 
 @parametrized
-def check_content(func, *definer):
+def check_content(func, secured=None, *definer):
     def func_wrapper(*args, **kwargs):
         try:
             content = json.loads(request.data)
             if content is None:
                 raise JsonNotFound
             for elem in definer:
-                if elem[2] and elem[0] not in content:
-                    raise JsonParameterNotFound(elem[0])
-                if elem[0] in content and type(content[elem[0]]) is not type(elem[1]):
-                    raise JsonParameterFormatError(elem[0], type(elem[1]))
+                if elem is not None:
+                    if elem[2] and elem[0] not in content:
+                        raise JsonParameterNotFound(elem[0])
+                    if elem[0] in content and type(content[elem[0]]) is not type(elem[1]):
+                        raise JsonParameterFormatError(elem[0], type(elem[1]))
+            if secured is not None:
+                if "token" in content and content["token"] != "" or "neo_user_token" in request.cookies:
+                    if "token" in content:
+                        json_token = content["token"]
+                    else:
+                        json_token = request.cookies.get("neo_user_token")
+                    client = User.decode_auth_token(json_token)
+                    if client.type != secured and secured == "ADMIN":
+                        raise InsufficientAccountRight
+                    kwargs['client'] = client
+                    kwargs["is_device"] = False
+                if "device_token" in content and content["device_token"] != "" or "neo_device_token" in request.cookies:
+                    if "device_token" in content:
+                        json_token = content["device_token"]
+                    else:
+                        json_token = request.cookies.get("neo_device_token")
+                    client = Device.decode_auth_token(json_token)
+                    kwargs['client'] = client
+                    kwargs["is_device"] = True
             kwargs['content'] = content
             return func(*args, **kwargs)
         except ContentException:

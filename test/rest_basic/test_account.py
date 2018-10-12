@@ -35,7 +35,7 @@ class AccountCreate(unittest.TestCase):
         todo = {}
         response = self.api.post('/account/create', data=json.dumps(todo), content_type='application/json')
         response_json = json.loads(response.data)
-        assert response.status_code == 409
+        assert response.status_code == 400
         assert response_json['success'] is False
 
     def test_missing_email(self):
@@ -47,7 +47,7 @@ class AccountCreate(unittest.TestCase):
         }
         response = self.api.post('/account/create', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
-        assert response.status_code == 409
+        assert response.status_code == 400
         assert response_json['success'] is False
 
     def test_missing_last_name(self):
@@ -59,7 +59,7 @@ class AccountCreate(unittest.TestCase):
         }
         response = self.api.post('/account/create', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
-        assert response.status_code == 409
+        assert response.status_code == 400
         assert response_json['success'] is False
 
     def test_missing_password(self):
@@ -71,7 +71,7 @@ class AccountCreate(unittest.TestCase):
         }
         response = self.api.post('/account/create', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
-        assert response.status_code == 409
+        assert response.status_code == 400
         assert response_json['success'] is False
 
     def test_missing_first_name(self):
@@ -83,7 +83,7 @@ class AccountCreate(unittest.TestCase):
         }
         response = self.api.post('/account/create', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
-        assert response.status_code == 409
+        assert response.status_code == 400
         assert response_json['success'] is False
 
     def test_missing_birthday(self):
@@ -95,7 +95,7 @@ class AccountCreate(unittest.TestCase):
         }
         response = self.api.post('/account/create', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
-        assert response.status_code == 409
+        assert response.status_code == 400
         assert response_json['success'] is False
 
     def test_unreadable_string_birthday(self):
@@ -108,7 +108,7 @@ class AccountCreate(unittest.TestCase):
         }
         response = self.api.post('/account/create', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
-        assert response.status_code == 409
+        assert response.status_code == 500
         assert response_json['success'] is False
 
     def test_used_mail(self):
@@ -234,5 +234,5 @@ class AccountApiToken(unittest.TestCase):
         }
         response = self.api.post('/token/verify', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
-        assert response.status_code == 200
+        assert response.status_code == 401
         assert response_json['success'] is False

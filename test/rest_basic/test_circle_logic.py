@@ -8,6 +8,7 @@ from models.UserToCircle import UserToCircle
 from models.CircleInvite import CircleInvite
 from models.Circle import Circle
 from utils.testutils import authenticate_user
+from core import circle_logic
 from gevent import monkey
 monkey.patch_all()
 
@@ -112,11 +113,11 @@ class TestCircleInvite(unittest.TestCase):
 
     def test_already_existing_user(self):
         json_data = {
-            "token": self.token1,
+            "token": self.token3,
             "circle_id": self.circle.id,
             "email": self.user2.email
         }
-        self.api.post('/circle/invite', data=json.dumps(json_data), content_type='application/json')
+        circle_logic.invite(self.circle.id, self.user2.email, self.user3, False)
         response = self.api.post('/circle/invite', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
         assert response.status_code != 200

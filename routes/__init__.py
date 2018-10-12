@@ -67,7 +67,7 @@ class ResourceManager:
         api.add_resource(conversation_logic_handlers.ConversationInvite, '/conversation/invite')
         api.add_resource(conversation_logic_handlers.ConversationKick, '/conversation/kick')
         api.add_resource(conversation_logic_handlers.ConversationQuit, '/conversation/quit')
-        api.add_resource(conversation_logic_handlers.ConvesationSetDevice, '/conversation/device/set')
+        api.add_resource(conversation_logic_handlers.ConversationSetDevice, '/conversation/device/set')
         api.add_resource(conversation_logic_handlers.ConversationUserPromote, '/conversation/promote')
 
     @staticmethod
