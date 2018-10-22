@@ -74,3 +74,5 @@ class UnallowedToUseInvitation(CircleException):
     def __init__(self):
         CircleException.message = self.message
         CircleException.status_code = self.status_code
+
+

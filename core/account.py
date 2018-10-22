@@ -1,20 +1,23 @@
 from config.database import db
 from models.User import User as UserModel
-from utils.apiUtils import *
-from exceptions.account import *
+from exceptions import account as e_account
 
 
 def create(email, password, first_name, last_name, birthday):
     try:
         if db.session.query(UserModel).filter(UserModel.email == email).first() is not None:
-            raise EmailAlreadyUsed
+            raise e_account.EmailAlreadyUsed
         UserModel(email=email, password=password, first_name=first_name, last_name=last_name, birthday=birthday)
         db.session.commit()
-        response = jsonify({"success": True})
-        response.status_code = 201
-    except AccountException:
-        response = jsonify({"success": False, "message": AccountException.message})
-        response.status_code = AccountException.status_code
+        response = {
+            "data": {"success": True},
+            "status_code": 201
+        }
+    except e_account.AccountException as exception:
+        response = {
+            "data": {"success": False, "message": exception.message},
+            "status_code": exception.status_code
+        }
     return response
 
 
@@ -22,41 +25,53 @@ def login(email, password):
     try:
         user = db.session.query(UserModel).filter_by(email=email).first()
         if user is None:
-            raise UserNotFound
+            raise e_account.UserNotFound
         token = user.authenticate(password)
-        resp = jsonify({"success": True, "token": token})
-        resp.status_code = 200
         user.notify_circles({'event': 'connect', 'user': user.email})
-    except AccountException:
-        resp = jsonify({"success": False, "message": AccountException.message})
-        resp.status_code = AccountException.status_code
-    return resp
+        response = {
+            "data": {"success": True, "token": token},
+            "status_code": 200
+        }
+    except e_account.AccountException as exception:
+        response = {
+            "data": {"success": False, "message": exception.message},
+            "status_code": exception.status_code
+        }
+    return response
 
 
 def modify_password(email, prev, new):
     try:
         user = db.session.query(UserModel).filter_by(email=email).first()
         if user is None:
-            raise UserNotFound
+            raise e_account.UserNotFound
         if not user.check_password(prev):
-            raise MismatchingPassword
+            raise e_account.MismatchingPassword
         user.update_password(new)
-        response = jsonify({"success": True})
-        response.status_code = 200
-    except AccountException:
-        resp = jsonify({"success": False, "message": AccountException.message})
-        resp.status_code = AccountException.status_code
+        response = {
+            "data": {"success": True},
+            "status_code": 200
+        }
+    except e_account.AccountException as exception:
+        response = {
+            "data": {"success": False, "message": exception.message},
+            "status_code": exception.status_code
+        }
     return response
 
 
 def check_token(json_token):
     try:
         UserModel.decode_auth_token(json_token)
-        response = jsonify({"success": True, "message": "Le token json est valide"})
-        response.status_code = 200
-    except AccountException:
-        response = jsonify({"success": False, "message": AccountException.message})
-        response.status_code = AccountException.status_code
+        response = {
+            "data": {"success": True, "message": "Le token json est valide"},
+            "status_code": 200
+        }
+    except e_account.AccountException as exception:
+        response = {
+            "data": {"success": False, "message": exception.message},
+            "status_code": exception.status_code
+        }
     return response
 
 
@@ -64,14 +79,18 @@ def logout(token):
     try:
         user = UserModel.decode_auth_token(token)
         if user is None:
-            raise UserNotFound
+            raise e_account.UserNotFound
         user.disconnect()
         user.notify_circles({'event': 'disconnect', 'user': user.email})
-        response = jsonify({"success": True})
-        response.status_code = 200
-    except AccountException:
-        response = jsonify({"success": False, "message": AccountException.message})
-        response.status_code = AccountException.status_code
+        response = {
+            "data": {"success": True},
+            "status_code": 200
+        }
+    except e_account.AccountException as exception:
+        response = {
+            "data": {"success": False, "message": exception.message},
+            "status_code": exception.status_code
+        }
     return response
 
 
@@ -79,14 +98,18 @@ def get_info(user_id, client, is_device):
     try:
         user = db.session.query(UserModel).filter(UserModel.id == user_id).first()
         if user is None:
-            raise UserNotFound
+            raise e_account.UserNotFound
         if is_device and not client.circle.has_member(user):
-            raise NotAllowedToSeeUser
-        response = jsonify({"success": True, "content": user.get_content()})
-        response.status_code = 200
-    except AccountException:
-        response = jsonify({"success": False, "message": AccountException.message})
-        response.status_code = AccountException.status_code
+            raise e_account.NotAllowedToSeeUser
+        response = {
+            "data": {"success": True, "content": user.get_content()},
+            "status_code": 200
+        }
+    except e_account.AccountException as exception:
+        response = {
+            "data": {"success": False, "message": exception.message},
+            "status_code": exception.status_code
+        }
     return response
 
 
@@ -97,11 +120,15 @@ def update(content, user):
         last_name = None if 'last_name' not in content else content['last_name']
         birthday = None if 'birthday' not in content else content['birthday']
         user.update_content(email=email, first_name=first_name, last_name=last_name, birthday=birthday)
-        resp = jsonify({"success": True})
-        resp.status_code = 200
-    except AccountException:
-        response = jsonify({"success": False, "message": AccountException.message})
-        response.status_code = AccountException.status_code
+        response = {
+            "data": {"success": True},
+            "status_code": 200
+        }
+    except e_account.AccountException as exception:
+        response = {
+            "data": {"success": False, "message": exception.message},
+            "status_code": exception.status_code
+        }
     return response
 
 
@@ -109,13 +136,18 @@ def is_email_available(email):
     try:
         user = db.session.query(UserModel).filter(UserModel.email == email).first()
         if user is not None:
-            response = jsonify({"success": False})
+            data = {"success": False}
         else:
-            response = jsonify({"success": True})
-        response.status_code = 200
-    except AccountException:
-        response = jsonify({"success": False, "message": AccountException.message})
-        response.status_code = AccountException.status_code
+            data = {"success": True}
+        response = {
+            "data": data,
+            "status_code": 200
+        }
+    except e_account.AccountException as exception:
+        response = {
+            "data": {"success": False, "message": exception.message},
+            "status_code": exception.status_code
+        }
     return response
 
 
@@ -123,24 +155,32 @@ def promote_admin(user_id):
     try:
         user = db.session.query(UserModel).filter(UserModel.id == user_id).first()
         if user is None:
-            raise UserNotFound
+            raise e_account.UserNotFound
         user.promote_admin()
-        response = jsonify({"success": True})
-        response.status_code = 200
-    except AccountException:
-        response = jsonify({"success": False, "message": AccountException.message})
-        response.status_code = AccountException.status_code
+        response = {
+            "data": {"success": True},
+            "status_code": 200
+        }
+    except e_account.AccountException as exception:
+        response = {
+            "data": {"success": False, "message": exception.message},
+            "status_code": exception.status_code
+        }
     return response
 
 
 def create_api_token(user):
     try:
         token = user.encode_api_token()
-        response = jsonify({"success": True, "api_token": token})
-        response.status_code = 200
-    except AccountException:
-        response = jsonify({"success": False, "message": AccountException.message})
-        response.status_code = AccountException.status_code
+        response = {
+            "data": {"success": True, "api_token": token},
+            "status_code": 200
+        }
+    except e_account.AccountException as exception:
+        response = {
+            "data": {"success": False, "message": exception.message},
+            "status_code": exception.status_code
+        }
     return response
 
 
@@ -148,9 +188,13 @@ def add_ios_token(ios_token, user):
     try:
         user.ios_token = ios_token
         db.session.commit()
-        response = jsonify({"success": True})
-        response.status_code = 200
-    except AccountException:
-        response = jsonify({"success": False, "message": AccountException.message})
-        response.status_code = AccountException.status_code
+        response = {
+            "data": {"success": True},
+            "status_code": 200
+        }
+    except e_account.AccountException as exception:
+        response = {
+            "data": {"success": False, "message": exception.message},
+            "status_code": exception.status_code
+        }
     return response

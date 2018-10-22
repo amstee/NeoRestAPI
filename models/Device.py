@@ -172,17 +172,15 @@ class Device(db.Model):
         return False
 
     def authenticate(self, password=None):
-        if password is not None and password != "":
-            if self.password != hashlib.sha512(password.encode('utf-8')).hexdigest():
-                return False, "Mot de pass invalide"
+        if self.password != hashlib.sha512(password.encode('utf-8')).hexdigest():
+            raise InvalidPassword
+        if self.json_token is not None:
             try:
-                if self.json_token is not None:
-                    jwt.decode(self.json_token, SECRET_KEY)
-                    return True, self.json_token
-                return True, self.encode_auth_token()
-            except jwt.ExpiredSignatureError:
-                return True, self.encode_auth_token()
-        return False, "Aucun mot de passe fourni"
+                jwt.decode(self.json_token, SECRET_KEY)
+                return self.json_token
+            except jwt.ExpiredSignature:
+                pass
+        return self.encode_auth_token()
 
     def update_password(self, password=None):
         if password is not None and password != "":

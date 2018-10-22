@@ -219,7 +219,7 @@ class TestMessageSend(unittest.TestCase):
         }
         response = self.api.post('/message/send', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
-        assert response.status_code == 403
+        assert response.status_code == 404
         assert not response_json['success']
 
     def test_invalid_conversation(self):
