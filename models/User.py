@@ -6,6 +6,7 @@ import jwt
 import datetime
 from config.log import LOG_DATABASE_FILE
 from config.facebook import SECRET_KEY as SECRET_KEY_BOT
+from exceptions.account import *
 
 logger = logger_set(module=__name__, file=LOG_DATABASE_FILE)
 SECRET_KEY = ""
@@ -26,6 +27,7 @@ class User(db.Model):
     hangout_space = db.Column(db.String(256))
     type = db.Column(db.String(10))
     is_online = db.Column(db.Boolean)
+    ios_token = db.Column(db.String(64))
 
     # RELATIONS
     circle_link = db.relationship("UserToCircle", back_populates="user", order_by="UserToCircle.id",
@@ -37,38 +39,19 @@ class User(db.Model):
     media_links = db.relationship("UserToMedia", back_populates="user", order_by="UserToMedia.id",
                                   cascade="all, delete-orphan")
 
-    def __init__(self, email=None, password=None, first_name=None, last_name=None,
-                 birthday=None, is_online=False, created=datetime.datetime.now(),
-                 updated=datetime.datetime.now()):
-        user = db.session.query(User).filter_by(email=email).first()
-        if user is not None:
-            raise Exception("L'utilisateur existe déja, réessayer avec une nouvelle adresse email")
-        if email is None or email == "" or password is None or password == "" or first_name is None \
-                or last_name == "" or last_name is None or last_name == "" or birthday is None or birthday == "":
-            raise Exception("Données incomplete, impossible de créer l'utilisateur")
+    def __init__(self, email=None, password=None, first_name=None, last_name=None, birthday=None):
         self.email = email
         self.password = hashlib.sha512(password.encode('utf-8')).hexdigest()
         self.first_name = first_name
         self.last_name = last_name
-        try:
-            if type(birthday) is str:
-                self.birthday = DateParser.parse(birthday)
-        except Exception:
-            raise Exception("Date de naissance invalide")
-        if created is not None:
-            if type(created) is str:
-                self.created = DateParser.parse(created)
-            else:
-                self.created = created
-        if updated is not None:
-            if type(updated) is str:
-                self.updated = DateParser.parse(updated)
-            else:
-                self.updated = updated
-        self.is_online = is_online
-        self.type = "DEFAULT"
+        self.birthday = DateParser.parse(birthday)
+        self.created = datetime.datetime.utcnow()
+        self.updated = datetime.datetime.utcnow()
+        self.json_token = None
         self.facebook_psid = None
         self.hangout_space = None
+        self.type = "DEFAULT"
+        self.is_online = False
         db.session.add(self)
         db.session.flush()
         logger.debug("Database add: users%s", self.get_simple_content())
@@ -76,13 +59,18 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r %r>' % (self.first_name, self.last_name)
 
-    def disconnect(self):
+    def disconnect_old(self):
         try:
             self.json_token = ""
             db.session.commit()
             return True, None
         except Exception as e:
             return False, str(e)
+
+    def disconnect(self):
+        self.json_token = None
+        db.session.commit()
+        return True
 
     def has_matching_circle(self, user):
         for link in self.circle_link:
@@ -104,7 +92,7 @@ class User(db.Model):
         return False
 
     @staticmethod
-    def decode_auth_token(auth_token):
+    def decode_auth_token_old(auth_token):
         try:
             payload = jwt.decode(auth_token, SECRET_KEY)
             try:
@@ -122,6 +110,22 @@ class User(db.Model):
         except jwt.InvalidTokenError:
             return False, 'Token invalide, authentifiez vous a nouveau'
 
+    @staticmethod
+    def decode_auth_token(auth_token):
+        try:
+            payload = jwt.decode(auth_token, SECRET_KEY)
+            user = db.session.query(User).filter(User.id == payload['sub']).first()
+            if user is None:
+                raise TokenNotBoundToUser
+            if user.json_token is None:
+                raise UnauthenticatedUser
+            return user
+        except jwt.ExpiredSignatureError:
+            raise ExpiredUserSession
+        except jwt.InvalidTokenError:
+            raise InvalidJwtToken
+        return None
+
     def notify_circles(self, p2):
         for link in self.circle_link:
             link.circle.notify_users(p2=p2)
@@ -138,23 +142,18 @@ class User(db.Model):
             db.session.commit()
             return token.decode()
         except Exception as e:
-            print(e)
             return None
 
     def encode_api_token(self):
-        try:
-            payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1, seconds=1),
-                'iat': datetime.datetime.utcnow(),
-                'sub': self.id,
-                'first_name': self.first_name,
-                'last_name': self.last_name
-            }
-            token = jwt.encode(payload, SECRET_KEY_BOT, algorithm="HS256")
-            return token.decode()
-        except Exception as e:
-            print(e)
-            return None
+        payload = {
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1, seconds=1),
+            'iat': datetime.datetime.utcnow(),
+            'sub': self.id,
+            'first_name': self.first_name,
+            'last_name': self.last_name
+        }
+        token = jwt.encode(payload, SECRET_KEY_BOT, algorithm="HS256")
+        return token.decode()
 
     def check_password(self, password=None):
         if password is not None and password != "":
@@ -163,7 +162,7 @@ class User(db.Model):
             return True
         return False
 
-    def authenticate(self, password=None):
+    def old_authenticate(self, password=None):
         if password is not None and password != "":
             if self.password != hashlib.sha512(password.encode('utf-8')).hexdigest():
                 return False, "Mot de passe invalide"
@@ -177,6 +176,17 @@ class User(db.Model):
             except Exception:
                 return True, self.encode_auth_token()
         return False, "Aucun mot de passe fourni"
+
+    def authenticate(self, password=None):
+        if self.password != hashlib.sha512(password.encode('utf-8')).hexdigest():
+            raise InvalidPassword
+        if self.json_token is not None:
+            try:
+                jwt.decode(self.json_token, SECRET_KEY)
+                return self.json_token
+            except jwt.ExpiredSignature:
+                pass
+        return self.encode_auth_token()
 
     def update_password(self, password=None):
         if password is not None and password != "":
@@ -221,7 +231,7 @@ class User(db.Model):
         admin = db.session.query(User).filter(User.email == "contact.projetneo@gmail.com").first()
         if admin is None:
             user = User(email="contact.projetneo@gmail.com", password=password,
-                        first_name="Neo", last_name="Admin", birthday=datetime.datetime.now())
+                        first_name="Neo", last_name="Admin", birthday="1995/02/02")
             user.promote_admin()
 
     def get_simple_content(self):
@@ -261,8 +271,9 @@ class User(db.Model):
             "updated": self.updated,
             "isOnline": self.is_online,
             "type": self.type,
-            "hangout": False if self.hangout_space is None or len(self.hangout_space) == 0 else True,
-            "facebook": False if self.facebook_psid is None or len(self.facebook_psid) == 0 else True,
+            "hangout": False if (self.hangout_space is None or len(self.hangout_space) == 0) else True,
+            "facebook": False if (self.facebook_psid is None or len(self.facebook_psid) == 0) else True,
+            "ios_token": False if (self.ios_token is None or len(self.ios_token == 0)) else True,
             "circles": [link.get_content() for link in self.circle_link],
             "invites": [invite.get_content() for invite in self.circle_invite],
             "conversations": [link.get_simple_content() for link in self.conversation_links],

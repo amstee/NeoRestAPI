@@ -1,13 +1,13 @@
 from flask_restful import Resource
 from utils.contentChecker import content_checker
-from utils.decorators import secured_user_route, check_content
+from utils.decorators import secured_user_route, check_content_old
 from utils.apiUtils import *
 from utils.exceptions import ContentNotFound
 import core.payment as core
 
 
 class FakePayment(Resource):
-    @check_content
+    @check_content_old
     @secured_user_route
     def post(self, content, user):
         try:

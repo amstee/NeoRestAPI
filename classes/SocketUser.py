@@ -72,9 +72,9 @@ class SocketUser:
         try:
             if self.authenticated is True:
                 return False, "Already authenticated"
-            b, client = User.decode_auth_token(jwt_token)
+            b, client = User.decode_auth_token_old(jwt_token)
             if not b:
-                b, client = Device.decode_auth_token(jwt_token)
+                b, client = Device.decode_auth_token_old(jwt_token)
                 if b:
                     self.is_device = True
             if not b or client is None:

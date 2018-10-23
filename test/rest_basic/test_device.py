@@ -565,7 +565,6 @@ class TestDeviceList(unittest.TestCase):
         response_json = json.loads(response.data)
         assert response.status_code == 400
         assert not response_json['success']
-        assert response_json['message'] == "Aucun NEO n'appartient à cet utilisateur"
 
     def test_invalid_email(self):
         json_data = {
@@ -574,8 +573,6 @@ class TestDeviceList(unittest.TestCase):
         }
         response = self.api.post('/admin/device/list', data=json.dumps(json_data), content_type='application/json')
         response_json = json.loads(response.data)
-        print(response_json)
-        assert response.status_code == 401
+        assert response.status_code == 404
         assert not response_json['success']
-        assert response_json['message'] == "Le NEO avec l'email %s n'existe pas" % "invalid@email.test"
 

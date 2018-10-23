@@ -1,6 +1,8 @@
 from dateutil import parser as DateParser
 from config.database import db
 from utils.log import logger_set
+from exceptions.device import *
+from exceptions.account import *
 import random
 import string
 import jwt
@@ -112,7 +114,7 @@ class Device(db.Model):
         db.session.commit()
 
     @staticmethod
-    def decode_auth_token(auth_token):
+    def decode_auth_token_old(auth_token):
         try:
             payload = jwt.decode(auth_token, SECRET_KEY)
             device = db.session.query(Device).filter(Device.id == payload['sub']).first()
@@ -130,6 +132,23 @@ class Device(db.Model):
             return False, 'Token invalide, authentifiez vous a nouveau'
         except Exception as e:
             return False, 'Une erreur est survenue : ' + str(e)
+
+    def decode_auth_token(auth_token):
+        try:
+            payload = jwt.decode(auth_token, SECRET_KEY)
+            device = db.session.query(Device).filter(Device.id == payload['sub']).first()
+            if device is None:
+                raise TokenNotBoundToDevice
+            if device.json_token is None:
+                raise UnauthenticatedDevice
+            if not device.activated:
+                raise UnactivatedDevice
+            return device
+        except jwt.ExpiredSignatureError:
+            raise ExpiredUserSession
+        except jwt.InvalidTokenError:
+            raise InvalidJwtToken
+        return None
 
     def encode_auth_token(self):
         try:
@@ -153,17 +172,15 @@ class Device(db.Model):
         return False
 
     def authenticate(self, password=None):
-        if password is not None and password != "":
-            if self.password != hashlib.sha512(password.encode('utf-8')).hexdigest():
-                return False, "Mot de pass invalide"
+        if self.password != hashlib.sha512(password.encode('utf-8')).hexdigest():
+            raise InvalidPassword
+        if self.json_token is not None:
             try:
-                if self.json_token is not None:
-                    jwt.decode(self.json_token, SECRET_KEY)
-                    return True, self.json_token
-                return True, self.encode_auth_token()
-            except jwt.ExpiredSignatureError:
-                return True, self.encode_auth_token()
-        return False, "Aucun mot de passe fourni"
+                jwt.decode(self.json_token, SECRET_KEY)
+                return self.json_token
+            except jwt.ExpiredSignature:
+                pass
+        return self.encode_auth_token()
 
     def update_password(self, password=None):
         if password is not None and password != "":

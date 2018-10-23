@@ -1,115 +1,129 @@
 from flask import request
 from flask_restful import Resource
-from utils.decorators import secured_route, check_content, check_admin_route, secured_user_route
-from utils.contentChecker import content_checker
+from utils.decorators import check_content, route_log
 from utils.security import get_any_from_header
-from utils.apiUtils import *
-from utils.exceptions import InvalidAuthentication, ContentNotFound
+from utils.apiUtils import jsonify
+from config.log import LOG_ACCOUNT_FILE
+from utils.log import logger_set
 import core.account as core
+
+logger = logger_set(module=__name__, file=LOG_ACCOUNT_FILE)
 
 
 class AccountCreate(Resource):
-    @check_content
+    @route_log(logger)
+    @check_content(None, ("email", str(), True), ("password", str(), True), ("first_name", str(), True),
+                   ("last_name", str(), True), ("birthday", str(), True))
     def post(self, content):
-        return core.create(content)
+        core_response = core.create(content["email"], content["password"], content["first_name"],
+                           content["last_name"], content["birthday"])
+        response = jsonify(core_response['data'])
+        response.status_code = core_response['status_code']
+        return response
 
 
 class AccountLogin(Resource):
-    @check_content
+    @route_log(logger)
+    @check_content(None, ("email", str(), True), ("password", str(), True))
     def post(self, content):
-        try:
-            content_checker("email", "password")
-            return core.login(content["email"], content["password"])
-        except ContentNotFound as cnf:
-            return FAILED(cnf)
+        core_response = core.login(content["email"], content["password"])
+        response = jsonify(core_response['data'])
+        response.status_code = core_response['status_code']
+        return response
 
 
 class ModifyPassword(Resource):
-    @check_content
-    def post(self, content):
-        try:
-            content_checker("email", "previous_password", "new_password")
-            return core.modify_password(content["email"], content["previous_password"], content["new_password"])
-        except ContentNotFound as cnf:
-            return FAILED(cnf)
+    @route_log(logger)
+    @check_content("DEFAULT", ("email", str(), True), ("previous_password", str(), True), ("new_password", str(), True))
+    def post(self, content, client, is_device):
+        core_response = core.modify_password(content["email"], content["previous_password"], content["new_password"])
+        response = jsonify(core_response['data'])
+        response.status_code = core_response['status_code']
+        return response
 
 
 class CheckToken(Resource):
-    @check_content
+    @route_log(logger)
+    @check_content(None, ("token", str(), True))
     def post(self, content):
-        try:
-            content_checker("token")
-            return core.check_token(content["token"])
-        except ContentNotFound as cnf:
-            return FAILED(cnf)
+        core_response = core.check_token(content["token"])
+        response = jsonify(core_response['data'])
+        response.status_code = core_response['status_code']
+        return response
 
 
 class AccountLogout(Resource):
-    @check_content
+    @route_log(logger)
+    @check_content(None, ("token", str(), True))
     def post(self, content):
-        try:
-            content_checker("token")
-            return core.logout(content["token"])
-        except ContentNotFound as cnf:
-            return FAILED(cnf)
+        core_response = core.logout(content["token"])
+        response = jsonify(core_response['data'])
+        response.status_code = core_response['status_code']
+        return response
 
 
 class UserInfo(Resource):
-    @check_content
-    @secured_route
+    @route_log(logger)
+    @check_content("DEFAULT", ("user_id", int(), False))
     def post(self, content, client, is_device):
         if "user_id" not in content and is_device is False:
-            return core.get_info(client.id, client, is_device)
-        try:
-            content_checker("user_id")
-            return core.get_info(content["user_id"], client, is_device)
-        except ContentNotFound as cnf:
-            return FAILED(cnf)
+            core_response = core.get_info(client.id, client, is_device)
+        else:
+            core_response = core.get_info(content["user_id"], client, is_device)
+        response = jsonify(core_response['data'])
+        response.status_code = core_response['status_code']
+        return response
 
 
 class GetUserInfo(Resource):
+    @route_log(logger)
     def get(self, user_id):
-        try:
-            client, is_device = get_any_from_header(request)
-            return core.get_info(user_id, client, is_device)
-        except InvalidAuthentication as ia:
-            return FAILED(ia)
+        client, is_device = get_any_from_header(request)
+        return core.get_info(user_id, client, is_device)
 
 
 class AccountModify(Resource):
-    @check_content
-    @secured_user_route
-    def post(self, content, user):
-        return core.update(content, user)
+    @route_log(logger)
+    @check_content("DEFAULT", ("email", str(), False), ("first_name", str(), False),
+                   ("last_name", str(), False), ("birthday", str(), False))
+    def post(self, content, client, is_device):
+        core_response = core.update(content, client)
+        response = jsonify(core_response['data'])
+        response.status_code = core_response['status_code']
+        return response
 
 
 class MailAvailability(Resource):
-    @check_content
+    @route_log(logger)
+    @check_content(None, ("email", str(), True))
     def post(self, content):
-        try:
-            content_checker("email")
-            return core.is_email_available(content["email"])
-        except ContentNotFound as cnf:
-            return FAILED(cnf)
+        core_response = core.is_email_available(content["email"])
+        response = jsonify(core_response['data'])
+        response.status_code = core_response['status_code']
+        return response
 
 
 class GetMailAvailability(Resource):
+    @route_log(logger)
     def get(self, email):
         return core.is_email_available(email)
 
 
 class PromoteAdmin(Resource):
-    @check_content
-    @check_admin_route
-    def post(self, content):
-        try:
-            content_checker("user_id")
-            core.promote_admin(content["user_id"])
-        except ContentNotFound as cnf:
-            return FAILED(cnf)
+    @route_log(logger)
+    @check_content("ADMIN", ("user_id", int(), True))
+    def post(self, content, client, is_device):
+        core_response = core.promote_admin(content["user_id"])
+        response = jsonify(core_response['data'])
+        response.status_code = core_response['status_code']
+        return response
 
 
 class CreateApiToken(Resource):
-    @secured_user_route
-    def post(self, user):
-        return core.create_api_token(user)
+    @route_log(logger)
+    @check_content("DEFAULT", None)
+    def post(self, content, client, is_device):
+        core_response = core.create_api_token(client)
+        response = jsonify(core_response['data'])
+        response.status_code = core_response['status_code']
+        return response

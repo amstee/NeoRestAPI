@@ -17,7 +17,7 @@ def get_user_from_header(request):
     token = request.headers.get('Authorization')
     if token is None or token == "":
         raise Exception("Authorization token not found")
-    res, data = User.decode_auth_token(token)
+    res, data = User.decode_auth_token_old(token)
     if res is True:
         return data
     raise InvalidAuthentication(data)
@@ -27,7 +27,7 @@ def get_device_from_header(request):
     token = request.headers.get('Authorization')
     if token is None or token == "":
         raise Exception("Authorization token not found")
-    res, data = Device.decode_auth_token(token)
+    res, data = Device.decode_auth_token_old(token)
     if res is True:
         return data
     raise InvalidAuthentication(data)
