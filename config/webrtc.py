@@ -1,5 +1,10 @@
+import json
+
+with open('config.json') as data_file:
+    neo_config = json.load(data_file)
+
 EXPIRY = 86400
-SECRET_KEY = ""
+SECRET_KEY = neo_config["secrets"]["webRTC"]
 
 TURN = [
     {

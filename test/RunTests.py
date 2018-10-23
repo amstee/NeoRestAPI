@@ -35,6 +35,7 @@ def run_all():
           "test/socket_basic/test_messages.py",
           "test/socket_basic/test_notifications.py",
           "test/socket_basic/test_rooms.py",
+          "test/socket_basic/test_webrtc.py",
           "-v"
           ])
 

@@ -1,3 +1,4 @@
+import traceback
 from config import socketio
 from config.sockets import sockets
 from flask import request
@@ -15,6 +16,7 @@ def get_credentials_event():
         else:
             webrtc_events.get_credentials(socket, sid)
     except Exception as e:
+        traceback.print_exc()
         emit("error", str(e), room=sid, namespace='/')
 
 
