@@ -200,7 +200,19 @@ class Media(db.Model):
             "extension": self.extension,
             "directory": self.directory,
             "identifier": self.identifier,
-            "uploaded": str(self.uploaded)
+            "uploaded": self.uploaded
+        }
+
+    def get_json_compliant_content(self):
+        return {
+            "id": self.id,
+            "media_link": self.get_link_type(),
+            "link_content": self.get_link_content(),
+            "filename": self.filename,
+            "extension": self.extension,
+            "directory": self.directory,
+            "identifier": self.identifier,
+            "uploaded": "true" if self.uploaded else "false"
         }
 
     def get_simple_content(self):

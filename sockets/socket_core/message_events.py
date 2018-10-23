@@ -65,7 +65,7 @@ def message_send(conversation_id, content, socket):
             media.identifier = file
             media.message = message
             db.session.commit()
-            media_list.append(media.get_simple_content())
+            media_list.append(media.get_json_compliant_content())
         socket.emit('media', {'media_list': media_list, 'message_id': message.id})
     socket.emit('success', {'received': True, 'message_id': message.id})
     if not media_list:
