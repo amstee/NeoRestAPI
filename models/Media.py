@@ -15,7 +15,7 @@ class Media(db.Model):
     filename = db.Column(db.String(120))
     extension = db.Column(db.String(10))
     directory = db.Column(db.String(1024))
-    identifier = db.Column(db.String(10))
+    identifier = db.Column(db.String(1024))
     uploaded = db.Boolean()
 
     message_link = db.relationship("MessageToMedia", back_populates="media", uselist=False,
