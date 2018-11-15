@@ -222,6 +222,7 @@ def admin_delete(device_id):
 def admin_list(email):
     try:
         user = db.session.query(User).filter(User.email == email).first()
+        not_found = True
         if user is None:
             raise e_account.UserNotFound
         if len(user.circle_link) == 0:
@@ -233,8 +234,9 @@ def admin_list(email):
                     "data": {"success": True, "devices": [device.get_simple_content() for device in devices]},
                     "status_code": 200
                 }
-            else:
-                raise e_device.NoDeviceForUser
+                not_found = False
+        if not_found:
+            raise e_device.NoDeviceForUser
     except (e_device.DeviceException, e_account.AccountException) as exception:
         response = {
             "data": {"success": False, "message": exception.message},
