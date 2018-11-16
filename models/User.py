@@ -28,6 +28,7 @@ class User(db.Model):
     type = db.Column(db.String(10))
     is_online = db.Column(db.Boolean)
     ios_token = db.Column(db.String(64))
+    android_token = db.Column(db.String(2048))
 
     # RELATIONS
     circle_link = db.relationship("UserToCircle", back_populates="user", order_by="UserToCircle.id",
