@@ -29,6 +29,7 @@ class ResourceManager:
         api.add_resource(account_handlers.MailAvailability, '/email/available')
         api.add_resource(account_handlers.GetMailAvailability, '/email/available/<email>')
         api.add_resource(account_handlers.CheckToken, '/token/verify')
+        api.add_resource(account_handlers.AddAndroidToken, '/android/token')
 
     @staticmethod
     def add_circle_logic_resources(api):

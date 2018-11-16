@@ -127,3 +127,13 @@ class CreateApiToken(Resource):
         response = jsonify(core_response['data'])
         response.status_code = core_response['status_code']
         return response
+
+
+class AddAndroidToken(Resource):
+    @route_log(logger)
+    @check_content("DEFAULT", ("android_token", str(), True))
+    def post(self, content, client, is_device):
+        core_response = core.add_android_token(content["android_token"], client)
+        response = jsonify(core_response['data'])
+        response.status_code = core_response['status_code']
+        return response

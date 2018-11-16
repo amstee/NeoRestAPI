@@ -40,7 +40,7 @@ def fcm_message(token, title, body):
 
 def send_notification(user, alert):
     if user.android_token is not None and user.android_token != "":
-        message = fcm_message(user.android_token, alert["title"], alert["body"])
+        message = fcm_message(user.android_token, "NEO notification", alert)
         response = send_fcm_message(message)
         if response.status_code != 200:
             logger.info("[NOTIFICATION] [%s] : %s (%s) -> %s" % (response.status_code, user.email, alert, response.content))

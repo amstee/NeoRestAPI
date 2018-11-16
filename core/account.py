@@ -198,3 +198,19 @@ def add_ios_token(ios_token, user):
             "status_code": exception.status_code
         }
     return response
+
+
+def add_android_token(android_token, user):
+    try:
+        user.android_token = android_token
+        db.session.commit()
+        response = {
+            "data": {"success": True},
+            "status_code": 200
+        }
+    except e_account.AccountException as exception:
+        response = {
+            "data": {"success": False, "message": exception.message},
+            "status_code": exception.status_code
+        }
+    return response
