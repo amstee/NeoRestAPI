@@ -101,6 +101,7 @@ def first_message_to_user(content, email, circle_id, user):
         sockets.notify_user(dest, False, 'conversation',
                             {"conversation_id": conversation.id,
                              "event": 'invite'})
+        message.conversation.mobile_notification("Nouvelle conversation avec %s" % user.email)
         info_sender = "[" + conversation.name + "] " + user.first_name + " : "
         try:
             messenger_conversation_model_send(user.id, conversation, info_sender + message.text_content)
@@ -151,6 +152,7 @@ def first_message_to_device(content, circle_id, user):
         sockets.notify_user(circle.device, True, 'conversation',
                             {"conversation_id": conversation.id,
                              "event": 'invite'})
+        message.conversation.mobile_notification("Nouvelle conversation avec %s" % user.email)
         info_sender = "[" + conversation.name + "] " + user.first_name + " : "
         try:
             messenger_conversation_model_send(user.id, conversation, info_sender + message.text_content)

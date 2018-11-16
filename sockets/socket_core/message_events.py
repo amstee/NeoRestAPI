@@ -4,6 +4,7 @@ from flask_socketio import emit
 from models.Conversation import Conversation
 from models.Media import Media
 from models.Message import Message
+from models.User import User
 from bot.facebook import messenger_conversation_model_send
 from bot.hangout import hangout_conversation_model_send
 from utils.log import logger_set
@@ -46,6 +47,8 @@ def message_send(conversation_id, content, socket):
         message.link = link
         info_sender = "[" + conv.name + "] " + client.first_name + " : "
     db.session.commit()
+    user = db.session.query(User).filter(socket.client_id == User.id).first()
+    message.conversation.mobile_notification("Nouveau message de %s" % user.email)
     try:
         messenger_conversation_model_send(0 if socket.is_device else socket.client_id,
                                           conv, info_sender + content["text_message"])
