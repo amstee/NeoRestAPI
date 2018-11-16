@@ -31,9 +31,9 @@ def fcm_message(token, title, body):
             'notification': {
                 'title': title,
                 'body': body
-            }
-        },
-        "token": token
+            },
+            "token": token
+        }
     }
     return message
 
