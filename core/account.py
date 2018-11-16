@@ -204,7 +204,7 @@ def add_android_token(android_token, user):
     try:
         old_user = db.session.query(UserModel).filter(UserModel.android_token == android_token).first()
         if old_user is not None:
-            old_user.android_token = None
+            old_user.android_token = ""
         user.android_token = android_token
         db.session.commit()
         response = {
