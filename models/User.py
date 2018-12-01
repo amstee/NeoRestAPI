@@ -1,6 +1,7 @@
 from config.database import db
 from dateutil import parser as DateParser
 from utils.log import logger_set
+from mobile import push_android as android
 import hashlib
 import jwt
 import datetime
@@ -130,6 +131,9 @@ class User(db.Model):
     def notify_circles(self, p2):
         for link in self.circle_link:
             link.circle.notify_users(p2=p2)
+
+    def notify_me(self, body, title):
+        android.send_notification(self, title=title, body=body)
 
     def encode_auth_token(self):
         try:

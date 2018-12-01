@@ -73,7 +73,7 @@ def invite(conversation_id, email, client, is_device):
         new_link.user = recipient
         new_link.conversation = conversation
         db.session.commit()
-        #.conversation.mobile_notification(title="Invitation", body="Vous êtes invité dans un nouveau cercle.")
+        recipient.notify_me(title="Conversation", body="Vous êtes invité dans une nouvelle conversation.")
         sockets.notify_user(client=recipient, is_device=False, p1='conversation',
                             p2={'event': 'invite', 'conversation_id': conversation_id})
         response = {
@@ -102,6 +102,8 @@ def conversation_quit(conversation_id, user):
             db.session.commit()
         if conversation.check_validity():
             conversation.set_other_admin()
+        conversation.mobile_notification(title="Conversation",
+                                         body=("%s à quitté la conversation %s" % (user.first_name, conversation.name)))
         response = {
             "data": {"success": True},
             "status_code": 200
@@ -135,6 +137,8 @@ def conversation_kick(conversation_id, email, user):
         db.session.commit()
         link.conversation.check_validity()
         link.conversation.notify_users(p2={'event': 'kick', 'user': recipient.email, 'from': user.email})
+        recipient.notify_me(title="Conversation",
+                            body=("Vous avez été exclus de la conversation %s" % (link.conversation.name)))
         response = {
             "data": {"success": True},
             "status_code": 200
