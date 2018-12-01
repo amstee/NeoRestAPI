@@ -52,8 +52,8 @@ def info(media_id, client, is_device):
         media = db.session.query(Media).filter(Media.id == media_id).first()
         if media is None:
             raise e_media.MediaNotFound
-        if (not is_device and not user_has_access_to_message(media.message, client)) or \
-                (is_device and not device_has_access_to_message(media.message, client)):
+        if (not is_device and not user_has_access_to_message(media.message_link.message, client)) or \
+                (is_device and not device_has_access_to_message(media.message_link.message, client)):
             raise e_message.ForbiddenAccess
         response = {
             "data": {"success": True, "content": media.get_simple_content()},
