@@ -54,10 +54,10 @@ class Conversation(db.Model):
                                                        "circle_id": self.circle_id,
                                                        "device_access": self.device_access})
 
-    def mobile_notification(self, alert):
+    def mobile_notification(self, title, body):
         for link in self.links:
-            ios.send_notification(link.user, alert)
-            android.send_notification(link.user, alert)
+            #ios.send_notification(link.user, alert)
+            android.send_notification(link.user, title=title, body=body)
 
     def has_members(self, *args):
         for member in args:

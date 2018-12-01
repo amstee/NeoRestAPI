@@ -48,7 +48,7 @@ def message_send(content, conversation_id, user):
                              'message': message.get_simple_json_compliant_content(),
                              'status': 'pending'}, room='conversation_' + str(message.conversation_id),
                  namespace='/')
-        message.conversation.mobile_notification("Nouveau message de %s" % user.email)
+        message.conversation.mobile_notification(title="Message", body=user.first_name + " vous à envoyer un message.")
         conversation = db.session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
         info_sender = "[" + link.conversation.name + "] " + user.first_name + " : "
         try:
@@ -101,7 +101,8 @@ def first_message_to_user(content, email, circle_id, user):
         sockets.notify_user(dest, False, 'conversation',
                             {"conversation_id": conversation.id,
                              "event": 'invite'})
-        message.conversation.mobile_notification("Nouvelle conversation avec %s" % user.email)
+        message.conversation.mobile_notification(title="Conversation", body="Nouvelle conversation avec " +
+                                                                            user.first_name)
         info_sender = "[" + conversation.name + "] " + user.first_name + " : "
         try:
             messenger_conversation_model_send(user.id, conversation, info_sender + message.text_content)
@@ -152,7 +153,8 @@ def first_message_to_device(content, circle_id, user):
         sockets.notify_user(circle.device, True, 'conversation',
                             {"conversation_id": conversation.id,
                              "event": 'invite'})
-        message.conversation.mobile_notification("Nouvelle conversation avec %s" % user.email)
+        message.conversation.mobile_notification(title="Conversation", body="Nouvelle conversation avec " +
+                                                                            user.first_name)
         info_sender = "[" + conversation.name + "] " + user.first_name + " : "
         try:
             messenger_conversation_model_send(user.id, conversation, info_sender + message.text_content)

@@ -73,6 +73,7 @@ def invite(conversation_id, email, client, is_device):
         new_link.user = recipient
         new_link.conversation = conversation
         db.session.commit()
+        #.conversation.mobile_notification(title="Invitation", body="Vous êtes invité dans un nouveau cercle.")
         sockets.notify_user(client=recipient, is_device=False, p1='conversation',
                             p2={'event': 'invite', 'conversation_id': conversation_id})
         response = {

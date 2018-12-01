@@ -28,20 +28,20 @@ def send_fcm_message(fcm_message):
 def fcm_message(token, title, body):
     message = {
         'message': {
+            'token': token,
             'notification': {
                 'title': title,
                 'body': body
-            },
-            'token': token
+            }
         }
     }
     return message
 
 
-def send_notification(user, alert):
+def send_notification(user, body, title="NEO"):
     if user.android_token is not None and user.android_token != "":
-        message = fcm_message(user.android_token, "NEO notification", alert)
+        message = fcm_message(user.android_token, title, body)
         response = send_fcm_message(message)
-        logger.info("[NOTIFICATION] [%s] : %s (%s) -> %s" % (response.status_code, user.email, alert, response.content))
+        logger.info("[NOTIFICATION] [%s] : %s (%s) -> %s" % (response.status_code, user.email, body, response.content))
     else:
-        logger.info("[NOTIFICATION] [ERROR] : %s (%s) -> %s" % (user.email, alert, "No android token found"))
+        logger.info("[NOTIFICATION] [ERROR] : %s (%s) -> %s" % (user.email, body, "No android token found"))
