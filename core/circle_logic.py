@@ -5,6 +5,7 @@ from models.CircleInvite import CircleInvite as CircleInviteModel
 from models.UserToCircle import UserToCircle
 from exceptions import circle as e_circle
 from mobile import push_ios as ios
+from mobile import push_android as android
 
 
 def invite(circle_id, email, client, is_device):
@@ -26,6 +27,7 @@ def invite(circle_id, email, client, is_device):
         db.session.commit()
         circle_invite.notify_user(p2={'event': 'invite', 'circle_id': circle.id})
         ios.send_notification(dest, "Invitation cercle " + circle.name)
+        dest.notify_me(title="Cercle", body="Vous avez été invité dans le cercle %s" % circle.name)
         response = {
             "data": {"success": True},
             "status_code": 200
@@ -51,6 +53,9 @@ def join(invite_id, user):
         db.session.delete(invitation)
         db.session.commit()
         link.circle.notify_users(p1='circle', p2={'event': 'join', 'user': link.user.email})
+        link.circle.notify_mobile(title="Cercle",
+                                  body=("%s à rejoins le cercle %s" % (link.user.first_name, link.circle.name)),
+                                  ignore=[link.user.id])
         response = {
             "data": {"success": True},
             "status_code": 200
@@ -96,6 +101,8 @@ def quit_circle(circle_id, user):
         db.session.commit()
         circle = db.session.query(Circle).filter(Circle.id == id_circle).first()
         circle.check_validity()
+        circle.notify_mobile(title="Cercle",
+                             body=("%s à quitté le cercle %s" % (link.user.first_name, link.circle.name)))
         response = {
             "data": {"success": True},
             "status_code": 200
@@ -123,6 +130,9 @@ def kick_user(email, circle_id, user):
         db.session.delete(link)
         db.session.commit()
         circle.notify_users('circle', {'event': 'kick', 'user': kick.email, 'from': user.email})
+        circle.notify_mobile(title="Cercle",
+                             body=("%s à été exclus du cercle %s" % (kick.first_name, circle.name)), ignore=[kick.id])
+        kick.notify_me(title="Cercle", body="Vous avez été exclus du cercle %s" % circle.name)
         response = {
             "data": {"success": True},
             "status_code": 200

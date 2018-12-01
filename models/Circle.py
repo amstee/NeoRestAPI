@@ -4,6 +4,7 @@ from flask_socketio import emit
 import datetime
 from utils.log import logger_set
 from config.log import LOG_DATABASE_FILE
+from mobile import push_android as android
 
 logger = logger_set(module=__name__, file=LOG_DATABASE_FILE)
 
@@ -78,6 +79,11 @@ class Circle(db.Model):
             p2 = {}
         p2['circle_id'] = self.id
         emit(p1, p2, room='circle_' + str(self.id), namespace='/')
+
+    def notify_mobile(self, title, body, ignore=[]):
+        for user_link in self.user_link:
+            if user_link.user.id not in ignore:
+                android.send_notification(user_link.user, title=title, body=body)
 
     def update_content(self, name=None, created=None, updated=datetime.datetime.now()):
         if name is not None and name != "":
