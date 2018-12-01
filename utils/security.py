@@ -2,6 +2,7 @@ from config.database import db
 from models.User import User
 from models.Device import Device
 from models.UserToConversation import UserToConversation
+from models.Conversation import Conversation
 from .exceptions import InvalidAuthentication
 
 
@@ -43,6 +44,21 @@ def user_has_access_to_message(message, user):
     return True
 
 
+def user_has_access_to_media(media, user):
+    if media.directory is None or media.directory == "":
+        return False
+    data = media.directory.split("_")
+    if len(data) == 2:
+        type = data[0]
+        id = data[1]
+        if type == "conversation":
+            link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id == id,
+                                                               UserToConversation.user_id == user.id).first()
+            if link is None:
+                return False
+    return True
+
+
 def user_is_owner_of_message(message, user):
     if message.link is None or message.is_user is False:
         return False
@@ -56,6 +72,22 @@ def device_has_access_to_message(message, device):
         if message.conversation.device_access is True:
             return True
     return False
+
+
+def device_has_access_to_media(media, device):
+    if media.directory is None or media.directory == "":
+        return False
+    data = media.directory.split("_")
+    if len(data) == 2:
+        type = data[0]
+        id = data[1]
+        if type == "conversation":
+            link = db.session.query(Conversation).filter(Conversation.device_access is True,
+                                                         Conversation.circle_id == device.circle_id,
+                                                         Conversation.id == id).first()
+            if link is None:
+                return False
+    return True
 
 
 def device_is_owner_of_message(message, device):
