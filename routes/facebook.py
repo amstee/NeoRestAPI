@@ -42,17 +42,17 @@ class WebHookMessenger(Resource):
                                 if len(split_message) >= 2 and split_message[0] == "/token":
                                     message = link_user_to_facebook(split_message[1], sender_id)
                                     resp = send_message(sender_id, message)
-                                    return resp
                                 elif is_user_linked(sender_id):
                                     send_message_choice(sender_id, message_text)
-                                    return "To handle", 200
                                 else:
                                     resp = send_message(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
-                                    return resp
-                            if 'quick_reply' in messaging_event["message"]:
+                            elif 'quick_reply' in messaging_event["message"]:
                                 handle_conversation_payload(messaging_event["message"]["quick_reply"]["payload"])
-                                return "To handle", 200
-            return "ok", 200
+            response = {
+                "data": {"success": True},
+                "status_code": 200
+            }
+            return response
         except Exception as e:
             print(e, file=sys.stderr)
             return "Failed", 200
