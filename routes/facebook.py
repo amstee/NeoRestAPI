@@ -30,13 +30,18 @@ class WebHookMessenger(Resource):
     @check_content_old
     def post(self, content):
         try:
-            logger.debug("FACEBOOK : [%s]", content)
+            logger.debug("FACEBOOK - [%s]", content)
             if content["object"] == "page":
                 for entry in content["entry"]:
                     for messaging_event in entry["messaging"]:
                         if messaging_event.get("message"):
                             sender_id = messaging_event["sender"]["id"]        
-                            message_text = messaging_event["message"]["text"]
+                            message_text = messaging_event["message"]["text"] if "text" in messaging_event["message"] else None
+                            attachment_image = None
+                            if "attachments" in messaging_event["message"]:
+                                attachment_image = messaging_event["message"]["attachments"]["payload"]["url"] if \
+                                    messaging_event["message"]["attachments"]["type"] == "image" else None
+                            logger.debug("FACEBOOK - [DATA]\ntext = %s\nimage = %s", message_text, attachment_image)
                             split_message = message_text.split(' ')
                             if 'quick_reply' not in messaging_event["message"]:
                                 if len(split_message) >= 2 and split_message[0] == "/token":
