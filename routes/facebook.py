@@ -28,7 +28,6 @@ class WebHookMessenger(Resource):
         return "Hello Facebook", 200
 
     @route_log(logger)
-    @check_content_old
     def post(self, content):
         try:
             if content["object"] == "page":
