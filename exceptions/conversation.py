@@ -41,7 +41,7 @@ class ConversationNotFound(ConversationException):
 
 
 class SpecifiedUserNotFound(ConversationException):
-    message = "Utilisateur spécifier introuvable"
+    message = "Utilisateur spécifié introuvable"
     status_code = 404
 
     def __init__(self):

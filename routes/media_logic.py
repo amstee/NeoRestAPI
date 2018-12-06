@@ -46,7 +46,7 @@ class UploadMedia(Resource):
     def post(self, media_id):
         try:
             client, is_device = get_any_from_header(request)
-            core_response = core.upload(media_id, client, is_device)
+            core_response = core.upload(media_id, request.files, client, is_device)
             response = jsonify(core_response['data'])
             response.status_code = core_response['status_code']
             return response

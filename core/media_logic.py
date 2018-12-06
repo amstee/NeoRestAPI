@@ -1,5 +1,3 @@
-from flask import send_from_directory
-from flask import request
 from config.database import db
 from models.Media import Media
 from models.UserToMedia import UserToMedia
@@ -40,7 +38,7 @@ def retrieve(media_id, client, is_device):
     return response
 
 
-def upload(media_id, client, is_device):
+def upload(media_id, files, client, is_device):
     try:
         media = db.session.query(Media).filter(Media.id == media_id).first()
         if media is None:
@@ -48,10 +46,10 @@ def upload(media_id, client, is_device):
         if not (is_device and media.can_be_uploaded_by_device(client)) and \
                 not (not is_device and media.can_be_uploaded_by_user(client)):
             raise e_media.ForbiddenUpload
-        if 'file' not in request.files:
+        if 'file' not in files:
             raise e_media.MediaNotFoundInRequest
-        media.set_content(request.files['file'])
-        media.upload(request.files['file'])
+        media.set_content(files['file'])
+        media.upload(files['file'])
         db.session.commit()
         if media.is_attached_to_message():
             message = media.message_link.message

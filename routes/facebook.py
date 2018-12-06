@@ -36,12 +36,13 @@ class WebHookMessenger(Resource):
                     for messaging_event in entry["messaging"]:
                         if messaging_event.get("message"):
                             sender_id = messaging_event["sender"]["id"]        
-                            message_text = messaging_event["message"]["text"] if "text" in messaging_event["message"] else None
-                            attachment_image = None
+                            message_text = messaging_event["message"]["text"] if "text" in messaging_event["message"] else ""
+                            attachment_images = []
                             if "attachments" in messaging_event["message"]:
-                                attachment_image = messaging_event["message"]["attachments"]["payload"]["url"] if \
-                                    messaging_event["message"]["attachments"]["type"] == "image" else None
-                            logger.debug("FACEBOOK - [DATA]\ntext = %s\nimage = %s", message_text, attachment_image)
+                                for attachment in messaging_event["message"]["attachments"]:
+                                    if attachment["type"] == "image":
+                                        attachment_images.append(attachment["payload"]["url"])
+                            logger.debug("FACEBOOK - [DATA]\ntext = %s\nimage = %s", message_text, attachment_images)
                             split_message = message_text.split(' ')
                             if 'quick_reply' not in messaging_event["message"]:
                                 if len(split_message) >= 2 and split_message[0] == "/token":
