@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request
-from utils.decorators import check_content_old
+from utils.decorators import check_content_old, route_log
 from webargs import fields
 from webargs.flaskparser import use_args
 from bot.facebook import send_message, link_user_to_facebook, is_user_linked, send_message_choice
@@ -27,6 +27,7 @@ class WebHookMessenger(Resource):
             return args["hub"]["challenge"], 200
         return "Hello Facebook", 200
 
+    @route_log(logger)
     @check_content_old
     def post(self, content):
         try:
