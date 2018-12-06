@@ -59,5 +59,5 @@ class WebHookMessenger(Resource):
                                 return "To handle", 200
             return "ok", 200
         except Exception as e:
-            print(e, file=sys.stderr)
+            logger.debug("FACEBOOK - [ERROR]\n%s", e)
             return "Failed", 200
