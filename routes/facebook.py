@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request
-from utils.decorators import check_content_old, route_log, check_content
+from utils.decorators import check_content_old
 from webargs import fields
 from webargs.flaskparser import use_args
 from bot.facebook import send_message, link_user_to_facebook, is_user_linked, send_message_choice
@@ -27,10 +27,10 @@ class WebHookMessenger(Resource):
             return args["hub"]["challenge"], 200
         return "Hello Facebook", 200
 
-    @route_log(logger)
-    @check_content(None, None)
+    @check_content_old
     def post(self, content):
         try:
+            logger.debug("FACEBOOK : [%s]", content)
             if content["object"] == "page":
                 for entry in content["entry"]:
                     for messaging_event in entry["messaging"]:
@@ -42,19 +42,17 @@ class WebHookMessenger(Resource):
                                 if len(split_message) >= 2 and split_message[0] == "/token":
                                     message = link_user_to_facebook(split_message[1], sender_id)
                                     resp = send_message(sender_id, message)
+                                    return resp
                                 elif is_user_linked(sender_id):
                                     send_message_choice(sender_id, message_text)
+                                    return "To handle", 200
                                 else:
                                     resp = send_message(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")
-                            elif 'quick_reply' in messaging_event["message"]:
+                                    return resp
+                            if 'quick_reply' in messaging_event["message"]:
                                 handle_conversation_payload(messaging_event["message"]["quick_reply"]["payload"])
-            response = {
-                "data": {"success": True},
-                "status_code": 200
-            }
+                                return "To handle", 200
+            return "ok", 200
         except Exception as e:
-            response = {
-                "data": {"success": True},
-                "status_code": 200
-            }
-        return response
+            print(e, file=sys.stderr)
+            return "Failed", 200
