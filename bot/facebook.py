@@ -6,8 +6,14 @@ from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
 from models.Message import Message
 from config.facebook import SECRET_KEY, PAGE_ACCESS_TOKEN
+from models.Media import Media
+from exceptions import conversation as e_conversation
+from models.MessageToMedia import MessageToMedia
+
+from exceptions import circle as e_circle
+from exceptions import message as e_message
 #from core.user_message_logic import message_send as core_message_send
-import core.user_message_logic as CoreMessage
+#import core.user_message_logic as CoreMessage
 import base64
 import requests
 import jwt
@@ -20,6 +26,37 @@ import json
 #PORT = neo_config["project"]["port"]
 #HOST = neo_config["project"]["host"]
 #BASE_ENDPOINT = "http://"+HOST+":"+PORT
+
+
+def message_send(content, conversation_id, user, standalone=False):
+    try:
+        link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
+                                                           conversation_id,
+                                                           UserToConversation.user_id == user.id).first()
+        if link is None:
+            raise e_conversation.ConversationNotFound
+        message = Message(content=content["text_message"] if "text_message" in content else "")
+        message.conversation = link.conversation
+        message.link = link
+        media_list = []
+        if "files" in content:
+            for file in content["files"]:
+                media = Media()
+                media.identifier = file
+                MessageToMedia(message=message, media=media)
+                db.session.commit()
+                media_list.append(media.get_simple_content())
+        db.session.commit()
+        response = {
+            "data": {"success": True, 'media_list': media_list, 'message_id': message.id},
+            "status_code": 200
+        }
+    except e_conversation.ConversationException as exception:
+        response = {
+            "data": {"success": False, "message": exception.message},
+            "status_code": exception.status_code
+        }
+    return response
 
 
 def encode_post_back_payload(facebook_psid, message_text, link, attachment_images):
