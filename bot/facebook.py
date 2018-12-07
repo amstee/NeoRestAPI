@@ -14,8 +14,8 @@ import jwt
 import datetime
 import json
 
-with open('config.json') as data_file:
-    neo_config = json.load(data_file)
+#with open('config.json') as data_file:
+#    neo_config = json.load(data_file)
 
 #PORT = neo_config["project"]["port"]
 #HOST = neo_config["project"]["host"]
