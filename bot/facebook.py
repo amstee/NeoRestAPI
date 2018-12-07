@@ -15,6 +15,9 @@ import jwt
 import datetime
 import json
 import io
+from utils.log import logger_set
+
+logger = logger_set(__name__)
 
 with open('config.json') as data_file:
     neo_config = json.load(data_file)
@@ -73,7 +76,7 @@ def encode_post_back_payload(facebook_psid, message_text, link, attachment_image
 
 
 def push_images_to_api(user, conv_id, message, attachment_images):
-    print("PUSHING IMAGES")
+    logger.debug("I AM IN PUSH IMAGES")
     for url in attachment_images:
         image = requests.get(url)
         response = core_message_send(content={"text_message": message, "files": [url]},
