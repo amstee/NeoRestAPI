@@ -16,9 +16,9 @@ import json
 with open('config.json') as data_file:
     neo_config = json.load(data_file)
 
-PORT = neo_config["project"]["port"]
-HOST = neo_config["project"]["host"]
-BASE_ENDPOINT = "http://"+HOST+":"+PORT
+#PORT = neo_config["project"]["port"]
+#HOST = neo_config["project"]["host"]
+#BASE_ENDPOINT = "http://"+HOST+":"+PORT
 
 
 def encode_post_back_payload(facebook_psid, message_text, link, attachment_images):
