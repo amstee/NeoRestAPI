@@ -102,17 +102,23 @@ def handle_conversation_payload(message_payload):
         try:
             link = db.session.query(UserToConversation).filter(UserToConversation.id == payload["link_id"],
                                                                UserToConversation.user_id == payload["user_id"]).first()
+            user = db.session.query(User).filter(User.id == payload["user_id"]).first()
             if len(payload["images"]) == 0:
                 message = Message(content=payload["message_text"])
                 message.link = link
                 message.conversation = link.conversation
                 db.session.commit()
-                emit('message', {'conversation_id': message.conversation_id,
-                                 'message': message.get_simple_json_compliant_content(),
-                                 'status': 'pending'}, room='conversation_' + str(message.conversation_id),
-                     namespace='/')
+                emit('message', {
+                    'conversation_id': message.conversation_id,
+                    'message': message.get_simple_json_compliant_content(),
+                    'time': message.sent.isoformat(),
+                    'sender': user.get_simple_json_compliant_content(),
+                    'media_list': [],
+                    'status': 'done'},
+                     room='conversation_' + str(message.conversation_id), namespace='/')
+                message.conversation.mobile_notification(title="Message",
+                                                         body=user.first_name + " vous à envoyer un message.")
             else:
-                user = db.session.query(User).filter(User.id == payload["user_id"]).first()
                 push_images_to_api(user=user, conv_id=link.conversation.id,
                                    message=payload["message_text"], attachment_images=payload["images"])
         except Exception as e:
