@@ -106,7 +106,8 @@ def handle_conversation_payload(message_payload):
                 db.session.commit()
             else:
                 user = db.session.query(User).filter(User.id == payload["user_id"]).first()
-                push_images_to_api(user=user, conv_id=link.conversation.id, message=payload["message_text"], )
+                push_images_to_api(user=user, conv_id=link.conversation.id,
+                                   message=payload["message_text"], attachment_images=payload["images"])
         except Exception as e:
             return "Une erreur est survenue : " + str(e)
     except jwt.ExpiredSignatureError:
