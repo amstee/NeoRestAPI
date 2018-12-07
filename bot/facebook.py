@@ -83,11 +83,11 @@ def push_images_to_api(user, conv_id, message, attachment_images):
                                      conversation_id=conv_id, user=user)
         if response["status_code"] == 200:
             headers = {
-                "Authorization": user.json_token,
-                "content-type": "multipart/form-data"
+                'Authorization': user.json_token,
+                'content-type': 'multipart/form-data'
             }
             data = {
-                'file': (image.content, 'attachment')
+                'file': (io.BytesIO(image.content), 'attachment')
             }
             endpoint = BASE_ENDPOINT+"/media/upload/"+str(response["data"]["media_list"][0]["id"])
             logger.debug("ENDPOINT = %s", endpoint)
