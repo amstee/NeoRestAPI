@@ -47,11 +47,11 @@ class Media(db.Model):
         file.save(os.path.join(UPLOAD_FOLDER + self.directory + os.path.sep, file_name))
         self.uploaded = True
 
-    def self_upload(self, url, filename):
-        file_name = secure_filename(filename)
+    def upload_bot(self, url, my_filename):
+        file_name = secure_filename(my_filename)
         if not os.path.exists(UPLOAD_FOLDER + self.directory + os.path.sep):
             os.makedirs(UPLOAD_FOLDER + self.directory + os.path.sep)
-        #urllib.request.urlretrieve(url, os.path.join(UPLOAD_FOLDER + self.directory + os.path.sep, file_name))
+        urllib.request.urlretrieve(url, os.path.join(UPLOAD_FOLDER + self.directory + os.path.sep, file_name))
         self.uploaded = True
 
     def clear_file(self):
@@ -150,8 +150,8 @@ class Media(db.Model):
         else:
             raise Exception("Ce media est corrompu, vous ne pouvez pas upload de fichier")
 
-    def self_set_content(self, filename):
-        file_name = secure_filename(filename)
+    def set_content_bot(self, my_filename):
+        file_name = secure_filename(my_filename)
         f, e = os.path.splitext(file_name)
         self.filename = f
         self.extension = e
