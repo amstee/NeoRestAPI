@@ -73,6 +73,7 @@ def encode_post_back_payload(facebook_psid, message_text, link, attachment_image
 
 
 def push_images_to_api(user, conv_id, message, attachment_images):
+    print("PUSHING IMAGES")
     for url in attachment_images:
         image = requests.get(url)
         response = core_message_send(content={"text_message": message, "files": [url]},
