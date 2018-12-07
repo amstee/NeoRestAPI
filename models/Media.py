@@ -153,7 +153,7 @@ class Media(db.Model):
     def set_content_bot(self, my_filename):
         file = str(my_filename).split('.')
         self.filename = file[0]
-        self.extension = file[1]
+        self.extension = "."+file[1]
         if self.message_link is not None:
             self.directory = "conversation_" + str(self.message_link.message.conversation_id)
         elif self.user_link is not None:
