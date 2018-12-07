@@ -2,6 +2,7 @@ from sqlalchemy import event
 from config.database import db
 from config.files import *
 from werkzeug.utils import secure_filename
+import urllib.request
 from utils.log import logger_set
 import os
 from config.log import LOG_DATABASE_FILE
@@ -44,6 +45,13 @@ class Media(db.Model):
         if not os.path.exists(UPLOAD_FOLDER + self.directory + os.path.sep):
             os.makedirs(UPLOAD_FOLDER + self.directory + os.path.sep)
         file.save(os.path.join(UPLOAD_FOLDER + self.directory + os.path.sep, file_name))
+        self.uploaded = True
+
+    def self_upload(self, url, filename):
+        file_name = secure_filename(filename)
+        if not os.path.exists(UPLOAD_FOLDER + self.directory + os.path.sep):
+            os.makedirs(UPLOAD_FOLDER + self.directory + os.path.sep)
+        urllib.request.urlretrieve(url, os.path.join(UPLOAD_FOLDER + self.directory + os.path.sep, file_name))
         self.uploaded = True
 
     def clear_file(self):
@@ -128,6 +136,22 @@ class Media(db.Model):
 
     def set_content(self, file):
         file_name = secure_filename(file.filename)
+        f, e = os.path.splitext(file_name)
+        self.filename = f
+        self.extension = e
+        if self.message_link is not None:
+            self.directory = "conversation_" + str(self.message_link.message.conversation_id)
+        elif self.user_link is not None:
+            self.directory = "user_" + str(self.user_link.user_id)
+        elif self.circle_link is not None:
+            self.directory = "circle_" + str(self.circle_link.circle_id)
+        elif self.device_link is not None:
+            self.directory = "device_" + str(self.device_link.device_id)
+        else:
+            raise Exception("Ce media est corrompu, vous ne pouvez pas upload de fichier")
+
+    def self_set_content(self, filename):
+        file_name = secure_filename(filename)
         f, e = os.path.splitext(file_name)
         self.filename = f
         self.extension = e

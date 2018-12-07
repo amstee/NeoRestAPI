@@ -8,6 +8,7 @@ from models.Message import Message
 from config.facebook import SECRET_KEY, PAGE_ACCESS_TOKEN
 from models.Media import Media
 from exceptions import conversation as e_conversation
+from exceptions import media as e_media
 from models.MessageToMedia import MessageToMedia
 import base64
 from flask_socketio import emit
@@ -26,6 +27,39 @@ with open('config.json') as data_file:
 PORT = neo_config["project"]["port"]
 HOST = neo_config["project"]["host"]
 BASE_ENDPOINT = "http://"+str(HOST)+":"+str(PORT)
+
+
+def core_upload(media_id, url, client, is_device):
+    try:
+        media = db.session.query(Media).filter(Media.id == media_id).first()
+        if media is None:
+            raise e_media.MediaNotFound
+        if not (is_device and media.can_be_uploaded_by_device(client)) and \
+                not (not is_device and media.can_be_uploaded_by_user(client)):
+            raise e_media.ForbiddenUpload
+        filename = str(url.split('?')[0]).split('/')[6]
+        media.self_set_content(filename)
+        media.self_upload(url, filename)
+        db.session.commit()
+        if media.is_attached_to_message():
+            message = media.message_link.message
+            emit('message', {
+                'conversation_id': message.conversation.id,
+                'message': message.get_simple_json_compliant_content(),
+                'sender': client.get_simple_json_compliant_content(),
+                'media': media.get_simple_content(),
+                'status': 'done'},
+                 room='conversation_' + str(message.conversation.id), namespace='/')
+        response = {
+            "data": {"success": True},
+            "status_code": 200
+        }
+    except e_media.MediaException as exception:
+        response = {
+            "data": {"success": False, "message": exception.message},
+            "status_code": exception.status_code
+        }
+    return response
 
 
 def core_message_send(content, conversation_id, user):
@@ -77,23 +111,10 @@ def encode_post_back_payload(facebook_psid, message_text, link, attachment_image
 
 
 def push_images_to_api(user, conv_id, message, attachment_images):
-    logger.debug("I AM IN PUSH IMAGES")
     for url in attachment_images:
-        image = requests.get(url)
         response = core_message_send(content={"text_message": message, "files": [url]},
                                      conversation_id=conv_id, user=user)
-        if response["status_code"] == 200:
-            headers = {
-                'Authorization': user.json_token,
-                'content-type': 'multipart/form-data'
-            }
-            data = {
-                'file': (io.BytesIO(image.content), 'attachment')
-            }
-            endpoint = "https://api.neo.ovh/media/upload/"+str(response["data"]["media_list"][0]["id"])
-            logger.debug("ENDPOINT = %s", endpoint)
-            r = requests.post(endpoint, headers=headers, data=data)
-            logger.debug("RESPONSE = %s", r.content)
+        core_upload(response["data"]["media_list"][0]["id"], url, user, False)
 
 
 def handle_conversation_payload(message_payload):
