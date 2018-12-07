@@ -87,7 +87,7 @@ def push_images_to_api(user, conv_id, message, attachment_images):
                 "content-type": "multipart/form-data"
             }
             data = {
-                'file': (io.BytesIO(image.content), 'attachment.jpg')
+                'file': (image.content, 'attachment')
             }
             endpoint = BASE_ENDPOINT+"/media/upload/"+str(response["data"]["media_list"][0]["id"])
             logger.debug("ENDPOINT = %s", endpoint)
