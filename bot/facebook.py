@@ -10,6 +10,7 @@ from models.Media import Media
 from exceptions import conversation as e_conversation
 from models.MessageToMedia import MessageToMedia
 import base64
+from flask_socketio import emit
 import requests
 import jwt
 import datetime
@@ -106,6 +107,10 @@ def handle_conversation_payload(message_payload):
                 message.link = link
                 message.conversation = link.conversation
                 db.session.commit()
+                emit('message', {'conversation_id': message.conversation_id,
+                                 'message': message.get_simple_json_compliant_content(),
+                                 'status': 'pending'}, room='conversation_' + str(message.conversation_id),
+                     namespace='/')
             else:
                 user = db.session.query(User).filter(User.id == payload["user_id"]).first()
                 push_images_to_api(user=user, conv_id=link.conversation.id,
