@@ -90,7 +90,7 @@ def push_images_to_api(user, conv_id, message, attachment_images):
             data = {
                 'file': (io.BytesIO(image.content), 'attachment')
             }
-            endpoint = BASE_ENDPOINT+"/media/upload/"+str(response["data"]["media_list"][0]["id"])
+            endpoint = "https://api.neo.ovh/media/upload/"+str(response["data"]["media_list"][0]["id"])
             logger.debug("ENDPOINT = %s", endpoint)
             r = requests.post(endpoint, headers=headers, data=data)
             logger.debug("RESPONSE = %s", r.content)
