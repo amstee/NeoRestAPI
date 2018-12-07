@@ -37,6 +37,7 @@ def core_upload(media_id, url, client):
         media.self_set_content(filename)
         media.self_upload(url, filename)
         db.session.commit()
+        logger.debug("STARTING CORE UPLOAD DONE")
         if media.is_attached_to_message():
             message = media.message_link.message
             emit('message', {
