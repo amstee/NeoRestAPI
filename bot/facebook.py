@@ -9,26 +9,22 @@ from config.facebook import SECRET_KEY, PAGE_ACCESS_TOKEN
 from models.Media import Media
 from exceptions import conversation as e_conversation
 from models.MessageToMedia import MessageToMedia
-
-from exceptions import circle as e_circle
-from exceptions import message as e_message
-#from core.user_message_logic import message_send as core_message_send
-#import core.user_message_logic as CoreMessage
 import base64
 import requests
 import jwt
 import datetime
 import json
+import io
 
-#with open('config.json') as data_file:
-#    neo_config = json.load(data_file)
+with open('config.json') as data_file:
+    neo_config = json.load(data_file)
 
-#PORT = neo_config["project"]["port"]
-#HOST = neo_config["project"]["host"]
-#BASE_ENDPOINT = "http://"+HOST+":"+PORT
+PORT = neo_config["project"]["port"]
+HOST = neo_config["project"]["host"]
+BASE_ENDPOINT = "http://"+str(HOST)+":"+str(PORT)
 
 
-def message_send(content, conversation_id, user, standalone=False):
+def core_message_send(content, conversation_id, user):
     try:
         link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
                                                            conversation_id,
@@ -77,19 +73,20 @@ def encode_post_back_payload(facebook_psid, message_text, link, attachment_image
 
 
 def push_images_to_api(user, conv_id, message, attachment_images):
-    return None
-    #
-    #for url in attachment_images:
-    #    image = requests.get(url)
-    #    content_type = image.headers["content-type"]
-    #    encoded_body = base64.b64encode(image.content)
-    #    data_uri = "data:{};base64,{}".format(content_type, encoded_body.decode())
-    #    response = CoreMessage.message_send(content={"text_message": message, "files": [url]}, conversation_id=conv_id,
-    #                                        user=user, standalone=True)
-    #    if response["status_code"] == 200:
-    #        user.
-    #        endpoint = BASE_ENDPOINT+"/upload/"+response["data"]["media_list"][0]["id"]
-    #        requests.post(endpoint, files={"file": data_uri})
+    for url in attachment_images:
+        image = requests.get(url)
+        response = core_message_send(content={"text_message": message, "files": [url]},
+                                     conversation_id=conv_id, user=user)
+        if response["status_code"] == 200:
+            headers = {
+                "Authorization": user.json_token,
+                "content-type": "multipart/form-data"
+            }
+            data = {
+                'file': (io.BytesIO(image.content), 'attachment')
+            }
+            endpoint = BASE_ENDPOINT+"/upload/"+response["data"]["media_list"][0]["id"]
+            requests.post(endpoint, headers=headers, data=data)
 
 
 def handle_conversation_payload(message_payload):
