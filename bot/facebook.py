@@ -110,6 +110,7 @@ def push_images_to_api(user, conv_id, message, attachment_images):
     for url in attachment_images:
         response = core_message_send(content={"text_message": message, "files": [url]},
                                      conversation_id=conv_id, user=user)
+        logger.debug("CORE_MESSAGE :\n%s", response)
         response = core_upload(response["data"]["media_list"][0]["id"], url, user, False)
         logger.debug("CORE_UPLOAD :\n%s", response)
 
