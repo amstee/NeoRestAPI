@@ -6,6 +6,7 @@ from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
 from models.Message import Message
 from config.facebook import SECRET_KEY, PAGE_ACCESS_TOKEN
+from core.user_message_logic import message_send as core_message_send
 #import core.user_message_logic as CoreMessage
 import base64
 import requests
