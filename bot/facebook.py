@@ -6,13 +6,22 @@ from models.Conversation import Conversation
 from models.UserToConversation import UserToConversation
 from models.Message import Message
 from config.facebook import SECRET_KEY, PAGE_ACCESS_TOKEN
+import core.user_message_logic as CoreMessage
+import base64
 import requests
 import jwt
 import datetime
 import json
 
+with open('config.json') as data_file:
+    neo_config = json.load(data_file)
 
-def encode_post_back_payload(facebook_psid, message_text, link):
+PORT = neo_config["project"]["port"]
+HOST = neo_config["project"]["host"]
+BASE_ENDPOINT = "http://"+HOST+":"+PORT
+
+
+def encode_post_back_payload(facebook_psid, message_text, link, attachment_images):
     try:
         payload = {
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30, seconds=1),
@@ -20,12 +29,29 @@ def encode_post_back_payload(facebook_psid, message_text, link):
             'facebook_psid': facebook_psid,
             'user_id': link.user_id,
             'link_id': link.id,
-            'message_text': message_text
+            'message_text': message_text,
+            'images': attachment_images
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
         return token.decode()
     except Exception as e:
         return str(e)
+
+
+def push_images_to_api(user, conv_id, message, attachment_images):
+    return None
+    #
+    #for url in attachment_images:
+    #    image = requests.get(url)
+    #    content_type = image.headers["content-type"]
+    #    encoded_body = base64.b64encode(image.content)
+    #    data_uri = "data:{};base64,{}".format(content_type, encoded_body.decode())
+    #    response = CoreMessage.message_send(content={"text_message": message, "files": [url]}, conversation_id=conv_id,
+    #                                        user=user, standalone=True)
+    #    if response["status_code"] == 200:
+    #        user.
+    #        endpoint = BASE_ENDPOINT+"/upload/"+response["data"]["media_list"][0]["id"]
+    #        requests.post(endpoint, files={"file": data_uri})
 
 
 def handle_conversation_payload(message_payload):
@@ -34,10 +60,14 @@ def handle_conversation_payload(message_payload):
         try:
             link = db.session.query(UserToConversation).filter(UserToConversation.id == payload["link_id"],
                                                                UserToConversation.user_id == payload["user_id"]).first()
-            message = Message(content=payload["message_text"])
-            message.link = link
-            message.conversation = link.conversation
-            db.session.commit()
+            if len(payload["images"]) == 0:
+                message = Message(content=payload["message_text"])
+                message.link = link
+                message.conversation = link.conversation
+                db.session.commit()
+            else:
+                user = db.session.query(User).filter(User.id == payload["user_id"]).first()
+                push_images_to_api(user=user, conv_id=link.conversation.id, message=payload["message_text"], )
         except Exception as e:
             return "Une erreur est survenue : " + str(e)
     except jwt.ExpiredSignatureError:
@@ -65,35 +95,16 @@ def send_message(recipient_id, message_text):
     return data, r.status_code
 
 
-def send_picture(recipient_id, message_text):
-    params = {
-        "access_token": PAGE_ACCESS_TOKEN
-    }
-    headers = {
-        "Content-Type": "application/json"
-    }
-    data = json.dumps({
-        "recipient": {
-            "id": recipient_id
-        },
-        "message": {
-            "text": message_text
-        }
-    })
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
-    return data, r.status_code
-
-
-def message_choice(sender_id, message_text, user):
+def message_choice(sender_id, message_text, user, attachment_images):
     quick_replies = []
     for user_to_conv in user.conversation_links:
         conv = db.session.query(Conversation).filter(Conversation.id == user_to_conv.conversation_id).first()
-        payload = encode_post_back_payload(sender_id, message_text, user_to_conv)
+        payload = encode_post_back_payload(sender_id, message_text, user_to_conv, attachment_images)
         quick_replies.append({"content_type": "text", "title": conv.name, "payload": payload})
     return quick_replies
 
 
-def send_message_choice(recipient_id, message_text):
+def send_message_choice(recipient_id, message_text, attachment_images):
     user = db.session.query(User).filter(User.facebook_psid == recipient_id).first()
     if len(user.conversation_links) > 0:
         params = {
@@ -108,7 +119,7 @@ def send_message_choice(recipient_id, message_text):
             },
             "message": {
                 "text": "Choisissez une conversation",
-                "quick_replies": message_choice(recipient_id, message_text, user)
+                "quick_replies": message_choice(recipient_id, message_text, user, attachment_images)
             }
         })
         r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)

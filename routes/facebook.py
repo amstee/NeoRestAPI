@@ -50,7 +50,7 @@ class WebHookMessenger(Resource):
                                     resp = send_message(sender_id, message)
                                     return resp
                                 elif is_user_linked(sender_id):
-                                    send_message_choice(sender_id, message_text)
+                                    send_message_choice(sender_id, message_text, attachment_images)
                                     return "To handle", 200
                                 else:
                                     resp = send_message(sender_id, "Votre compte messenger n'est lié a aucun compte NEO")

@@ -47,7 +47,7 @@ class UploadMedia(Resource):
         try:
             client, is_device = get_any_from_header(request)
             core_response = core.upload(media_id, request.files, client, is_device)
-            logger.debug("REQUEST FILE : %s", request.files)
+            logger.debug("REQUEST FILE : %s", request.files['file'])
             response = jsonify(core_response['data'])
             response.status_code = core_response['status_code']
             return response

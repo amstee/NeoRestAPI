@@ -15,7 +15,7 @@ from exceptions import circle as e_circle
 from exceptions import message as e_message
 
 
-def message_send(content, conversation_id, user):
+def message_send(content, conversation_id, user, standalone=False):
     try:
         link = db.session.query(UserToConversation).filter(UserToConversation.conversation_id ==
                                                            conversation_id,
@@ -34,31 +34,32 @@ def message_send(content, conversation_id, user):
                 db.session.commit()
                 media_list.append(media.get_simple_content())
         db.session.commit()
-        if not media_list:
-            emit('message', {
-                'conversation_id': message.conversation_id,
-                'message': message.get_simple_json_compliant_content(),
-                'time': message.sent.isoformat(),
-                'sender': user.get_simple_json_compliant_content(),
-                'media_list': media_list,
-                'status': 'done'},
-                 room='conversation_' + str(message.conversation_id), namespace='/')
-        else:
-            emit('message', {'conversation_id': message.conversation_id,
-                             'message': message.get_simple_json_compliant_content(),
-                             'status': 'pending'}, room='conversation_' + str(message.conversation_id),
-                 namespace='/')
-        message.conversation.mobile_notification(title="Message", body=user.first_name + " vous à envoyer un message.")
-        conversation = db.session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
-        info_sender = "[" + link.conversation.name + "] " + user.first_name + " : "
-        try:
-            messenger_conversation_model_send(link.user_id, conversation, info_sender + message.text_content)
-        except Exception:
-            pass
-        try:
-            hangout_conversation_model_send(link.user_id, conversation, info_sender + message.text_content)
-        except Exception:
-            pass
+        if standalone is False:
+            if not media_list:
+                emit('message', {
+                    'conversation_id': message.conversation_id,
+                    'message': message.get_simple_json_compliant_content(),
+                    'time': message.sent.isoformat(),
+                    'sender': user.get_simple_json_compliant_content(),
+                    'media_list': media_list,
+                    'status': 'done'},
+                     room='conversation_' + str(message.conversation_id), namespace='/')
+            else:
+                emit('message', {'conversation_id': message.conversation_id,
+                                 'message': message.get_simple_json_compliant_content(),
+                                 'status': 'pending'}, room='conversation_' + str(message.conversation_id),
+                     namespace='/')
+            message.conversation.mobile_notification(title="Message", body=user.first_name + " vous à envoyer un message.")
+            conversation = db.session.query(Conversation).filter(link.conversation_id == Conversation.id).first()
+            info_sender = "[" + link.conversation.name + "] " + user.first_name + " : "
+            try:
+                messenger_conversation_model_send(link.user_id, conversation, info_sender + message.text_content)
+            except Exception:
+                pass
+            try:
+                hangout_conversation_model_send(link.user_id, conversation, info_sender + message.text_content)
+            except Exception:
+                pass
         response = {
             "data": {"success": True, 'media_list': media_list, 'message_id': message.id},
             "status_code": 200
