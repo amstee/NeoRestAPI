@@ -29,8 +29,9 @@ HOST = neo_config["project"]["host"]
 BASE_ENDPOINT = "http://"+str(HOST)+":"+str(PORT)
 
 
-def core_upload(media_id, url, client, is_device):
+def core_upload(media_id, url, client):
     try:
+        logger.debug("STARTING CORE UPLOAD")
         media = db.session.query(Media).filter(Media.id == media_id).first()
         filename = str(url.split('?')[0]).split('/')[6]
         media.self_set_content(filename)
@@ -111,7 +112,7 @@ def push_images_to_api(user, conv_id, message, attachment_images):
         response = core_message_send(content={"text_message": message, "files": [url]},
                                      conversation_id=conv_id, user=user)
         logger.debug("CORE_MESSAGE :\n%s", response)
-        response = core_upload(response["data"]["media_list"][0]["id"], url, user, False)
+        response = core_upload(response["data"]["media_list"][0]["id"], url, user)
         logger.debug("CORE_UPLOAD :\n%s", response)
 
 
