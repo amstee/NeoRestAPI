@@ -41,7 +41,7 @@ def core_upload(media_id, url, client):
         filename = part_b[5]
         logger.debug("CORE UPLOAD SPLIT: %s", filename)
         media.set_content_bot(filename)
-        #media.upload_bot(url, filename)
+        media.upload_bot(url, filename)
         db.session.commit()
         logger.debug("STARTING CORE UPLOAD DONE")
         if media.is_attached_to_message():

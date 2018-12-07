@@ -164,7 +164,6 @@ class Media(db.Model):
             self.directory = "device_" + str(self.device_link.device_id)
         else:
             raise Exception("Ce media est corrompu, vous ne pouvez pas upload de fichier")
-        db.session.commit()
 
     def get_directory(self):
         return UPLOAD_FOLDER + self.directory + os.path.sep
