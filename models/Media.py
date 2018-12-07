@@ -151,10 +151,9 @@ class Media(db.Model):
             raise Exception("Ce media est corrompu, vous ne pouvez pas upload de fichier")
 
     def set_content_bot(self, my_filename):
-        #file_name = secure_filename(my_filename)
-        f, e = os.path.splitext(my_filename)
-        self.filename = f
-        self.extension = e
+        file = str(my_filename).split('.')
+        self.filename = file[0]
+        self.extension = file[1]
         if self.message_link is not None:
             self.directory = "conversation_" + str(self.message_link.message.conversation_id)
         elif self.user_link is not None:
@@ -165,6 +164,7 @@ class Media(db.Model):
             self.directory = "device_" + str(self.device_link.device_id)
         else:
             raise Exception("Ce media est corrompu, vous ne pouvez pas upload de fichier")
+        db.session.commit()
 
     def get_directory(self):
         return UPLOAD_FOLDER + self.directory + os.path.sep
