@@ -90,7 +90,9 @@ def push_images_to_api(user, conv_id, message, attachment_images):
                 'file': (io.BytesIO(image.content), 'attachment')
             }
             endpoint = BASE_ENDPOINT+"/upload/"+str(response["data"]["media_list"][0]["id"])
-            requests.post(endpoint, headers=headers, data=data)
+            logger.debug("ENDPOINT = %s", endpoint)
+            r = requests.post(endpoint, headers=headers, data=data)
+            logger.debug("RESPONSE = %s", r.content)
 
 
 def handle_conversation_payload(message_payload):
