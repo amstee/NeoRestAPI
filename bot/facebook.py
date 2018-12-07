@@ -33,8 +33,9 @@ def core_upload(media_id, url, client):
     try:
         logger.debug("STARTING CORE UPLOAD")
         media = db.session.query(Media).filter(Media.id == media_id).first()
+        logger.debug("CORE UPLOAD URL: %s", url)
         filename = str(url.split('?')[0]).split('/')[6]
-        logger.debug("CORE UPLOAD : %s", filename)
+        logger.debug("CORE UPLOAD SPLIT: %s", filename)
         media.set_content_bot(filename)
         #media.upload_bot(url, filename)
         db.session.commit()
