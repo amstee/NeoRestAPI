@@ -32,11 +32,6 @@ BASE_ENDPOINT = "http://"+str(HOST)+":"+str(PORT)
 def core_upload(media_id, url, client, is_device):
     try:
         media = db.session.query(Media).filter(Media.id == media_id).first()
-        if media is None:
-            raise e_media.MediaNotFound
-        if not (is_device and media.can_be_uploaded_by_device(client)) and \
-                not (not is_device and media.can_be_uploaded_by_user(client)):
-            raise e_media.ForbiddenUpload
         filename = str(url.split('?')[0]).split('/')[6]
         media.self_set_content(filename)
         media.self_upload(url, filename)
@@ -114,7 +109,8 @@ def push_images_to_api(user, conv_id, message, attachment_images):
     for url in attachment_images:
         response = core_message_send(content={"text_message": message, "files": [url]},
                                      conversation_id=conv_id, user=user)
-        core_upload(response["data"]["media_list"][0]["id"], url, user, False)
+        response = core_upload(response["data"]["media_list"][0]["id"], url, user, False)
+        logger.debug("CORE_UPLOAD :\n%s", response)
 
 
 def handle_conversation_payload(message_payload):
