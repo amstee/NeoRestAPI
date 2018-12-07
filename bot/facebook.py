@@ -89,7 +89,7 @@ def push_images_to_api(user, conv_id, message, attachment_images):
             data = {
                 'file': (io.BytesIO(image.content), 'attachment')
             }
-            endpoint = BASE_ENDPOINT+"/upload/"+response["data"]["media_list"][0]["id"]
+            endpoint = BASE_ENDPOINT+"/upload/"+str(response["data"]["media_list"][0]["id"])
             requests.post(endpoint, headers=headers, data=data)
 
 
