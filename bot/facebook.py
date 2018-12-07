@@ -38,7 +38,7 @@ def core_upload(media_id, url, client):
         logger.debug("CORE UPLOAD URL_A: %s", part_a)
         part_b = part_a[0].split('/')
         logger.debug("CORE UPLOAD URL_B: %s", part_b)
-        filename = part_b[6]
+        filename = part_b[5]
         logger.debug("CORE UPLOAD SPLIT: %s", filename)
         media.set_content_bot(filename)
         #media.upload_bot(url, filename)
