@@ -51,7 +51,7 @@ class Media(db.Model):
         file_name = secure_filename(filename)
         if not os.path.exists(UPLOAD_FOLDER + self.directory + os.path.sep):
             os.makedirs(UPLOAD_FOLDER + self.directory + os.path.sep)
-        urllib.request.urlretrieve(url, os.path.join(UPLOAD_FOLDER + self.directory + os.path.sep, file_name))
+        #urllib.request.urlretrieve(url, os.path.join(UPLOAD_FOLDER + self.directory + os.path.sep, file_name))
         self.uploaded = True
 
     def clear_file(self):
