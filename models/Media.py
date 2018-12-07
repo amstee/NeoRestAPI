@@ -151,8 +151,8 @@ class Media(db.Model):
             raise Exception("Ce media est corrompu, vous ne pouvez pas upload de fichier")
 
     def set_content_bot(self, my_filename):
-        file_name = secure_filename(my_filename)
-        f, e = os.path.splitext(file_name)
+        #file_name = secure_filename(my_filename)
+        f, e = os.path.splitext(my_filename)
         self.filename = f
         self.extension = e
         if self.message_link is not None:
